@@ -4,6 +4,12 @@ import { API_VERSION } from "./manifest.js";
 import type { PluginManifest } from "./manifest.js";
 import { validateManifest } from "./validate.js";
 
+const UNKNOWN_PLUGIN = "(unknown plugin)";
+
+function attributedTo(manifest: PluginManifest): string {
+  return manifest.id ?? UNKNOWN_PLUGIN;
+}
+
 /** One thing worth telling a plugin author or an operator about a set of installed plugins. */
 export interface DoctorFinding {
   /** `error` blocks a load, `warning` is legal but probably not what the author meant. */
@@ -40,7 +46,7 @@ export function analyzePlugins(manifests: PluginManifest[], hostApi: number = AP
 
   const seen = new Set<string>();
   for (const manifest of manifests) {
-    const pluginId = manifest.id ?? "(unknown plugin)";
+    const pluginId = attributedTo(manifest);
 
     for (const issue of validateManifest(manifest)) {
       findings.push({ level: "error", pluginId, detail: `plugin.json ${issue.path}: ${issue.message}`, fix: issue.fix });
@@ -81,11 +87,12 @@ export function analyzePlugins(manifests: PluginManifest[], hostApi: number = AP
   const consumed = new Set(manifests.flatMap((manifest) => manifest.services?.consumes ?? []));
 
   for (const manifest of manifests) {
+    const pluginId = attributedTo(manifest);
     for (const serviceId of manifest.services?.consumes ?? []) {
       if (provided.has(serviceId)) continue;
       findings.push({
         level: "warning",
-        pluginId: manifest.id,
+        pluginId,
         detail: `consumes "${serviceId}"; nothing installed provides it`,
         fix: `install the plugin that provides "${serviceId}", or let the consumer carry on without it`,
       });
@@ -94,7 +101,7 @@ export function analyzePlugins(manifests: PluginManifest[], hostApi: number = AP
       if (consumed.has(serviceId)) continue;
       findings.push({
         level: "warning",
-        pluginId: manifest.id,
+        pluginId,
         detail: `provides "${serviceId}"; nothing installed consumes it`,
         fix: "leave it if other installs use it, or drop it from services.provides",
       });
@@ -103,7 +110,7 @@ export function analyzePlugins(manifests: PluginManifest[], hostApi: number = AP
       if (isKnownCapability(capabilityId)) continue;
       findings.push({
         level: "warning",
-        pluginId: manifest.id,
+        pluginId,
         detail: `declares capability "${capabilityId}", which this api version does not mint and every host ignores`,
         fix: "check the spelling against the capability ids this api version documents",
       });

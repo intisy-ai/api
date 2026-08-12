@@ -92,3 +92,9 @@ it("reports a dependency cycle as an error naming its members", () => {
     fix: "break the cycle by having one of them use services.watch or services.get at call time instead of declaring the dependency",
   });
 });
+
+it("attributes a warning to a placeholder when the manifest carries no id", () => {
+  const report = analyzePlugins([{ api: 1, entry: "dist/index.js", services: { consumes: ["config-ledger:history"] } } as PluginManifest]);
+  expect(report.ok).toBe(false);
+  expect(report.findings.map((finding) => finding.pluginId)).toEqual(["(unknown plugin)", "(unknown plugin)"]);
+});
