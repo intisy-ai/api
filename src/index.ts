@@ -29,6 +29,8 @@ export type {
 } from "./capability-types.js";
 export type { IrEventStream, IrRequest, IrResponse, IrStreamEvent, ProviderCallContext, WireRequest, WireResponse } from "./ir.js";
 export type {
+  CapabilityImplementation,
+  CapabilityKey,
   CapabilityMap,
   CommandDef,
   CommandsCapability,
@@ -49,9 +51,21 @@ export type {
   SyncResult,
 } from "./capabilities.js";
 export { createServiceHub } from "./services.js";
-export type { AccountsService, RoutingService, ServiceEvent, ServiceHub, ServiceListener, ServiceMap, ServiceRecorder, ServiceRegistry, WantOptions } from "./services.js";
+export type {
+  AccountsService,
+  RoutingService,
+  ServiceContract,
+  ServiceEvent,
+  ServiceHub,
+  ServiceKey,
+  ServiceListener,
+  ServiceMap,
+  ServiceRecorder,
+  ServiceRegistry,
+  WantOptions,
+} from "./services.js";
 export { ECOSYSTEM_TOPICS } from "./events.js";
-export type { EventBus, EventMap, NotificationLevel } from "./events.js";
+export type { EventBus, EventMap, EventPayload, EventTopic, NotificationLevel } from "./events.js";
 export type { HostDescriptor, Logger, PluginConfig, PluginPaths } from "./runtime.js";
 export type { PluginContext } from "./context.js";
 export { definePlugin } from "./plugin.js";

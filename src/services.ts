@@ -46,6 +46,12 @@ export interface WantOptions {
   timeoutMs?: number;
 }
 
+/** A service id this package types, or any other id a plugin mints. */
+export type ServiceKey = keyof ServiceMap | (string & {});
+
+/** The contract behind a service id, `unknown` for an id this package does not type. */
+export type ServiceContract<T> = T extends keyof ServiceMap ? ServiceMap[T] : unknown;
+
 /**
  * One plugin's view of the service registry.
  *
@@ -68,9 +74,7 @@ export interface ServiceRegistry {
   /** Reports every registration and unregistration of the id. Returns a disposer. */
   watch(id: string, listener: ServiceListener<unknown>): () => void;
   /** Registers one of this plugin's own services. Returns a disposer that unregisters it. */
-  register<K extends keyof ServiceMap>(id: K, service: ServiceMap[K]): () => void;
-  /** Registers one of this plugin's own services. Returns a disposer that unregisters it. */
-  register(id: string, service: unknown): () => void;
+  register<K extends ServiceKey>(id: K, service: ServiceContract<K>): () => void;
   /** Every service id registered right now. */
   ids(): string[];
 }

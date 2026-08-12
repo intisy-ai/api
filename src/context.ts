@@ -1,4 +1,4 @@
-import type { CapabilityMap } from "./capabilities.js";
+import type { CapabilityImplementation, CapabilityKey } from "./capabilities.js";
 import type { EventBus } from "./events.js";
 import type { PluginManifest } from "./manifest.js";
 import type { HostDescriptor, Logger, PluginConfig, PluginPaths } from "./runtime.js";
@@ -34,8 +34,8 @@ export interface PluginContext {
    * @remarks
    * The manifest declares capability ids statically and `activate` supplies the implementations;
    * the host checks the two against each other, which is what keeps the static manifest honest.
+   * An id this API version does not mint is accepted and typed as `unknown`, because vocabularies
+   * are open.
    */
-  provide<K extends keyof CapabilityMap>(id: K, implementation: CapabilityMap[K]): void;
-  /** Supplies the implementation behind a capability id this API version does not mint. */
-  provide(id: string, implementation: unknown): void;
+  provide<K extends CapabilityKey>(id: K, implementation: CapabilityImplementation<K>): void;
 }

@@ -51,6 +51,12 @@ export const ECOSYSTEM_TOPICS = [
   "sync.completed",
 ] as const;
 
+/** A topic this package types, or any other topic a plugin mints. */
+export type EventTopic = keyof EventMap | (string & {});
+
+/** The payload a topic carries, `unknown` for a topic this package does not type. */
+export type EventPayload<T> = T extends keyof EventMap ? EventMap[T] : unknown;
+
 /**
  * Publish and subscribe, alongside the registry's request and response.
  *
@@ -61,9 +67,7 @@ export const ECOSYSTEM_TOPICS = [
  */
 export interface EventBus {
   /** Publishes a payload on a topic. */
-  publish<K extends keyof EventMap>(topic: K, payload: EventMap[K]): void;
-  /** Publishes a payload on a topic. */
-  publish(topic: string, payload: unknown): void;
+  publish<T extends EventTopic>(topic: T, payload: EventPayload<T>): void;
   /** Subscribes to a topic. Returns a disposer. */
   subscribe<K extends keyof EventMap>(topic: K, listener: (payload: EventMap[K]) => void): () => void;
   /** Subscribes to a topic. Returns a disposer. */

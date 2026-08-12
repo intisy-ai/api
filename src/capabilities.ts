@@ -216,3 +216,9 @@ export interface CapabilityMap {
   /** Contributes installable entries to a marketplace listing. */
   "marketplace-source": MarketplaceSourceCapability;
 }
+
+/** A capability id this API version mints, or any other id a later one might. */
+export type CapabilityKey = keyof CapabilityMap | (string & {});
+
+/** The implementation a capability id requires, `unknown` for an id this API version does not mint. */
+export type CapabilityImplementation<T> = T extends keyof CapabilityMap ? CapabilityMap[T] : unknown;
