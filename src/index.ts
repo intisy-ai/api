@@ -74,3 +74,7 @@ export { createPluginLedger } from "./ledger.js";
 export type { LedgerEntry, PluginLedger, PluginStatus } from "./ledger.js";
 export { createPluginHost } from "./host.js";
 export type { CapabilityRecord, PluginHost, PluginHostOptions, PluginRuntime } from "./host.js";
+export { activationOrder } from "./graph.js";
+export type { ActivationPlan } from "./graph.js";
+export { analyzePlugins } from "./doctor.js";
+export type { DoctorFinding, DoctorReport } from "./doctor.js";
