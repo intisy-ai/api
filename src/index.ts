@@ -70,3 +70,7 @@ export type { HostDescriptor, Logger, PluginConfig, PluginPaths } from "./runtim
 export type { PluginContext } from "./context.js";
 export { definePlugin } from "./plugin.js";
 export type { Plugin } from "./plugin.js";
+export { createPluginLedger } from "./ledger.js";
+export type { LedgerEntry, PluginLedger, PluginStatus } from "./ledger.js";
+export { createPluginHost } from "./host.js";
+export type { CapabilityRecord, PluginHost, PluginHostOptions, PluginRuntime } from "./host.js";
