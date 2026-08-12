@@ -47,8 +47,9 @@ it("reads every manifest sidecar in an app home, and none when the directory is 
   write(join(home, "plugin"), "b.json", { id: "b", api: 1 });
   write(join(home, "plugin"), "a.json", { id: "a", api: 1 });
   writeFileSync(join(home, "plugin", "a.js"), "// bundle", "utf8");
-  expect(readHome(home).map((loaded) => (loaded.value as { id: string }).id)).toEqual(["a", "b"]);
-  expect(readHome(tempDir())).toEqual([]);
+  expect(readHome(home).loaded.map((loaded) => (loaded.value as { id: string }).id)).toEqual(["a", "b"]);
+  expect(readHome(home).failed).toEqual([]);
+  expect(readHome(tempDir())).toEqual({ loaded: [], failed: [] });
 });
 
 it("validates a good manifest and exits 0", () => {
@@ -102,4 +103,54 @@ it("prints usage and exits 0 when asked for help", () => {
   const { io, out } = collect();
   expect(run(["--help"], io)).toBe(0);
   expect(out[0]).toBe("usage:");
+});
+
+it("keeps reading a home past a sidecar it cannot parse", () => {
+  const home = tempDir();
+  mkdirSync(join(home, "plugin"));
+  write(join(home, "plugin"), "good.json", { id: "good", api: 1 });
+  writeFileSync(join(home, "plugin", "bad.json"), "{ nope", "utf8");
+  const result = readHome(home);
+  expect(result.loaded.map((loaded) => (loaded.value as { id: string }).id)).toEqual(["good"]);
+  expect(result.failed).toHaveLength(1);
+  expect(result.failed[0].error.detail).toContain("is not valid JSON");
+});
+
+it("reports an unreadable sidecar as a finding and still checks the rest of the home", () => {
+  const home = tempDir();
+  mkdirSync(join(home, "plugin"));
+  write(join(home, "plugin"), "good.json", { id: "good", api: 1 });
+  writeFileSync(join(home, "plugin", "bad.json"), "{ nope", "utf8");
+  const { io, err } = collect();
+  expect(run(["doctor", "--home", home], io)).toBe(1);
+  expect(err[0]).toBe("1 plugin checked");
+  expect(err[1]).toContain("error  (unknown plugin): ");
+  expect(err[1]).toContain("is not valid JSON");
+});
+
+it("does not let an unreadable checkout hide the home it already read", () => {
+  const home = tempDir();
+  mkdirSync(join(home, "plugin"));
+  write(join(home, "plugin"), "cairn.json", { id: "cairn", api: 1, entry: "dist/index.js", services: { consumes: ["config-ledger:history"] } });
+  const { io, err } = collect();
+  expect(run(["doctor", "--home", home, "--dir", tempDir()], io)).toBe(1);
+  expect(err[0]).toBe("1 plugin checked");
+  expect(err.some((line) => line.includes('consumes "config-ledger:history"'))).toBe(true);
+});
+
+it("refuses a non-numeric api floor instead of silently skipping the check", () => {
+  const dir = tempDir();
+  write(dir, "plugin.json", { id: "future", api: 3 });
+  const { io, err } = collect();
+  expect(run(["doctor", "--dir", dir, "--api", "garbage"], io)).toBe(2);
+  expect(err[0]).toBe('--api needs a whole number of 1 or more, got "garbage"');
+});
+
+it("treats a flag with no value as absent rather than eating the next flag", () => {
+  const home = tempDir();
+  mkdirSync(join(home, "plugin"));
+  write(join(home, "plugin"), "wakatime-sync.json", { id: "wakatime-sync", api: 1 });
+  const { io, out } = collect();
+  expect(run(["doctor", "--dir", "--home", home], io)).toBe(0);
+  expect(out[0]).toBe("1 plugin checked");
 });

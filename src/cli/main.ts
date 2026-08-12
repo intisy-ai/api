@@ -3,7 +3,9 @@ import { realpathSync } from "node:fs";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { analyzePlugins } from "../doctor.js";
+import type { DoctorFinding, DoctorReport } from "../doctor.js";
 import { isPluginError } from "../errors.js";
+import type { PluginError } from "../errors.js";
 import { API_VERSION } from "../manifest.js";
 import type { PluginManifest } from "../manifest.js";
 import { validateManifest } from "../validate.js";
@@ -61,25 +63,60 @@ function doctor(argv: string[], io: CliIo): number {
   const home = option(argv, "--home");
   const dir = option(argv, "--dir");
   const api = option(argv, "--api");
-  const loaded: LoadedManifest[] = [];
-  if (home) loaded.push(...readHome(home));
-  if (dir || !home) loaded.push(readCheckout(dir ?? "."));
+  const hostApi = api === undefined ? API_VERSION : Number(api);
+  if (!Number.isInteger(hostApi) || hostApi < 1) {
+    io.err(`--api needs a whole number of 1 or more, got "${api}"`);
+    return 2;
+  }
 
-  const report = analyzePlugins(loaded.map((entry) => entry.value as PluginManifest), api ? Number(api) : API_VERSION);
+  const loaded: LoadedManifest[] = [];
+  const unreadable: DoctorFinding[] = [];
+  if (home) {
+    const fromHome = readHome(home);
+    loaded.push(...fromHome.loaded);
+    for (const failure of fromHome.failed) unreadable.push(toFinding(failure.error));
+  }
+  if (dir || !home) {
+    try {
+      loaded.push(readCheckout(dir ?? "."));
+    } catch (error) {
+      if (!isPluginError(error)) throw error;
+      unreadable.push(toFinding(error));
+    }
+  }
+
+  const analysed = analyzePlugins(loaded.map((entry) => entry.value as PluginManifest), hostApi);
+  const findings = [...unreadable, ...analysed.findings];
+  const report: DoctorReport = { findings, ok: !findings.some((finding) => finding.level === "error") };
   const lines = formatReport(report, loaded.length);
   const write = report.ok ? (line: string) => io.out(line) : (line: string) => io.err(line);
   for (const line of lines) write(line);
   return report.ok ? 0 : 1;
 }
 
-function option(argv: string[], name: string): string | undefined {
-  const index = argv.indexOf(name);
-  if (index < 0 || index === argv.length - 1) return undefined;
-  return argv[index + 1];
+function toFinding(error: PluginError): DoctorFinding {
+  return { level: "error", pluginId: error.pluginId, detail: error.detail, fix: error.fix };
 }
 
-const invokedDirectly = process.argv[1] ? realpathSync(process.argv[1]) === fileURLToPath(import.meta.url) : false;
-if (invokedDirectly) {
+function option(argv: string[], name: string): string | undefined {
+  const index = argv.indexOf(name);
+  if (index < 0) return undefined;
+  const value = argv[index + 1];
+  if (value === undefined || value.startsWith("--")) return undefined;
+  return value;
+}
+
+function invokedDirectly(): boolean {
+  const invoked = process.argv[1];
+  if (!invoked) return false;
+  try {
+    return realpathSync(invoked) === fileURLToPath(import.meta.url);
+  } catch {
+    return false;
+  }
+}
+
+if (invokedDirectly()) {
   process.exitCode = run(process.argv.slice(2), {
     out: (line) => process.stdout.write(`${line}\n`),
     err: (line) => process.stderr.write(`${line}\n`),
