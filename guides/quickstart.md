@@ -57,8 +57,12 @@ npx intisy-plugin doctor --home ~/.claude
 ```
 
 `validate` checks one checkout's manifest. `doctor` checks a whole app home: manifest schema,
-declared-versus-provided capabilities, unresolvable consumes, orphaned services, dependency
-cycles, and api floors. Every problem names the field and the fix.
+unresolvable consumes, orphaned services, dependency cycles, and api floors. Every problem names
+the field and the fix.
+
+The declared-versus-provided check is not here: comparing what a manifest declares against what
+`activate` supplied needs a running host, so it lives in `verifyActivation`, and a host reports it
+when it loads the plugin.
 
 ## 4. Turn the quiet failures loud while developing
 
