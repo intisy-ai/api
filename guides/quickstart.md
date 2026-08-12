@@ -57,8 +57,9 @@ npx intisy-plugin doctor --home ~/.claude
 ```
 
 `validate` checks one checkout's manifest. `doctor` checks a whole app home: manifest schema,
-unresolvable consumes, orphaned services, dependency cycles, and api floors. Every problem names
-the field and the fix.
+unresolvable consumes, orphaned services, services two plugins both provide, dependency cycles,
+and api floors. Every problem names the field and the fix. A manifest that fails the schema is
+reported on its own, since cross-checking a broken declaration only buries the real error.
 
 The declared-versus-provided check is not here: comparing what a manifest declares against what
 `activate` supplied needs a running host, so it lives in `verifyActivation`, and a host reports it

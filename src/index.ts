@@ -1,7 +1,7 @@
 export { API_VERSION } from "./manifest.js";
 export type { ManifestLifecycle, ManifestPublish, ManifestServices, PluginManifest, Presentation, RepoMeta } from "./manifest.js";
 export { PluginError, isPluginError } from "./errors.js";
-export { ignoreUnknown, isStrict, setDiagnosticSink, setStrict, STRICT_ENV } from "./strict.js";
+export { ignoreUnknown, isStrict, reportDiagnostic, setDiagnosticSink, setStrict, STRICT_ENV } from "./strict.js";
 export type { DiagnosticSink } from "./strict.js";
 export { validateAgainstSchema } from "./schema.js";
 export type { JsonSchema, SchemaIssue } from "./schema.js";

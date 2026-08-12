@@ -150,8 +150,8 @@ export interface Column {
   key: string;
   /** Heading shown above the column. Defaults to the key. */
   label?: string;
-  /** Named tone the surface renders the cell in. */
-  tone?: "normal" | "muted" | "mono" | "old" | "new";
+  /** Named tone the surface renders the cell in. The listed names autocomplete, any other is legal and resolved by the surface's own palette. */
+  tone?: "normal" | "muted" | "mono" | "old" | "new" | (string & {});
   /** Character budget beyond which the surface truncates. */
   truncate?: number;
 }
@@ -190,11 +190,12 @@ export interface ScreenSpec {
   refreshOn?: string[];
   /** The layout tree. */
   layout: ScreenNode;
-  /** Per-surface layout overrides, for surfaces that need a different tree. */
-  surfaces?: {
-    /** Layout tree to use on a TUI surface instead of `layout`. */
-    tui?: ScreenNode;
-  };
+  /**
+   * Per-surface layout overrides, keyed by surface id, for surfaces that need a different tree.
+   * A surface uses `layout` when it finds no entry of its own, and an id no host renders is
+   * ignored.
+   */
+  surfaces?: Record<string, ScreenNode>;
 }
 
 /** A host asking a plugin for the data behind one screen. */

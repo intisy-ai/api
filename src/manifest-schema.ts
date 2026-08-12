@@ -20,6 +20,10 @@ export const MANIFEST_SCHEMA: JsonSchema = {
   type: "object",
   required: ["id", "api"],
   properties: {
+    $schema: {
+      type: "string",
+      description: "Pointer at the published manifest schema, for an editor's completion and validation.",
+    },
     id: {
       type: "string",
       pattern: "^[a-z0-9]+(-[a-z0-9]+)*$",

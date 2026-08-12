@@ -75,9 +75,9 @@ export interface PluginHost {
   service<K extends keyof ServiceMap>(id: K): ServiceMap[K] | undefined;
   /** One service, or `undefined` when nothing provides it. */
   service(id: string): unknown;
-  /** Quarantines a plugin: its capabilities and services go, the host stays up. */
+  /** Quarantines a plugin: its capabilities, services and subscriptions go, the host stays up. */
   markBroken(pluginId: string, error: PluginError): void;
-  /** Releases everything a plugin provided, on deactivation. */
+  /** Releases everything a plugin provided and every subscription it holds, on deactivation. */
   release(pluginId: string): void;
 }
 
@@ -94,6 +94,25 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
     consumed: (pluginId, serviceId) => ledger.recordServiceConsumed(pluginId, serviceId),
   });
   const capabilities = new Map<string, CapabilityRecord<unknown>[]>();
+  const disposers = new Map<string, Array<() => void>>();
+
+  function tracked(pluginId: string, dispose: () => void): () => void {
+    let done = false;
+    const once = () => {
+      if (done) return;
+      done = true;
+      dispose();
+    };
+    const owned = disposers.get(pluginId) ?? [];
+    owned.push(once);
+    disposers.set(pluginId, owned);
+    return once;
+  }
+
+  function detach(pluginId: string): void {
+    for (const dispose of disposers.get(pluginId) ?? []) dispose();
+    disposers.delete(pluginId);
+  }
 
   function provide(pluginId: string, id: string, implementation: unknown): void {
     if (!isKnownCapability(id)) ignoreUnknown("capability", id, pluginId);
@@ -115,7 +134,7 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
       publish: ((topic: string, payload: unknown) => events.publish(topic, payload)) as EventBus["publish"],
       subscribe: ((topic: string, listener: (payload: unknown) => void) => {
         ledger.recordTopic(pluginId, topic);
-        return events.subscribe(topic, listener);
+        return tracked(pluginId, events.subscribe(topic, listener));
       }) as EventBus["subscribe"],
     };
   }
@@ -178,11 +197,13 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
     service: ((id: string) => hub.get(id)) as PluginHost["service"],
     markBroken: (pluginId, error) => {
       dropCapabilities(pluginId);
+      detach(pluginId);
       hub.releasePlugin(pluginId);
       ledger.recordStatus(pluginId, "broken", { detail: error.detail, fix: error.fix });
     },
     release: (pluginId) => {
       dropCapabilities(pluginId);
+      detach(pluginId);
       hub.releasePlugin(pluginId);
       ledger.recordStatus(pluginId, "stopped");
     },

@@ -93,8 +93,36 @@ it("reports a dependency cycle as an error naming its members", () => {
   });
 });
 
-it("attributes a warning to a placeholder when the manifest carries no id", () => {
+it("attributes a finding to a placeholder when the manifest carries no id", () => {
   const report = analyzePlugins([{ api: 1, entry: "dist/index.js", services: { consumes: ["config-ledger:history"] } } as PluginManifest]);
   expect(report.ok).toBe(false);
-  expect(report.findings.map((finding) => finding.pluginId)).toEqual(["(unknown plugin)", "(unknown plugin)"]);
+  expect(report.findings.map((finding) => finding.pluginId)).toEqual(["(unknown plugin)"]);
+});
+
+it("does not cross-check a manifest whose structure is already wrong", () => {
+  const report = analyzePlugins([{ id: "x", api: 1, capabilities: "screens" } as unknown as PluginManifest]);
+  expect(report.findings).toHaveLength(1);
+  expect(report.findings[0].detail).toBe("plugin.json capabilities: expected array, got string");
+});
+
+it("reports a service two plugins both provide, naming each of them", () => {
+  const report = analyzePlugins([
+    plugin("core-auth", { services: { provides: ["accounts"] } }),
+    plugin("stub-auth", { services: { provides: ["accounts"] } }),
+  ]);
+  expect(report.ok).toBe(false);
+  expect(report.findings.filter((finding) => finding.level === "error")).toEqual([
+    {
+      level: "error",
+      pluginId: "core-auth",
+      detail: 'service "accounts" is provided by more than one plugin: core-auth, stub-auth',
+      fix: "disable one of them, or have each provide its own namespaced id so consumers can ask for the one they want",
+    },
+    {
+      level: "error",
+      pluginId: "stub-auth",
+      detail: 'service "accounts" is provided by more than one plugin: core-auth, stub-auth',
+      fix: "disable one of them, or have each provide its own namespaced id so consumers can ask for the one they want",
+    },
+  ]);
 });

@@ -1,3 +1,5 @@
+import { ignoreUnknown } from "./strict.js";
+
 /**
  * The subset of JSON Schema draft-07 this package uses and validates against.
  *
@@ -59,23 +61,25 @@ export interface SchemaIssue {
  * @param value - the parsed value to check
  * @param schema - the schema to check it against
  * @param path - the path prefix issues are reported under, `"(root)"` by default
+ * @param source - who supplied the value, for the diagnostic an ignored unknown field produces;
+ * omit to ignore silently
  * @returns every issue found, empty when the value is valid
  */
-export function validateAgainstSchema(value: unknown, schema: JsonSchema, path = "(root)"): SchemaIssue[] {
+export function validateAgainstSchema(value: unknown, schema: JsonSchema, path = "(root)", source?: string): SchemaIssue[] {
   const issues: SchemaIssue[] = [];
-  check(value, schema, path, issues);
+  check(value, schema, path, issues, source);
   return issues;
 }
 
-function check(value: unknown, schema: JsonSchema, path: string, issues: SchemaIssue[]): void {
-  if (schema.type === "object") checkObject(value, schema, path, issues);
-  else if (schema.type === "array") checkArray(value, schema, path, issues);
+function check(value: unknown, schema: JsonSchema, path: string, issues: SchemaIssue[], source?: string): void {
+  if (schema.type === "object") checkObject(value, schema, path, issues, source);
+  else if (schema.type === "array") checkArray(value, schema, path, issues, source);
   else if (schema.type === "string") checkString(value, schema, path, issues);
   else if (schema.type === "integer" || schema.type === "number") checkNumber(value, schema, path, issues);
   else if (schema.type === "boolean" && typeof value !== "boolean") issues.push(typeIssue(value, schema, path));
 }
 
-function checkObject(value: unknown, schema: JsonSchema, path: string, issues: SchemaIssue[]): void {
+function checkObject(value: unknown, schema: JsonSchema, path: string, issues: SchemaIssue[], source?: string): void {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     issues.push(typeIssue(value, schema, path));
     return;
@@ -93,18 +97,21 @@ function checkObject(value: unknown, schema: JsonSchema, path: string, issues: S
   for (const [key, child] of Object.entries(record)) {
     if (child === undefined) continue;
     const childSchema = schema.properties?.[key] ?? schema.additionalProperties;
-    if (!childSchema) continue;
-    check(child, childSchema, childPath(path, key), issues);
+    if (!childSchema) {
+      if (source !== undefined) ignoreUnknown("field", childPath(path, key), source);
+      continue;
+    }
+    check(child, childSchema, childPath(path, key), issues, source);
   }
 }
 
-function checkArray(value: unknown, schema: JsonSchema, path: string, issues: SchemaIssue[]): void {
+function checkArray(value: unknown, schema: JsonSchema, path: string, issues: SchemaIssue[], source?: string): void {
   if (!Array.isArray(value)) {
     issues.push(typeIssue(value, schema, path));
     return;
   }
   if (!schema.items) return;
-  value.forEach((item, index) => check(item, schema.items as JsonSchema, `${path}[${index}]`, issues));
+  value.forEach((item, index) => check(item, schema.items as JsonSchema, `${path}[${index}]`, issues, source));
 }
 
 function checkString(value: unknown, schema: JsonSchema, path: string, issues: SchemaIssue[]): void {

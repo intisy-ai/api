@@ -43,7 +43,17 @@ export function setDiagnosticSink(sink: DiagnosticSink | null): void {
  * @param source - who supplied it, normally a plugin id or a host name
  */
 export function ignoreUnknown(kind: string, id: string, source: string): void {
-  const message = `ignored unknown ${kind} "${id}" from ${source}`;
+  reportDiagnostic(`ignored unknown ${kind} "${id}" from ${source}`);
+}
+
+/**
+ * Sends a diagnostic to the host's sink, or to the console when it installed none.
+ *
+ * @remarks
+ * Quiet by default and loud in strict mode, because the open-vocabulary rule means most of these
+ * are normal in production and only interesting while developing.
+ */
+export function reportDiagnostic(message: string): void {
   if (SINK) {
     SINK(message);
     return;

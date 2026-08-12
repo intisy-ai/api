@@ -24,6 +24,7 @@
   "files": [
     "dist/",
     "schema/",
+    "plugin.json",
     "README.md",
     "LICENSE"
   ],

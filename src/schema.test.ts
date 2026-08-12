@@ -2,6 +2,7 @@ import { expect, it } from "vitest";
 import { MANIFEST_SCHEMA, SCHEMA_ID } from "./manifest-schema.js";
 import { validateAgainstSchema } from "./schema.js";
 import type { JsonSchema } from "./schema.js";
+import { setDiagnosticSink } from "./strict.js";
 
 const PERSON: JsonSchema = {
   type: "object",
@@ -45,6 +46,15 @@ it("ignores an unknown property, an explicit undefined, and validates a record's
   expect(validateAgainstSchema({ name: "ada", labels: { a: 1 } }, PERSON)).toEqual([
     { path: "labels.a", message: "expected string, got number", fix: "set labels.a to a string" },
   ]);
+});
+
+it("reports an ignored unknown field when a source is named, and stays silent without one", () => {
+  const seen: string[] = [];
+  setDiagnosticSink((message) => seen.push(message));
+  expect(validateAgainstSchema({ name: "ada", futureField: 1 }, PERSON, "(root)", "wakatime-sync")).toEqual([]);
+  expect(validateAgainstSchema({ name: "ada", futureField: 1 }, PERSON)).toEqual([]);
+  setDiagnosticSink(null);
+  expect(seen).toEqual(['ignored unknown field "futureField" from wakatime-sync']);
 });
 
 it("names the root when the value itself is the wrong shape", () => {

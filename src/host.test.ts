@@ -1,4 +1,5 @@
 import { afterEach, expect, it } from "vitest";
+import { PluginError } from "./errors.js";
 import { createPluginHost } from "./host.js";
 import type { PluginRuntime } from "./host.js";
 import type { PluginManifest } from "./manifest.js";
@@ -121,6 +122,31 @@ it("quarantines a broken plugin with the error attributed to it", () => {
   expect(entry.status).toBe("broken");
   expect(entry.error).toEqual({ detail: error.detail, fix: error.fix });
   expect(host.capability("screens")).toEqual([]);
+});
+
+it("stops a quarantined plugin's event subscriptions", () => {
+  const host = createPluginHost({ app: "claude" });
+  const shared = runtime();
+  const seen: unknown[] = [];
+  const context = host.contextFor(SCREENS, shared);
+  context.provide("screens", {} as never);
+  context.events.subscribe("config.changed", (payload) => seen.push(payload));
+  shared.events.publish("config.changed", { name: "before" });
+  host.markBroken("config-ledger", new PluginError("config-ledger", "boom", "fix it"));
+  shared.events.publish("config.changed", { name: "after" });
+  expect(seen).toEqual([{ name: "before" }]);
+});
+
+it("stops a released plugin's event subscriptions", () => {
+  const host = createPluginHost({ app: "claude" });
+  const shared = runtime();
+  const seen: unknown[] = [];
+  const context = host.contextFor(SCREENS, shared);
+  context.provide("screens", {} as never);
+  context.events.subscribe("config.changed", (payload) => seen.push(payload));
+  host.release("config-ledger");
+  shared.events.publish("config.changed", { name: "after" });
+  expect(seen).toEqual([]);
 });
 
 it("hands out ledger copies rather than its own state", () => {

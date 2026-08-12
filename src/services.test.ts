@@ -1,6 +1,7 @@
 import { expect, it, vi } from "vitest";
 import { isPluginError } from "./errors.js";
 import { createServiceHub } from "./services.js";
+import { setDiagnosticSink } from "./strict.js";
 
 it("round-trips a namespaced registration through get", () => {
   const hub = createServiceHub();
@@ -108,6 +109,48 @@ it("drops every service a released plugin registered", () => {
   registry.register("config-ledger:profiles", {});
   hub.releasePlugin("config-ledger");
   expect(hub.ids()).toEqual([]);
+});
+
+it("stops a released plugin's watchers", () => {
+  const hub = createServiceHub();
+  const seen: string[] = [];
+  hub.forPlugin("cairn").watch("accounts", (_service, event) => seen.push(event));
+  hub.releasePlugin("cairn");
+  hub.forPlugin("core-auth").register("accounts", {});
+  expect(seen).toEqual([]);
+});
+
+it("rejects a released plugin's pending want instead of leaving it hanging", async () => {
+  const hub = createServiceHub();
+  const pending = hub.forPlugin("cairn").want("config-ledger:history");
+  hub.releasePlugin("cairn");
+  await expect(pending).rejects.toMatchObject({
+    pluginId: "cairn",
+    detail: 'stopped while waiting for service "config-ledger:history"',
+  });
+});
+
+it("leaves another plugin's pending want alone", async () => {
+  const hub = createServiceHub();
+  const pending = hub.forPlugin("cairn").want("config-ledger:history");
+  hub.releasePlugin("wakatime-sync");
+  const history = {};
+  hub.forPlugin("config-ledger").register("config-ledger:history", history);
+  await expect(pending).resolves.toBe(history);
+});
+
+it("delivers to every watcher even when one throws", () => {
+  const hub = createServiceHub();
+  const seen: string[] = [];
+  setDiagnosticSink(() => {});
+  const registry = hub.forPlugin("cairn");
+  registry.watch("accounts", () => {
+    throw new Error("boom");
+  });
+  registry.watch("accounts", (_service, event) => seen.push(event));
+  hub.forPlugin("core-auth").register("accounts", {});
+  setDiagnosticSink(null);
+  expect(seen).toEqual(["register"]);
 });
 
 it("records what each plugin provided and consumed", () => {

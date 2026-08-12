@@ -146,11 +146,11 @@ it("refuses a non-numeric api floor instead of silently skipping the check", () 
   expect(err[0]).toBe('--api needs a whole number of 1 or more, got "garbage"');
 });
 
-it("treats a flag with no value as absent rather than eating the next flag", () => {
+it("refuses a flag given no value rather than checking somewhere the user never named", () => {
   const home = tempDir();
   mkdirSync(join(home, "plugin"));
   write(join(home, "plugin"), "wakatime-sync.json", { id: "wakatime-sync", api: 1 });
-  const { io, out } = collect();
-  expect(run(["doctor", "--dir", "--home", home], io)).toBe(0);
-  expect(out[0]).toBe("1 plugin checked");
+  const { io, err } = collect();
+  expect(run(["doctor", "--dir", "--home", home], io)).toBe(2);
+  expect(err[0]).toBe("--dir needs a value");
 });

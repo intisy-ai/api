@@ -1,5 +1,6 @@
 import { expect, it } from "vitest";
 import { isPluginError } from "./errors.js";
+import { setDiagnosticSink } from "./strict.js";
 import { assertManifest, validateManifest } from "./validate.js";
 
 const VALID = { id: "wakatime-sync", api: 1, entry: "dist/index.js", capabilities: ["settings"] };
@@ -78,6 +79,22 @@ it("attributes an unidentifiable manifest to a placeholder rather than crashing"
   } catch (error) {
     expect((error as { pluginId: string }).pluginId).toBe("(unknown plugin)");
   }
+});
+
+it("says nothing about the $schema pointer an editor reads", () => {
+  const seen: string[] = [];
+  setDiagnosticSink((message) => seen.push(message));
+  expect(validateManifest({ ...VALID, $schema: "./schema/plugin.schema.json" })).toEqual([]);
+  setDiagnosticSink(null);
+  expect(seen).toEqual([]);
+});
+
+it("names the plugin when it ignores an unknown manifest field", () => {
+  const seen: string[] = [];
+  setDiagnosticSink((message) => seen.push(message));
+  expect(validateManifest({ id: "wakatime-sync", api: 1, capabilties: ["settings"] })).toEqual([]);
+  setDiagnosticSink(null);
+  expect(seen).toEqual(['ignored unknown field "capabilties" from wakatime-sync']);
 });
 
 it("returns the manifest itself when it is valid", () => {

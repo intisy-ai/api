@@ -1,5 +1,6 @@
 import { PluginError } from "./errors.js";
 import { mayRegister, WELL_KNOWN_SERVICES } from "./ids.js";
+import { reportDiagnostic } from "./strict.js";
 
 /**
  * The account store contract.
@@ -95,7 +96,10 @@ export interface ServiceHub {
   get(id: string): unknown;
   /** Every service id registered right now. */
   ids(): string[];
-  /** Unregisters everything a plugin registered, on deactivation or quarantine. */
+  /**
+   * Unregisters everything a plugin registered, stops the watchers it installed, and rejects the
+   * `want` calls it is still waiting on, so a deactivated or quarantined plugin is inert.
+   */
   releasePlugin(pluginId: string): void;
 }
 
@@ -105,6 +109,7 @@ interface Entry {
 }
 
 interface Waiter {
+  pluginId: string;
   resolve: (service: unknown) => void;
   reject: (error: unknown) => void;
   timer: ReturnType<typeof setTimeout> | null;
@@ -119,13 +124,18 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
   const entries = new Map<string, Entry>();
   const waiters = new Map<string, Set<Waiter>>();
   const watchers = new Map<string, Set<ServiceListener<unknown>>>();
+  const watching = new Map<string, Array<() => void>>();
 
   function notify(id: string, service: unknown, event: ServiceEvent): void {
     const listeners = watchers.get(id);
     if (!listeners) return;
     for (const listener of [...listeners]) {
       if (!listeners.has(listener)) continue;
-      listener(service, event);
+      try {
+        listener(service, event);
+      } catch (error) {
+        reportDiagnostic(`a watcher of "${id}" threw while handling ${event}: ${String(error)}`);
+      }
     }
   }
 
@@ -169,7 +179,7 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
     const entry = entries.get(id);
     if (entry) return Promise.resolve(entry.service);
     return new Promise((resolve, reject) => {
-      const waiter: Waiter = { resolve, reject, timer: null };
+      const waiter: Waiter = { pluginId, resolve, reject, timer: null };
       if (options.timeoutMs !== undefined) {
         waiter.timer = setTimeout(() => {
           waiters.get(id)?.delete(waiter);
@@ -191,9 +201,16 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
     const set = watchers.get(id) ?? new Set<ServiceListener<unknown>>();
     set.add(listener);
     watchers.set(id, set);
-    return () => {
+    let stopped = false;
+    const stop = () => {
+      if (stopped) return;
+      stopped = true;
       set.delete(listener);
     };
+    const owned = watching.get(pluginId) ?? [];
+    owned.push(stop);
+    watching.set(pluginId, owned);
+    return stop;
   }
 
   function forPlugin(pluginId: string): ServiceRegistry {
@@ -215,7 +232,22 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
     get: (id) => entries.get(id)?.service,
     ids: () => [...entries.keys()],
     releasePlugin: (pluginId) => {
-      for (const [id, entry] of [...entries] ) if (entry.pluginId === pluginId) unregister(pluginId, id);
+      for (const [id, entry] of [...entries]) if (entry.pluginId === pluginId) unregister(pluginId, id);
+      for (const stop of watching.get(pluginId) ?? []) stop();
+      watching.delete(pluginId);
+      for (const [id, waiting] of waiters) {
+        for (const waiter of [...waiting]) {
+          if (waiter.pluginId !== pluginId) continue;
+          waiting.delete(waiter);
+          if (waiter.timer) clearTimeout(waiter.timer);
+          waiter.reject(new PluginError(
+            pluginId,
+            `stopped while waiting for service "${id}"`,
+            `provide "${id}" before this plugin is stopped, or use get() and carry on without it`,
+          ));
+        }
+        if (!waiting.size) waiters.delete(id);
+      }
     },
   };
 }

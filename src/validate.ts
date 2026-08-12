@@ -19,7 +19,9 @@ export type ValidationIssue = SchemaIssue;
  * @returns every issue found, empty when the manifest is valid
  */
 export function validateManifest(value: unknown): ValidationIssue[] {
-  const structural = validateAgainstSchema(value, MANIFEST_SCHEMA);
+  const declaredId = (value as { id?: unknown } | null)?.id;
+  const source = typeof declaredId === "string" && declaredId ? declaredId : "the manifest";
+  const structural = validateAgainstSchema(value, MANIFEST_SCHEMA, "(root)", source);
   if (structural.length) return structural;
 
   const manifest = value as PluginManifest;

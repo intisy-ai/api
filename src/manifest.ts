@@ -59,6 +59,8 @@ export interface Presentation {
  * know, so a manifest written against a later version of this package loads on today's host.
  */
 export interface PluginManifest {
+  /** Pointer at the published manifest schema, for an editor's completion and validation. */
+  $schema?: string;
   /** The plugin's permanent identity, matching its repository name. */
   id: string;
   /** The lowest API major version this plugin needs. A floor, not a build tag. */

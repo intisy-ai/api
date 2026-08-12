@@ -51,7 +51,9 @@ export function run(argv: string[], io: CliIo): number {
 }
 
 function validate(argv: string[], io: CliIo): number {
-  const loaded = readCheckout(option(argv, "--dir") ?? ".");
+  const dir = option(argv, "--dir");
+  if (missingValue(dir, "--dir", io)) return 2;
+  const loaded = readCheckout(dir.value ?? ".");
   const issues = validateManifest(loaded.value);
   const lines = formatValidation(loaded, issues);
   const write = issues.length ? (line: string) => io.err(line) : (line: string) => io.out(line);
@@ -63,22 +65,25 @@ function doctor(argv: string[], io: CliIo): number {
   const home = option(argv, "--home");
   const dir = option(argv, "--dir");
   const api = option(argv, "--api");
-  const hostApi = api === undefined ? API_VERSION : Number(api);
+  if (missingValue(home, "--home", io)) return 2;
+  if (missingValue(dir, "--dir", io)) return 2;
+  if (missingValue(api, "--api", io)) return 2;
+  const hostApi = api.value === undefined ? API_VERSION : Number(api.value);
   if (!Number.isInteger(hostApi) || hostApi < 1) {
-    io.err(`--api needs a whole number of 1 or more, got "${api}"`);
+    io.err(`--api needs a whole number of 1 or more, got "${api.value}"`);
     return 2;
   }
 
   const loaded: LoadedManifest[] = [];
   const unreadable: DoctorFinding[] = [];
-  if (home) {
-    const fromHome = readHome(home);
+  if (home.value) {
+    const fromHome = readHome(home.value);
     loaded.push(...fromHome.loaded);
     for (const failure of fromHome.failed) unreadable.push(toFinding(failure.error));
   }
-  if (dir || !home) {
+  if (dir.value || !home.value) {
     try {
-      loaded.push(readCheckout(dir ?? "."));
+      loaded.push(readCheckout(dir.value ?? "."));
     } catch (error) {
       if (!isPluginError(error)) throw error;
       unreadable.push(toFinding(error));
@@ -98,12 +103,26 @@ function toFinding(error: PluginError): DoctorFinding {
   return { level: "error", pluginId: error.pluginId, detail: error.detail, fix: error.fix };
 }
 
-function option(argv: string[], name: string): string | undefined {
+/** One flag as it appeared on the command line, so a flag given no value is a misuse rather than an absence. */
+interface Flag {
+  /** Whether the flag appeared at all. */
+  present: boolean;
+  /** The value that followed it, absent when nothing but another flag did. */
+  value?: string;
+}
+
+function option(argv: string[], name: string): Flag {
   const index = argv.indexOf(name);
-  if (index < 0) return undefined;
+  if (index < 0) return { present: false };
   const value = argv[index + 1];
-  if (value === undefined || value.startsWith("--")) return undefined;
-  return value;
+  if (value === undefined || value.startsWith("--")) return { present: true };
+  return { present: true, value };
+}
+
+function missingValue(flag: Flag, name: string, io: CliIo): boolean {
+  if (!flag.present || flag.value !== undefined) return false;
+  io.err(`${name} needs a value`);
+  return true;
 }
 
 function invokedDirectly(): boolean {
