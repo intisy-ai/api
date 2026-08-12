@@ -23,8 +23,8 @@ A service id is namespaced by the plugin providing it: `config-ledger:history`. 
 REJECTS a registration whose prefix is not the registering plugin's manifest id, which makes
 squatting and collisions structurally impossible rather than socially discouraged.
 
-Well-known ids are the exception: `accounts` and `routing` are bare names declared by this
-package and implementable by anyone. Asking for a well-known id is asking for a CONTRACT and
+Well-known ids are the exception: `accounts`, `routing` and `activity` are bare names declared by
+this package and implementable by anyone. Asking for a well-known id is asking for a CONTRACT and
 leaves the implementation swappable. Asking for a namespaced id is asking for one specific
 implementation, which is legitimate when that is genuinely what you want.
 

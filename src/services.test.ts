@@ -24,7 +24,7 @@ it("rejects a registration outside the caller's namespace, naming the fix", () =
   } catch (error) {
     expect(isPluginError(error)).toBe(true);
     expect((error as { detail: string }).detail).toBe('cannot register service "config-ledger:history", which belongs to another plugin');
-    expect((error as { fix: string }).fix).toBe('namespace it as "wakatime-sync:history", or register one of the well-known ids: accounts, routing');
+    expect((error as { fix: string }).fix).toBe('namespace it as "wakatime-sync:history", or register one of the well-known ids: accounts, routing, activity');
   }
 });
 
@@ -185,4 +185,11 @@ it("records what each plugin provided and consumed", () => {
   expect(provided).toHaveBeenCalledWith("config-ledger", "config-ledger:history");
   expect(consumed).toHaveBeenCalledWith("cairn", "config-ledger:history");
   expect(consumed).toHaveBeenCalledWith("cairn", "accounts");
+});
+
+it("lets any plugin register the well-known activity service", () => {
+  const hub = createServiceHub();
+  const registry = hub.forPlugin("core-loader");
+  registry.register("activity", { emit: () => {}, read: async () => [] });
+  expect(hub.get("activity")).toBeDefined();
 });

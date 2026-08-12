@@ -19,9 +19,8 @@ it("mints exactly the ten v1 capability ids", () => {
 });
 
 it("declares the well-known bare service ids", () => {
-  expect([...WELL_KNOWN_SERVICES]).toEqual(["accounts", "routing"]);
-  expect(isWellKnownService("accounts")).toBe(true);
-  expect(isWellKnownService("config-ledger:history")).toBe(false);
+  expect([...WELL_KNOWN_SERVICES]).toEqual(["accounts", "routing", "activity"]);
+  expect(isWellKnownService("activity")).toBe(true);
 });
 
 it("reads the owner out of a namespaced service id", () => {

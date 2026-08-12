@@ -44,7 +44,7 @@ it("rejects a provided service id outside the plugin's namespace", () => {
   expect(validateManifest({ ...VALID, services: { provides: ["history"] } })[0]).toEqual({
     path: "services.provides[0]",
     message: '"history" is neither namespaced by this plugin nor a well-known service id',
-    fix: 'rename it to "wakatime-sync:history", or use one of: accounts, routing',
+    fix: 'rename it to "wakatime-sync:history", or use one of: accounts, routing, activity',
   });
   expect(validateManifest({ ...VALID, services: { provides: ["config-ledger:history"] } })[0].path).toBe("services.provides[0]");
 });

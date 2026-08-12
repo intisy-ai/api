@@ -28,7 +28,7 @@ export type CapabilityId = (typeof CAPABILITY_IDS)[number];
  * plugin may implement rather than one plugin's own offering. Asking for a well-known id is how
  * a consumer stays swappable; asking for a namespaced id is how it demands one implementation.
  */
-export const WELL_KNOWN_SERVICES = ["accounts", "routing"] as const;
+export const WELL_KNOWN_SERVICES = ["accounts", "routing", "activity"] as const;
 
 /** One of the well-known bare service ids. */
 export type WellKnownServiceId = (typeof WELL_KNOWN_SERVICES)[number];

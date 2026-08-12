@@ -15,6 +15,17 @@ export interface AccountsService {}
 export interface RoutingService {}
 
 /**
+ * The activity record contract.
+ *
+ * @remarks
+ * Declared here as an empty interface and filled in by whichever component owns the activity
+ * record, through declaration merging, so this package names the contract without implementing it.
+ * Bare rather than namespaced because it is a contract any plugin may implement, exactly like the
+ * account store.
+ */
+export interface ActivityService {}
+
+/**
  * Every service id paired with the contract behind it.
  *
  * @remarks
@@ -33,6 +44,8 @@ export interface ServiceMap {
   accounts: AccountsService;
   /** The routing engine. */
   routing: RoutingService;
+  /** The activity record. */
+  activity: ActivityService;
 }
 
 /** What happened to a watched service. */
