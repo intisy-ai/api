@@ -35,6 +35,8 @@ it("rejects an entry that escapes the repo", () => {
     fix: "use a repo-relative path with no leading slash and no ..",
   });
   expect(validateManifest({ ...VALID, entry: "/abs/index.js" })[0].path).toBe("entry");
+  expect(validateManifest({ ...VALID, entry: "C:\\evil\\index.js" })[0].message).toBe('"C:\\evil\\index.js" is not a path inside the repo');
+  expect(validateManifest({ ...VALID, entry: "D:/evil/index.js" })[0].path).toBe("entry");
 });
 
 it("rejects a provided service id outside the plugin's namespace", () => {

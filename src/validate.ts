@@ -58,7 +58,7 @@ function entryIssues(manifest: PluginManifest): ValidationIssue[] {
     }];
   }
   const entry = manifest.entry;
-  if (entry && (entry.startsWith("/") || entry.startsWith("\\") || entry.split(/[\\/]/).includes(".."))) {
+  if (entry && (entry.startsWith("/") || entry.startsWith("\\") || /^[A-Za-z]:/.test(entry) || entry.split(/[\\/]/).includes(".."))) {
     return [{
       path: "entry",
       message: `"${entry}" is not a path inside the repo`,
