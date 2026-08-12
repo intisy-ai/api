@@ -38,7 +38,14 @@ export interface PluginLedger {
   entries(): LedgerEntry[];
   /** One plugin's entry, as a copy, or `undefined` when the host never saw it. */
   entry(pluginId: string): LedgerEntry | undefined;
-  /** Opens an entry from a manifest, at status `activating`. */
+  /**
+   * Opens an entry from a manifest, at status `activating`.
+   *
+   * @remarks
+   * Every relationship an entry holds belongs to ONE activation, so this resets them: a plugin
+   * that stops and activates again is described by what it does this time, not by the union of
+   * every cycle it has ever run.
+   */
   recordDeclared(manifest: PluginManifest): void;
   /** Notes that a plugin supplied a capability. */
   recordCapabilityProvided(pluginId: string, capabilityId: string): void;
@@ -98,6 +105,13 @@ export function createPluginLedger(): PluginLedger {
     recordDeclared: (manifest) => {
       const entry = ensure(manifest.id);
       entry.status = "activating";
+      entry.capabilitiesDeclared = [];
+      entry.capabilitiesProvided = [];
+      entry.servicesProvided = [];
+      entry.servicesConsumed = [];
+      entry.topics = [];
+      entry.permissions = [];
+      delete entry.error;
       for (const id of manifest.capabilities ?? []) add(entry.capabilitiesDeclared, id);
       for (const permission of manifest.permissions ?? []) add(entry.permissions, permission);
     },

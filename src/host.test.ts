@@ -1,4 +1,4 @@
-import { afterEach, expect, it, vi } from "vitest";
+import { afterEach, expect, it } from "vitest";
 import { createPluginHost } from "./host.js";
 import type { PluginRuntime } from "./host.js";
 import type { PluginManifest } from "./manifest.js";
@@ -129,4 +129,26 @@ it("hands out ledger copies rather than its own state", () => {
   const entry = host.ledger.entry("config-ledger")!;
   entry.capabilitiesDeclared.push("tampered");
   expect(host.ledger.entry("config-ledger")?.capabilitiesDeclared).toEqual(["screens"]);
+});
+
+it("scopes the declared and provided check to the current activation, not to history", () => {
+  const host = createPluginHost({ app: "claude" });
+  host.contextFor(SCREENS, runtime()).provide("screens", {} as never);
+  expect(host.verifyActivation(SCREENS)).toBeNull();
+  host.release("config-ledger");
+
+  const later: PluginManifest = { id: "config-ledger", api: 1, entry: "dist/index.js", capabilities: [] };
+  host.contextFor(later, runtime());
+  expect(host.verifyActivation(later)).toBeNull();
+  expect(host.ledger.entry("config-ledger")?.capabilitiesProvided).toEqual([]);
+});
+
+it("fails a re-activation whose declared capability is not provided again", () => {
+  const host = createPluginHost({ app: "claude" });
+  host.contextFor(SCREENS, runtime()).provide("screens", {} as never);
+  expect(host.verifyActivation(SCREENS)).toBeNull();
+  host.release("config-ledger");
+
+  host.contextFor(SCREENS, runtime());
+  expect(host.verifyActivation(SCREENS)?.detail).toBe("capabilities declared but never provided: screens");
 });
