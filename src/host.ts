@@ -9,8 +9,8 @@ import { API_VERSION } from "./manifest.js";
 import type { PluginManifest } from "./manifest.js";
 import type { HostDescriptor, Logger, PluginConfig, PluginPaths } from "./runtime.js";
 import { createServiceHub } from "./services.js";
-import type { ServiceMap } from "./services.js";
-import { ignoreUnknown } from "./strict.js";
+import type { ServiceListener, ServiceMap, ServiceRegistry } from "./services.js";
+import { ignoreUnknown, reportDiagnostic } from "./strict.js";
 
 /** One plugin's implementation of a capability, with the plugin it came from. */
 export interface CapabilityRecord<T> {
@@ -75,9 +75,15 @@ export interface PluginHost {
   service<K extends keyof ServiceMap>(id: K): ServiceMap[K] | undefined;
   /** One service, or `undefined` when nothing provides it. */
   service(id: string): unknown;
-  /** Quarantines a plugin: its capabilities, services and subscriptions go, the host stays up. */
+  /**
+   * Quarantines a plugin: its capabilities, services and subscriptions go, the host stays up.
+   *
+   * @remarks
+   * Its context is fenced too, so an `activate` that finishes after the host stopped waiting
+   * cannot register itself back in. Building a context again lifts the fence.
+   */
   markBroken(pluginId: string, error: PluginError): void;
-  /** Releases everything a plugin provided and every subscription it holds, on deactivation. */
+  /** Releases everything a plugin provided and every subscription it holds, and fences its context. */
   release(pluginId: string): void;
 }
 
@@ -95,6 +101,7 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
   });
   const capabilities = new Map<string, CapabilityRecord<unknown>[]>();
   const disposers = new Map<string, Array<() => void>>();
+  const revoked = new Set<string>();
 
   function tracked(pluginId: string, dispose: () => void): () => void {
     let done = false;
@@ -119,7 +126,32 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
     disposers.delete(pluginId);
   }
 
+  /**
+   * Whether a call from this plugin arrives after it was quarantined or released.
+   *
+   * @remarks
+   * Quarantine stops the host waiting for a plugin, it does not stop the plugin: an `activate`
+   * abandoned at its deadline can still finish and register. Late calls are reported rather than
+   * thrown, because the caller is an async context nobody is awaiting.
+   */
+  function refuseLate(pluginId: string, what: string, id: string): boolean {
+    if (!revoked.has(pluginId)) return false;
+    reportDiagnostic(`ignored ${what} "${id}" from ${pluginId}, which is no longer running`);
+    return true;
+  }
+
+  function fenced(pluginId: string, registry: ServiceRegistry): ServiceRegistry {
+    return {
+      ...registry,
+      register: ((id: string, service: unknown) =>
+        refuseLate(pluginId, "a late registration of service", id) ? () => {} : registry.register(id, service)) as ServiceRegistry["register"],
+      watch: ((id: string, listener: ServiceListener<unknown>) =>
+        refuseLate(pluginId, "a late watch of service", id) ? () => {} : registry.watch(id, listener)) as ServiceRegistry["watch"],
+    };
+  }
+
   function provide(pluginId: string, id: string, implementation: unknown): void {
+    if (refuseLate(pluginId, "a late provision of capability", id)) return;
     if (!isKnownCapability(id)) ignoreUnknown("capability", id, pluginId);
     const records = capabilities.get(id) ?? [];
     if (records.some((record) => record.pluginId === pluginId)) {
@@ -164,6 +196,7 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
       );
     },
     contextFor: (manifest, runtime) => {
+      revoked.delete(manifest.id);
       ledger.recordDeclared(manifest);
       return {
         manifest,
@@ -171,7 +204,7 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
         config: runtime.config,
         log: runtime.log,
         paths: runtime.paths,
-        services: hub.forPlugin(manifest.id),
+        services: fenced(manifest.id, hub.forPlugin(manifest.id)),
         events: recordingEvents(manifest.id, runtime.events),
         provide: ((id: string, implementation: unknown) => provide(manifest.id, id, implementation)) as PluginContext["provide"],
       };
@@ -201,12 +234,14 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
     capability: ((id: string) => [...(capabilities.get(id) ?? [])]) as PluginHost["capability"],
     service: ((id: string) => hub.get(id)) as PluginHost["service"],
     markBroken: (pluginId, error) => {
+      revoked.add(pluginId);
       dropCapabilities(pluginId);
       detach(pluginId);
       hub.releasePlugin(pluginId);
       ledger.recordStatus(pluginId, "broken", { detail: error.detail, fix: error.fix });
     },
     release: (pluginId) => {
+      revoked.add(pluginId);
       dropCapabilities(pluginId);
       detach(pluginId);
       hub.releasePlugin(pluginId);

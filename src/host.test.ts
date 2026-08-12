@@ -169,6 +169,53 @@ it("scopes the declared and provided check to the current activation, not to his
   expect(host.ledger.entry("config-ledger")?.capabilitiesProvided).toEqual([]);
 });
 
+it("refuses a quarantined plugin's late provide and late registration, and reports both", () => {
+  const seen: string[] = [];
+  setDiagnosticSink((message) => seen.push(message));
+  const host = createPluginHost({ app: "claude" });
+  const context = host.contextFor(SCREENS, runtime());
+  host.markBroken("config-ledger", new PluginError("config-ledger", "took too long", "return sooner"));
+
+  context.provide("screens", {} as never);
+  const disposer = context.services.register("config-ledger:history", {});
+  disposer();
+
+  expect(host.capability("screens")).toEqual([]);
+  expect(host.service("config-ledger:history")).toBeUndefined();
+  expect(host.ledger.entry("config-ledger")?.status).toBe("broken");
+  expect(seen).toEqual([
+    'ignored a late provision of capability "screens" from config-ledger, which is no longer running',
+    'ignored a late registration of service "config-ledger:history" from config-ledger, which is no longer running',
+  ]);
+});
+
+it("refuses a released plugin's late watch, so its listener never fires again", () => {
+  setDiagnosticSink(() => {});
+  const host = createPluginHost({ app: "claude" });
+  const context = host.contextFor(SCREENS, runtime());
+  host.release("config-ledger");
+
+  const seen: unknown[] = [];
+  context.services.watch("accounts", (service) => seen.push(service));
+  host.contextFor({ id: "core-auth", api: 1, entry: "dist/index.js", capabilities: [] }, runtime())
+    .services.register("accounts", { list: () => [] });
+
+  expect(seen).toEqual([]);
+});
+
+it("lets a plugin that activates again register once more", () => {
+  const host = createPluginHost({ app: "claude" });
+  host.markBroken("config-ledger", new PluginError("config-ledger", "took too long", "return sooner"));
+
+  const context = host.contextFor(SCREENS, runtime());
+  context.provide("screens", {} as never);
+  context.services.register("config-ledger:history", {});
+
+  expect(host.verifyActivation(SCREENS)).toBeNull();
+  expect(host.capability("screens")).toHaveLength(1);
+  expect(host.service("config-ledger:history")).toBeDefined();
+});
+
 it("fails a re-activation whose declared capability is not provided again", () => {
   const host = createPluginHost({ app: "claude" });
   host.contextFor(SCREENS, runtime()).provide("screens", {} as never);
