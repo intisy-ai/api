@@ -146,6 +146,15 @@ it("refuses a non-numeric api floor instead of silently skipping the check", () 
   expect(err[0]).toBe('--api needs a whole number of 1 or more, got "garbage"');
 });
 
+it("writes an ignored-field diagnostic to the problem channel and still exits 0", () => {
+  const dir = tempDir();
+  write(dir, "plugin.json", { id: "wakatime-sync", api: 1, futureField: 1 });
+  const { io, out, err } = collect();
+  expect(run(["validate", "--dir", dir], io)).toBe(0);
+  expect(err).toEqual(['ignored unknown field "futureField" from wakatime-sync']);
+  expect(out[0]).toBe("ok  wakatime-sync (api 1)");
+});
+
 it("refuses a flag given no value rather than checking somewhere the user never named", () => {
   const home = tempDir();
   mkdirSync(join(home, "plugin"));

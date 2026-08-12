@@ -130,6 +130,28 @@ it("rejects a released plugin's pending want instead of leaving it hanging", asy
   });
 });
 
+it("does not raise an unhandled rejection when a released plugin ignored its own want", async () => {
+  const raised: unknown[] = [];
+  const onUnhandled = (error: unknown) => raised.push(error);
+  process.on("unhandledRejection", onUnhandled);
+  const hub = createServiceHub();
+  hub.forPlugin("cairn").want("config-ledger:history");
+  hub.releasePlugin("cairn");
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  process.off("unhandledRejection", onUnhandled);
+  expect(raised).toEqual([]);
+});
+
+it("does not tell a released plugin about the unregistration of its own service", () => {
+  const hub = createServiceHub();
+  const registry = hub.forPlugin("core-auth");
+  const seen: string[] = [];
+  registry.register("accounts", {});
+  registry.watch("accounts", (_service, event) => seen.push(event));
+  hub.releasePlugin("core-auth");
+  expect(seen).toEqual([]);
+});
+
 it("leaves another plugin's pending want alone", async () => {
   const hub = createServiceHub();
   const pending = hub.forPlugin("cairn").want("config-ledger:history");

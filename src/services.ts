@@ -43,7 +43,10 @@ export type ServiceListener<T> = (service: T | undefined, event: ServiceEvent) =
 
 /** How long to wait for a service that has not arrived yet. */
 export interface WantOptions {
-  /** Milliseconds to wait before rejecting. Waits indefinitely when absent. */
+  /**
+   * Milliseconds to wait before rejecting. Waits indefinitely when absent, though the wait still
+   * ends if the waiting plugin is released.
+   */
   timeoutMs?: number;
 }
 
@@ -66,9 +69,15 @@ export interface ServiceRegistry {
   get<K extends keyof ServiceMap>(id: K): ServiceMap[K] | undefined;
   /** The service now, or `undefined` when nothing provides it. */
   get(id: string): unknown;
-  /** Resolves when the service is registered, now or later. */
+  /**
+   * Resolves when the service is registered, now or later, and rejects on the timeout when one
+   * was given or when this plugin is released first.
+   */
   want<K extends keyof ServiceMap>(id: K, options?: WantOptions): Promise<ServiceMap[K]>;
-  /** Resolves when the service is registered, now or later. */
+  /**
+   * Resolves when the service is registered, now or later, and rejects on the timeout when one
+   * was given or when this plugin is released first.
+   */
   want(id: string, options?: WantOptions): Promise<unknown>;
   /** Reports every registration and unregistration of the id. Returns a disposer. */
   watch<K extends keyof ServiceMap>(id: K, listener: ServiceListener<ServiceMap[K]>): () => void;
@@ -174,11 +183,18 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
     return () => unregister(pluginId, id);
   }
 
+  /**
+   * @remarks
+   * The returned promise carries a no-op catch of its own, because a plugin may legitimately
+   * `want(...).then(...)` and never handle a rejection: releasing that plugin would otherwise
+   * raise an unhandled rejection and take the whole host down, which is the opposite of what
+   * quarantine is for. Anyone who does await or catch the promise still sees the rejection.
+   */
   function want(pluginId: string, id: string, options: WantOptions = {}): Promise<unknown> {
     recorder.consumed?.(pluginId, id);
     const entry = entries.get(id);
     if (entry) return Promise.resolve(entry.service);
-    return new Promise((resolve, reject) => {
+    const settled = new Promise<unknown>((resolve, reject) => {
       const waiter: Waiter = { pluginId, resolve, reject, timer: null };
       if (options.timeoutMs !== undefined) {
         waiter.timer = setTimeout(() => {
@@ -194,6 +210,26 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
       set.add(waiter);
       waiters.set(id, set);
     });
+    settled.catch(() => {});
+    return settled;
+  }
+
+  function tracked(pluginId: string, dispose: () => void): () => void {
+    let done = false;
+    const stop = () => {
+      if (done) return;
+      done = true;
+      dispose();
+      const owned = watching.get(pluginId);
+      if (!owned) return;
+      const index = owned.indexOf(stop);
+      if (index >= 0) owned.splice(index, 1);
+      if (!owned.length) watching.delete(pluginId);
+    };
+    const owned = watching.get(pluginId) ?? [];
+    owned.push(stop);
+    watching.set(pluginId, owned);
+    return stop;
   }
 
   function watch(pluginId: string, id: string, listener: ServiceListener<unknown>): () => void {
@@ -201,16 +237,7 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
     const set = watchers.get(id) ?? new Set<ServiceListener<unknown>>();
     set.add(listener);
     watchers.set(id, set);
-    let stopped = false;
-    const stop = () => {
-      if (stopped) return;
-      stopped = true;
-      set.delete(listener);
-    };
-    const owned = watching.get(pluginId) ?? [];
-    owned.push(stop);
-    watching.set(pluginId, owned);
-    return stop;
+    return tracked(pluginId, () => set.delete(listener));
   }
 
   function forPlugin(pluginId: string): ServiceRegistry {
@@ -232,9 +259,9 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
     get: (id) => entries.get(id)?.service,
     ids: () => [...entries.keys()],
     releasePlugin: (pluginId) => {
-      for (const [id, entry] of [...entries]) if (entry.pluginId === pluginId) unregister(pluginId, id);
-      for (const stop of watching.get(pluginId) ?? []) stop();
+      for (const stop of [...(watching.get(pluginId) ?? [])]) stop();
       watching.delete(pluginId);
+      for (const [id, entry] of [...entries]) if (entry.pluginId === pluginId) unregister(pluginId, id);
       for (const [id, waiting] of waiters) {
         for (const waiter of [...waiting]) {
           if (waiter.pluginId !== pluginId) continue;

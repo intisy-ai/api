@@ -102,6 +102,11 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
       if (done) return;
       done = true;
       dispose();
+      const owned = disposers.get(pluginId);
+      if (!owned) return;
+      const index = owned.indexOf(once);
+      if (index >= 0) owned.splice(index, 1);
+      if (!owned.length) disposers.delete(pluginId);
     };
     const owned = disposers.get(pluginId) ?? [];
     owned.push(once);
@@ -110,7 +115,7 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
   }
 
   function detach(pluginId: string): void {
-    for (const dispose of disposers.get(pluginId) ?? []) dispose();
+    for (const dispose of [...(disposers.get(pluginId) ?? [])]) dispose();
     disposers.delete(pluginId);
   }
 

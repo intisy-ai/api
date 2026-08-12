@@ -8,6 +8,7 @@ import { isPluginError } from "../errors.js";
 import type { PluginError } from "../errors.js";
 import { API_VERSION } from "../manifest.js";
 import type { PluginManifest } from "../manifest.js";
+import { setDiagnosticSink } from "../strict.js";
 import { validateManifest } from "../validate.js";
 import { readCheckout, readHome } from "./read.js";
 import type { LoadedManifest } from "./read.js";
@@ -38,12 +39,15 @@ export function run(argv: string[], io: CliIo): number {
     for (const line of USAGE.split("\n")) io.out(line);
     return 0;
   }
+  setDiagnosticSink((message) => io.err(message));
   try {
     if (command === "validate") return validate(rest, io);
     if (command === "doctor") return doctor(rest, io);
   } catch (error) {
     io.err(isPluginError(error) ? error.message : String(error));
     return 1;
+  } finally {
+    setDiagnosticSink(null);
   }
   io.err(`unknown command: ${command}`);
   for (const line of USAGE.split("\n")) io.err(line);
