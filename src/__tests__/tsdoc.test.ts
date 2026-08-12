@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { expect, it } from "vitest";
 
 const SRC = fileURLToPath(new URL("..", import.meta.url));
-const DECLARATION = /^export\s+(?:default\s+)?(?:declare\s+)?(?:abstract\s+)?(?:interface|type|class|function|const|let|enum)\s/;
+const DECLARATION = /^export\s+(?:default\s+)?(?:declare\s+)?(?:abstract\s+)?(?:async\s+)?(?:interface|type|class|function\*?|const|let|enum)\s/;
 const RE_EXPORT = /^export\s+(?:type\s+)?\{|^export\s+\*/;
 
 function sourceFiles(dir: string, out: string[] = []): string[] {
@@ -44,4 +44,6 @@ it("flags an undocumented export and accepts a documented one", () => {
   expect(undocumented(`export const A = 1;`)).toEqual(["export const A = 1;"]);
   expect(undocumented(`/** Documented. */\nexport const A = 1;`)).toEqual([]);
   expect(undocumented(`export { A } from "./a.js";`)).toEqual([]);
+  expect(undocumented(`export async function a() {}`)).toEqual(["export async function a() {}"]);
+  expect(undocumented(`export function* g() {}`)).toEqual(["export function* g() {}"]);
 });
