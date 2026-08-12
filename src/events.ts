@@ -19,23 +19,76 @@ export type NotificationLevel = "info" | "success" | "warning" | "error";
  */
 export interface EventMap {
   /** Something a surface should show the user. */
-  notification: { message: string; level: NotificationLevel };
+  notification: {
+    /** Text to show. */
+    message: string;
+    /** How prominent to show it. */
+    level: NotificationLevel;
+  };
   /** The proxy came up or went down. */
-  "proxy.status": { up: boolean; port: number };
+  "proxy.status": {
+    /** Whether the proxy is now reachable. */
+    up: boolean;
+    /** Port the proxy listens on. */
+    port: number;
+  };
   /** An account hit an upstream rate limit. */
-  "account.rate_limited": { provider: string; accountId?: string; lane?: string; resetAt?: number };
+  "account.rate_limited": {
+    /** Provider whose upstream rate-limited the account. */
+    provider: string;
+    /** Account that was rate-limited, when known. */
+    accountId?: string;
+    /** Routing lane the account was serving, when known. */
+    lane?: string;
+    /** Epoch millis when the limit is expected to clear, when known. */
+    resetAt?: number;
+  };
   /** A plugin's configuration file changed. */
-  "config.changed": { name: string };
+  "config.changed": {
+    /** Config name that changed. */
+    name: string;
+  };
   /** A configuration snapshot was taken. */
-  "config.snapshot": { hash: string; reason: string; files: string[] };
+  "config.snapshot": {
+    /** Snapshot content hash. */
+    hash: string;
+    /** Why the snapshot was taken. */
+    reason: string;
+    /** Files the snapshot covers. */
+    files: string[];
+  };
   /** The active configuration profile changed. */
-  "config.profile_changed": { profile: string; files: string[] };
+  "config.profile_changed": {
+    /** Name of the profile now active. */
+    profile: string;
+    /** Files the profile switch affected. */
+    files: string[];
+  };
   /** A long-running plugin operation reported progress. */
-  "plugin.progress": { name: string; phase: string; pct?: number };
+  "plugin.progress": {
+    /** Plugin name reporting progress. */
+    name: string;
+    /** Current phase of the operation. */
+    phase: string;
+    /** Completion percentage, when known. */
+    pct?: number;
+  };
   /** A plugin finished installing. */
-  "plugin.installed": { name: string; version: string };
+  "plugin.installed": {
+    /** Plugin name that finished installing. */
+    name: string;
+    /** Version that was installed. */
+    version: string;
+  };
   /** A cross-app reconciliation finished. */
-  "sync.completed": { files: string[]; plugins: string[]; homes: string[] };
+  "sync.completed": {
+    /** Files that were reconciled. */
+    files: string[];
+    /** Plugins whose entries were mirrored. */
+    plugins: string[];
+    /** App homes involved in the reconciliation. */
+    homes: string[];
+  };
 }
 
 /** The ecosystem-owned bare topics, for a host that needs the list at runtime. */

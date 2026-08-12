@@ -22,7 +22,12 @@ export interface LedgerEntry {
   /** Permissions the manifest declares. */
   permissions: string[];
   /** Why the plugin is broken, when it is. */
-  error?: { detail: string; fix: string };
+  error?: {
+    /** What went wrong. */
+    detail: string;
+    /** How to fix it. */
+    fix: string;
+  };
 }
 
 /**

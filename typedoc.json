@@ -1,0 +1,22 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "out": "site",
+  "readme": "README.md",
+  "name": "@intisy-ai/api",
+  "projectDocuments": [
+    "guides/quickstart.md",
+    "guides/capabilities.md",
+    "guides/services.md",
+    "guides/permanence.md"
+  ],
+  "excludePrivate": true,
+  "treatWarningsAsErrors": true,
+  "validation": {
+    "notExported": true,
+    "invalidLink": true,
+    "notDocumented": true
+  },
+  "sourceLinkTemplate": "https://github.com/intisy-ai/api/blob/{gitRevision}/{path}#L{line}",
+  "ignoredHighlightLanguages": ["mermaid"]
+}

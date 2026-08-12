@@ -14,7 +14,12 @@ export interface FieldSpec {
   /** Group heading this field sorts under. */
   group?: string;
   /** The choices for a `select` field. */
-  options?: { value: string; label: string }[];
+  options?: {
+    /** Value stored when this choice is picked. */
+    value: string;
+    /** Label shown for this choice. */
+    label: string;
+  }[];
   /** Lowest accepted value for a `number` field. */
   min?: number;
   /** Highest accepted value for a `number` field. */
@@ -186,7 +191,10 @@ export interface ScreenSpec {
   /** The layout tree. */
   layout: ScreenNode;
   /** Per-surface layout overrides, for surfaces that need a different tree. */
-  surfaces?: { tui?: ScreenNode };
+  surfaces?: {
+    /** Layout tree to use on a TUI surface instead of `layout`. */
+    tui?: ScreenNode;
+  };
 }
 
 /** A host asking a plugin for the data behind one screen. */
