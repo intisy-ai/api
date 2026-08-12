@@ -48,3 +48,5 @@ export type {
   SettingsCapability,
   SyncResult,
 } from "./capabilities.js";
+export { createServiceHub } from "./services.js";
+export type { AccountsService, RoutingService, ServiceEvent, ServiceHub, ServiceListener, ServiceMap, ServiceRecorder, ServiceRegistry, WantOptions } from "./services.js";
