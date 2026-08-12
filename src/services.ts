@@ -117,7 +117,12 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
   const watchers = new Map<string, Set<ServiceListener<unknown>>>();
 
   function notify(id: string, service: unknown, event: ServiceEvent): void {
-    for (const listener of watchers.get(id) ?? []) listener(service, event);
+    const listeners = watchers.get(id);
+    if (!listeners) return;
+    for (const listener of [...listeners]) {
+      if (!listeners.has(listener)) continue;
+      listener(service, event);
+    }
   }
 
   function unregister(pluginId: string, id: string): void {

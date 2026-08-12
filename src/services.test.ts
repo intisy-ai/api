@@ -82,6 +82,25 @@ it("reports registration and unregistration to a watcher until it is disposed", 
   expect(seen).toEqual([[store, "register"], [undefined, "unregister"]]);
 });
 
+it("dispatches to the watchers subscribed when the event fired, not ones added or stopped during it", () => {
+  const hub = createServiceHub();
+  const watcher = hub.forPlugin("cairn");
+  const seen: string[] = [];
+  const late: string[] = [];
+  let stopThird = () => {};
+  watcher.watch("accounts", (_service, event) => {
+    seen.push(`first:${event}`);
+    watcher.watch("accounts", (_added, addedEvent) => late.push(addedEvent));
+    stopThird();
+  });
+  stopThird = watcher.watch("accounts", (_third, thirdEvent) => seen.push(`third:${thirdEvent}`));
+  const release = hub.forPlugin("core-auth").register("accounts", {});
+  expect(seen).toEqual(["first:register"]);
+  expect(late).toEqual([]);
+  release();
+  expect(late).toEqual(["unregister"]);
+});
+
 it("drops every service a released plugin registered", () => {
   const hub = createServiceHub();
   const registry = hub.forPlugin("config-ledger");
