@@ -53,7 +53,13 @@ export type {
 export { createServiceHub } from "./services.js";
 export type {
   AccountsService,
+  ActivityImpact,
+  ActivityPage,
+  ActivityQuery,
+  ActivityRecord,
   ActivityService,
+  ActivitySpec,
+  ActivitySubject,
   RoutingService,
   ServiceContract,
   ServiceEvent,

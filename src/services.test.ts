@@ -1,7 +1,40 @@
 import { expect, it, vi } from "vitest";
 import { isPluginError } from "./errors.js";
 import { createServiceHub } from "./services.js";
+import type { ActivityRecord, ActivitySpec } from "./services.js";
 import { setDiagnosticSink } from "./strict.js";
+
+function activityRecorder(): { emit: (spec: ActivitySpec) => void; read: () => Promise<{ records: ActivityRecord[]; nextCursor?: string }> } {
+  const records: ActivityRecord[] = [];
+  return {
+    emit: (spec) => {
+      records.push({
+        id: `r${records.length}`,
+        ts: records.length,
+        home: "/home",
+        topic: spec.topic,
+        action: spec.action,
+        impact: spec.impact ?? "info",
+        source: "recorder",
+        details: spec.details ?? {},
+        text: spec.action,
+      });
+    },
+    read: async () => ({ records: [...records].reverse(), nextCursor: "next" }),
+  };
+}
+
+it("types the well-known activity service from this package alone", async () => {
+  const hub = createServiceHub();
+  hub.forPlugin("recorder").register("activity", activityRecorder());
+
+  const service = hub.forPlugin("reader").get("activity");
+  service?.emit({ topic: "demo.ran", action: "ran", impact: "notice" });
+  const page = await service!.read({ impacts: ["notice"], limit: 10 });
+
+  expect(page.records.map((record) => record.topic)).toEqual(["demo.ran"]);
+  expect(page.nextCursor).toBe("next");
+});
 
 it("round-trips a namespaced registration through get", () => {
   const hub = createServiceHub();
@@ -190,6 +223,6 @@ it("records what each plugin provided and consumed", () => {
 it("lets any plugin register the well-known activity service", () => {
   const hub = createServiceHub();
   const registry = hub.forPlugin("core-loader");
-  registry.register("activity", { emit: () => {}, read: async () => [] });
+  registry.register("activity", { emit: () => {}, read: async () => ({ records: [] }) });
   expect(hub.get("activity")).toBeDefined();
 });

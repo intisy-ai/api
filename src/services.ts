@@ -14,16 +14,98 @@ export interface AccountsService {}
 /** The routing contract, filled in by the routing engine through declaration merging. */
 export interface RoutingService {}
 
+/** How much one recorded activity matters. */
+export type ActivityImpact = "debug" | "info" | "notice" | "warning" | "error";
+
+/** What one activity was about. */
+export interface ActivitySubject {
+  /** What kind of thing it is, for example `plugin` or `account`. */
+  kind: string;
+  /** The thing's id, when it has one. */
+  id?: string;
+  /** The thing's name, when it has one. */
+  label?: string;
+}
+
+/** What a plugin hands the activity record to have one activity written down. */
+export interface ActivitySpec {
+  /** Dotted topic the activity belongs to, for example `config.changed`. */
+  topic: string;
+  /** What happened, as one verb. */
+  action: string;
+  /** How much it matters. The implementation picks a default per topic when this is absent. */
+  impact?: ActivityImpact;
+  /** What the activity was about. */
+  subject?: ActivitySubject;
+  /** Anything else worth keeping, which a surface renders as it likes. */
+  details?: Record<string, unknown>;
+}
+
+/** One activity as it is read back. */
+export interface ActivityRecord {
+  /** Record id. */
+  id: string;
+  /** When it happened, in epoch milliseconds. */
+  ts: number;
+  /** Absolute path of the app home it was recorded in. */
+  home: string;
+  /** Topic the activity belongs to. */
+  topic: string;
+  /** What happened. */
+  action: string;
+  /** How much it matters. */
+  impact: ActivityImpact;
+  /** Who recorded it, normally a plugin id. */
+  source: string;
+  /** What the activity was about, when the emitter said. */
+  subject?: ActivitySubject;
+  /** Whatever else the emitter kept. */
+  details: Record<string, unknown>;
+  /** One line describing the activity, for a surface that renders text. */
+  text: string;
+}
+
+/** Which slice of the activity record a caller wants. */
+export interface ActivityQuery {
+  /** Keep only these impacts. */
+  impacts?: ActivityImpact[];
+  /** Keep only activity these sources recorded. */
+  sources?: string[];
+  /** Keep only these topics. */
+  topics?: string[];
+  /** Keep only activity at or after this epoch millisecond. */
+  since?: number;
+  /** Keep only activity at or before this epoch millisecond. */
+  until?: number;
+  /** Greatest number of records to return. */
+  limit?: number;
+  /** Opaque cursor from a previous page. */
+  cursor?: string;
+}
+
+/** One page of read-back activity. */
+export interface ActivityPage {
+  /** The records, newest first. */
+  records: ActivityRecord[];
+  /** Cursor {@link ActivityQuery.cursor} takes for the next page, absent on the last one. */
+  nextCursor?: string;
+}
+
 /**
  * The activity record contract.
  *
  * @remarks
- * Declared here as an empty interface and filled in by whichever component owns the activity
- * record, through declaration merging, so this package names the contract without implementing it.
  * Bare rather than namespaced because it is a contract any plugin may implement, exactly like the
- * account store.
+ * account store. The shapes here are the smallest a consumer needs: an implementation is free to
+ * record and return more, and a consumer that wants the extra reaches for that implementation's
+ * own package.
  */
-export interface ActivityService {}
+export interface ActivityService {
+  /** Records one activity. */
+  emit(spec: ActivitySpec): void;
+  /** Reads recorded activity, newest first. */
+  read(query?: ActivityQuery): Promise<ActivityPage>;
+}
 
 /**
  * Every service id paired with the contract behind it.
