@@ -10,3 +10,41 @@ export { CAPABILITY_IDS, WELL_KNOWN_SERVICES, isKnownCapability, isWellKnownServ
 export type { CapabilityId, WellKnownServiceId } from "./ids.js";
 export { assertManifest, validateManifest } from "./validate.js";
 export type { ValidationIssue } from "./validate.js";
+export type {
+  ActionResult,
+  ActionSpec,
+  CapabilitySchema,
+  Column,
+  DataSpec,
+  FieldSpec,
+  FieldType,
+  ItemShape,
+  NodeStyle,
+  ScreenActionRequest,
+  ScreenData,
+  ScreenDataRequest,
+  ScreenNode,
+  ScreenSpec,
+  SectionSpec,
+} from "./capability-types.js";
+export type { IrEventStream, IrRequest, IrResponse, IrStreamEvent, ProviderCallContext, WireRequest, WireResponse } from "./ir.js";
+export type {
+  CapabilityMap,
+  CommandDef,
+  CommandsCapability,
+  ConfigHistoryCapability,
+  CrossAppSyncCapability,
+  CustomEndpoint,
+  CustomEndpointsCapability,
+  FrontDoorCapability,
+  HistoryEntry,
+  HistoryQuery,
+  ManagedPlugin,
+  MarketplaceEntry,
+  MarketplaceSourceCapability,
+  PluginManagementCapability,
+  ProviderCapability,
+  ScreensCapability,
+  SettingsCapability,
+  SyncResult,
+} from "./capabilities.js";

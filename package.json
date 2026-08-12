@@ -31,7 +31,8 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc --noEmit -p tsconfig.test.json",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
     "schema": "node scripts/emit-schema.mjs",
     "docs": "typedoc",
     "test": "vitest run",
