@@ -8,8 +8,8 @@ import type { PluginLedger } from "./ledger.js";
 import { API_VERSION } from "./manifest.js";
 import type { PluginManifest } from "./manifest.js";
 import type { HostDescriptor, Logger, PluginConfig, PluginPaths } from "./runtime.js";
-import { createServiceHub } from "./services.js";
-import type { ServiceListener, ServiceMap, ServiceRegistry } from "./services.js";
+import { createServiceHub, refuseWant } from "./services.js";
+import type { ServiceListener, ServiceMap, ServiceRegistry, WantOptions } from "./services.js";
 import { ignoreUnknown, reportDiagnostic } from "./strict.js";
 
 /** One plugin's implementation of a capability, with the plugin it came from. */
@@ -140,6 +140,11 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
     return true;
   }
 
+  /**
+   * @remarks
+   * `get` stays open: it installs nothing, and its honest answer to a revoked plugin is the same
+   * `undefined` every other caller gets for a service nobody registered.
+   */
   function fenced(pluginId: string, registry: ServiceRegistry): ServiceRegistry {
     return {
       ...registry,
@@ -147,6 +152,8 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
         refuseLate(pluginId, "a late registration of service", id) ? () => {} : registry.register(id, service)) as ServiceRegistry["register"],
       watch: ((id: string, listener: ServiceListener<unknown>) =>
         refuseLate(pluginId, "a late watch of service", id) ? () => {} : registry.watch(id, listener)) as ServiceRegistry["watch"],
+      want: ((id: string, options?: WantOptions) =>
+        refuseLate(pluginId, "a late want of service", id) ? refuseWant(pluginId, id) : registry.want(id, options)) as ServiceRegistry["want"],
     };
   }
 
@@ -170,6 +177,7 @@ export function createPluginHost(options: PluginHostOptions): PluginHost {
     return {
       publish: ((topic: string, payload: unknown) => events.publish(topic, payload)) as EventBus["publish"],
       subscribe: ((topic: string, listener: (payload: unknown) => void) => {
+        if (refuseLate(pluginId, "a late subscription to topic", topic)) return () => {};
         ledger.recordTopic(pluginId, topic);
         return tracked(pluginId, events.subscribe(topic, listener));
       }) as EventBus["subscribe"],

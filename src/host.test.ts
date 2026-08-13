@@ -203,6 +203,56 @@ it("refuses a released plugin's late watch, so its listener never fires again", 
   expect(seen).toEqual([]);
 });
 
+it("refuses a quarantined plugin's late subscription and leaves its disposer safe to call", () => {
+  const reported: string[] = [];
+  setDiagnosticSink((message) => reported.push(message));
+  const host = createPluginHost({ app: "claude" });
+  const shared = runtime();
+  const context = host.contextFor(SCREENS, shared);
+  host.markBroken("config-ledger", new PluginError("config-ledger", "took too long", "return sooner"));
+
+  const seen: unknown[] = [];
+  const stop = context.events.subscribe("config.changed", (payload) => seen.push(payload));
+  shared.events.publish("config.changed", { name: "after" });
+
+  expect(seen).toEqual([]);
+  expect(() => stop()).not.toThrow();
+  expect(host.ledger.entry("config-ledger")?.topics).toEqual([]);
+  expect(reported).toEqual([
+    'ignored a late subscription to topic "config.changed" from config-ledger, which is no longer running',
+  ]);
+});
+
+it("refuses a quarantined plugin's late want, so a later registration cannot resume it", async () => {
+  const raised: unknown[] = [];
+  const onUnhandled = (error: unknown) => raised.push(error);
+  process.on("unhandledRejection", onUnhandled);
+  setDiagnosticSink(() => {});
+  const host = createPluginHost({ app: "claude" });
+  const context = host.contextFor(SCREENS, runtime());
+  host.markBroken("config-ledger", new PluginError("config-ledger", "took too long", "return sooner"));
+
+  const resumed: unknown[] = [];
+  const refused = context.services.want("accounts");
+  refused.then((service) => resumed.push(service), () => {});
+  context.services.want("routing");
+
+  host.contextFor({ id: "core-auth", api: 1, entry: "dist/index.js", capabilities: [] }, runtime())
+    .services.register("accounts", { list: () => [] });
+
+  await expect(refused).rejects.toMatchObject({
+    pluginId: "config-ledger",
+    detail: 'stopped while waiting for service "accounts"',
+    fix: 'provide "accounts" before this plugin is stopped, or use get() and carry on without it',
+  });
+  await new Promise((resolve) => setTimeout(resolve, 10));
+  process.off("unhandledRejection", onUnhandled);
+
+  expect(resumed).toEqual([]);
+  expect(raised).toEqual([]);
+  expect(host.ledger.entry("config-ledger")?.servicesConsumed).toEqual([]);
+});
+
 it("lets a plugin that activates again register once more", () => {
   const host = createPluginHost({ app: "claude" });
   host.markBroken("config-ledger", new PluginError("config-ledger", "took too long", "return sooner"));

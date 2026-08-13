@@ -219,6 +219,31 @@ interface Waiter {
   timer: ReturnType<typeof setTimeout> | null;
 }
 
+function stoppedWaiting(pluginId: string, id: string): PluginError {
+  return new PluginError(
+    pluginId,
+    `stopped while waiting for service "${id}"`,
+    `provide "${id}" before this plugin is stopped, or use get() and carry on without it`,
+  );
+}
+
+/**
+ * What a `want` from a plugin that is no longer running answers with.
+ *
+ * @remarks
+ * The rejection is the one {@link ServiceHub.releasePlugin} already gives a pending `want`, so an
+ * author meets one failure rather than two. No waiter is installed: a released plugin's waiter is
+ * swept once and never again, so a later registration of the id would resolve it and run the
+ * continuation of a plugin the host has already declared inert. The promise carries its own no-op
+ * catch for the same reason `want` does, since nobody awaits the continuation of an abandoned
+ * `activate` and an unhandled rejection would take the host down.
+ */
+export function refuseWant(pluginId: string, id: string): Promise<never> {
+  const refused = Promise.reject<never>(stoppedWaiting(pluginId, id));
+  refused.catch(() => {});
+  return refused;
+}
+
 /**
  * Builds the live service registry a host shares between every plugin it loads.
  *
@@ -362,11 +387,7 @@ export function createServiceHub(recorder: Partial<ServiceRecorder> = {}): Servi
           if (waiter.pluginId !== pluginId) continue;
           waiting.delete(waiter);
           if (waiter.timer) clearTimeout(waiter.timer);
-          waiter.reject(new PluginError(
-            pluginId,
-            `stopped while waiting for service "${id}"`,
-            `provide "${id}" before this plugin is stopped, or use get() and carry on without it`,
-          ));
+          waiter.reject(stoppedWaiting(pluginId, id));
         }
         if (!waiting.size) waiters.delete(id);
       }
