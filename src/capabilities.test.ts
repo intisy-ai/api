@@ -38,3 +38,31 @@ it("keeps an unknown node kind and unknown node props legal", () => {
   const node: ScreenSpec["layout"] = { kind: "kind-from-a-later-host", children: [], somethingNew: 42 };
   expect(node.somethingNew).toBe(42);
 });
+
+it("accepts a provider that advertises one lane and one that advertises several", () => {
+  const single: CapabilityMap["provider"] = {
+    id: "stub",
+    handleIr: async () => ({}),
+  };
+  const multi: CapabilityMap["provider"] = {
+    id: "antigravity",
+    handleIr: async () => ({}),
+    providers: () => [
+      { id: "antigravity", label: "Antigravity", accountPool: "antigravity" },
+      { id: "gemini-cli", label: "Gemini CLI", accountPool: "antigravity" },
+    ],
+  };
+  expect(single.providers).toBeUndefined();
+  expect(multi.providers?.()).toHaveLength(2);
+});
+
+it("accepts a provider that resolves its lanes asynchronously", async () => {
+  const dynamic: CapabilityMap["provider"] = {
+    id: "custom",
+    handleIr: async () => ({}),
+    providers: async () => [{ id: "my-endpoint", label: "my-endpoint", translator: "custom" }],
+  };
+  await expect(dynamic.providers?.()).resolves.toEqual([
+    { id: "my-endpoint", label: "my-endpoint", translator: "custom" },
+  ]);
+});

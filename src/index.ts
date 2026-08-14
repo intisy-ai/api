@@ -46,6 +46,7 @@ export type {
   MarketplaceSourceCapability,
   PluginManagementCapability,
   ProviderCapability,
+  ProviderDescriptor,
   ScreensCapability,
   SettingsCapability,
   SyncResult,

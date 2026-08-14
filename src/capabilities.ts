@@ -10,6 +10,29 @@ import type {
 import type { IrEventStream, IrRequest, IrResponse, ProviderCallContext, WireRequest, WireResponse } from "./ir.js";
 
 /**
+ * One upstream lane a provider plugin serves, as a host lists it.
+ *
+ * @remarks
+ * A plugin may back several lanes off one driver (a shared account pool with distinct upstream
+ * quotas) or resolve them from the user's own configuration, so a lane is described rather than
+ * inferred from the plugin's identity.
+ */
+export interface ProviderDescriptor {
+  /** The provider id a routing chain names. */
+  id: string;
+  /** Name shown to the user. */
+  label: string;
+  /** Models this lane serves, keyed by model id. */
+  models?: Record<string, unknown>;
+  /** Whether accounts for this lane are obtained through an OAuth flow. */
+  hasOAuth?: boolean;
+  /** Account store key, when several lanes share one pool. Defaults to the lane's own id. */
+  accountPool?: string;
+  /** Wire format this lane speaks upstream, when it is not the plugin's default. */
+  translator?: string;
+}
+
+/**
  * Talks to one upstream vendor, in canonical IR only.
  *
  * @remarks
@@ -23,6 +46,14 @@ export interface ProviderCapability {
   readonly id: string;
   /** Handles one request, returning a response or a stream of IR events. */
   handleIr(request: IrRequest, context: ProviderCallContext): Promise<IrResponse | IrEventStream>;
+  /**
+   * Every lane this plugin serves, when it serves more than the one `id` names.
+   *
+   * @remarks
+   * Optional because most providers are one lane. A host that does not call it sees exactly the
+   * behaviour it saw before this method existed.
+   */
+  providers?(): ProviderDescriptor[] | Promise<ProviderDescriptor[]>;
 }
 
 /**
