@@ -1,0 +1,6 @@
+// No dependency on :contract: this module works on JSON trees and plain ids, which is what a host
+// holds after reading a sidecar. Adding the typed manifest would serve no caller that exists.
+dependencies {
+    compileOnly project(":annotations")
+    annotationProcessor project(":processor")
+}

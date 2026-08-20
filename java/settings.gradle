@@ -10,3 +10,6 @@ rootProject.name = "api-java"
 include ":annotations"
 include ":processor"
 include ":contract"
+
+// :engine  - the declaration engine: failure type, diagnostics, activation order, validation.
+include ":engine"
