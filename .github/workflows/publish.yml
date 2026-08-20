@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
   id-token: write
 
 jobs:
@@ -25,4 +26,5 @@ jobs:
       scope: 'intisy-ai'
       patch_ceiling: 20
       scoped_only: true
+      needs_java: true
       tag: ${{ inputs.tag }}
