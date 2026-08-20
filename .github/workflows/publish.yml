@@ -24,4 +24,5 @@ jobs:
       unscoped_name: 'api'
       scope: 'intisy-ai'
       patch_ceiling: 20
+      scoped_only: true
       tag: ${{ inputs.tag }}
