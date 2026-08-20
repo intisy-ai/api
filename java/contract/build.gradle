@@ -1,0 +1,5 @@
+// The annotations are SOURCE-retention, so compileOnly is right: nothing needs them at run time.
+dependencies {
+    compileOnly project(":annotations")
+    annotationProcessor project(":processor")
+}
