@@ -1,5 +1,12 @@
 import { expect, it } from "vitest";
-import { activationOrder, assertManifest, isPluginError, pluginError, setDiagnosticSink } from "../generated/engine.js";
+import {
+  activationOrder,
+  assertManifest,
+  createPluginHost,
+  isPluginError,
+  pluginError,
+  setDiagnosticSink,
+} from "../generated/engine.js";
 
 it("mints an error a separately bundled consumer recognises by its name marker", () => {
   const error = pluginError("config-ledger", "went wrong", "put it right");
@@ -69,3 +76,99 @@ function assertManifestQuietly(): void {
     return;
   }
 }
+
+function runtime() {
+  const listeners = new Map<string, (payload: unknown) => void>();
+  return {
+    config: { all: () => ({}), get: () => undefined, set: async () => {} },
+    log: { info: () => {}, warn: () => {}, error: () => {}, debug: () => {} },
+    paths: { home: "/home", repos: "/home/repos", plugin: "/home/plugin", cache: "/home/cache", config: "/home/config" },
+    events: {
+      publish: (topic: string, payload: unknown) => listeners.get(topic)?.(payload),
+      subscribe: (topic: string, listener: (payload: unknown) => void) => {
+        listeners.set(topic, listener);
+        return () => listeners.delete(topic);
+      },
+    },
+  };
+}
+
+const SCREENS = { id: "config-ledger", api: 1, entry: "dist/index.js", capabilities: ["screens"], permissions: ["config:write"] };
+
+it("hands a plugin a context carrying its own manifest object and the host descriptor", () => {
+  const host = createPluginHost({ app: "claude", api: 1, surfaces: ["tui"] });
+  const context = host.contextFor(SCREENS, runtime());
+  expect(context.manifest).toBe(SCREENS);
+  expect(context.host).toEqual({ app: "claude", api: 1, surfaces: ["tui"] });
+  expect(context.paths.home).toBe("/home");
+  expect(() => context.services.register("plugin-updater:catalog", {})).toThrow(/belongs to another plugin/);
+});
+
+it("collects a provided capability and reports the ledger status in lower case", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const screens = { screens: () => [] };
+  host.contextFor(SCREENS, runtime()).provide("screens", screens);
+  expect(host.capability("screens")).toEqual([{ pluginId: "config-ledger", implementation: screens }]);
+  expect(host.verifyActivation(SCREENS)).toBeNull();
+  expect(host.ledger.entry("config-ledger")?.status).toBe("active");
+  expect(host.ledger.entry("config-ledger")?.permissions).toEqual(["config:write"]);
+});
+
+it("refuses a plugin whose api floor is above the host, as a marked error", () => {
+  const host = createPluginHost({ app: "claude", api: 2 });
+  expect(host.supports({ id: "old", api: 2 })).toBeNull();
+  const error = host.supports({ id: "new", api: 3 });
+  expect(isPluginError(error)).toBe(true);
+  expect((error as { detail: string }).detail).toBe("needs api 3, this host has api 2");
+});
+
+it("stops a quarantined plugin's subscriptions and drops its capabilities", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const shared = runtime();
+  const seen: unknown[] = [];
+  const context = host.contextFor(SCREENS, shared);
+  context.provide("screens", {});
+  context.events.subscribe("config.changed", (payload: unknown) => seen.push(payload));
+  shared.events.publish("config.changed", { name: "before" });
+  host.markBroken("config-ledger", pluginError("config-ledger", "boom", "fix it"));
+  shared.events.publish("config.changed", { name: "after" });
+  expect(seen).toEqual([{ name: "before" }]);
+  expect(host.capability("screens")).toEqual([]);
+  expect(host.ledger.entry("config-ledger")?.status).toBe("broken");
+  expect(host.ledger.entry("config-ledger")?.error).toEqual({ detail: "boom", fix: "fix it" });
+});
+
+it("settles a want as a real promise, and rejects a quarantined plugin's want", async () => {
+  const host = createPluginHost({ app: "claude", api: 1, wellKnownServices: ["accounts"] });
+  const context = host.contextFor(SCREENS, runtime());
+  const arriving = context.services.want("accounts");
+  host.contextFor({ id: "core-auth", api: 1, capabilities: [] }, runtime()).services.register("accounts", { list: () => [] });
+  expect(await arriving).toEqual({ list: expect.any(Function) });
+
+  const quarantined = createPluginHost({ app: "claude", api: 1, wellKnownServices: ["accounts"] });
+  const stopped = quarantined.contextFor(SCREENS, runtime());
+  quarantined.markBroken("config-ledger", pluginError("config-ledger", "took too long", "return sooner"));
+  await expect(stopped.services.want("accounts")).rejects.toMatchObject({
+    detail: 'stopped while waiting for service "accounts"',
+  });
+});
+
+it("fires a want deadline, which is what proves the scheduler is really wired", async () => {
+  const host = createPluginHost({ app: "claude", api: 1, wellKnownServices: ["accounts"] });
+  const context = host.contextFor(SCREENS, runtime());
+  await expect(context.services.want("accounts", { timeoutMs: 20 })).rejects.toMatchObject({
+    detail: 'waited 20ms for service "accounts" and nothing registered it',
+  });
+});
+
+it("reports an unknown capability id only when the host declared a vocabulary", () => {
+  const seen: string[] = [];
+  setDiagnosticSink((message) => seen.push(message));
+  const silent = createPluginHost({ app: "claude", api: 1 });
+  silent.contextFor({ id: "a", api: 1, capabilities: ["screns"] }, runtime()).provide("screns", {});
+  expect(seen).toEqual([]);
+  const declaring = createPluginHost({ app: "claude", api: 1, vocabulary: ["screens"] });
+  declaring.contextFor({ id: "b", api: 1, capabilities: ["screns"] }, runtime()).provide("screns", {});
+  expect(seen).toEqual(['ignored unknown capability "screns" from b']);
+  setDiagnosticSink(null);
+});
