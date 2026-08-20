@@ -13,3 +13,7 @@ include ":contract"
 
 // :engine  - the declaration engine: failure type, diagnostics, activation order, validation.
 include ":engine"
+
+// :teavm - the engine compiled to an ES2015 module. JDK 17, because TeaVM 0.15.0's artifacts
+//          publish minimum-JVM metadata above 8.
+include ":teavm"
