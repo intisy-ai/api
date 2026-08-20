@@ -1,5 +1,8 @@
 import { expect, it } from "vitest";
-import { activationOrder, assertManifest, isPluginError, pluginError, setDiagnosticSink } from "../generated/engine.js";
+import type { EngineSurface } from "../generated/engine.js";
+import * as engineModule from "../generated/engine.js";
+
+const { activationOrder, assertManifest, isPluginError, pluginError, setDiagnosticSink } = engineModule as unknown as EngineSurface;
 
 it("mints an error a separately bundled consumer recognises by its name marker", () => {
   const error = pluginError("config-ledger", "went wrong", "put it right");

@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -27,6 +28,7 @@ import javax.tools.StandardLocation;
 
 @SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsConstant"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
+@SupportedOptions("tsemit.name")
 public class TsEmitProcessor extends AbstractProcessor {
 
     private final List<String> chunks = new ArrayList<String>();
@@ -225,7 +227,7 @@ public class TsEmitProcessor extends AbstractProcessor {
         }
         try {
             Writer writer = processingEnv.getFiler()
-                    .createResource(StandardLocation.CLASS_OUTPUT, "", "api.d.ts").openWriter();
+                    .createResource(StandardLocation.CLASS_OUTPUT, "", basename() + ".d.ts").openWriter();
             try {
                 writer.write(out.toString());
             } finally {
@@ -238,6 +240,11 @@ public class TsEmitProcessor extends AbstractProcessor {
         } catch (IOException failure) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "tsemit failed: " + failure.getMessage());
         }
+    }
+
+    private String basename() {
+        String name = processingEnv.getOptions().get("tsemit.name");
+        return name == null || name.isEmpty() ? "api" : name;
     }
 
     private void writeConstants() throws IOException {
@@ -271,7 +278,7 @@ public class TsEmitProcessor extends AbstractProcessor {
             out.append(constant).append("\n");
         }
         Writer writer = processingEnv.getFiler()
-                .createResource(StandardLocation.CLASS_OUTPUT, "", "api.keys.ts").openWriter();
+                .createResource(StandardLocation.CLASS_OUTPUT, "", basename() + ".keys.ts").openWriter();
         try {
             writer.write(out.toString());
         } finally {

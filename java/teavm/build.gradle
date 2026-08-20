@@ -8,6 +8,8 @@ plugins {
 dependencies {
     implementation project(":engine")
     teavm teavm.libs.jsoApis
+    compileOnly project(":annotations")
+    annotationProcessor project(":processor")
 }
 
 // TeaVM 0.15.0's classlib, jso-apis and extension-spi artifacts publish minimum-JVM metadata above
@@ -21,6 +23,7 @@ java {
 
 tasks.named("compileJava") {
     options.release = 17
+    options.compilerArgs << "-Atsemit.name=engine"
 }
 
 teavm.js {
