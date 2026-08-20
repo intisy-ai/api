@@ -137,6 +137,29 @@ public class TsEmitProcessor extends AbstractProcessor {
         if ("java.lang.String".equals(qualified)) {
             return "string";
         }
+        if ("java.lang.Boolean".equals(qualified)) {
+            return "boolean";
+        }
+        if ("java.lang.Integer".equals(qualified) || "java.lang.Long".equals(qualified) || "java.lang.Double".equals(qualified)) {
+            return "number";
+        }
+        if ("java.lang.Object".equals(qualified)) {
+            return "unknown";
+        }
+        if ("java.lang.Void".equals(qualified)) {
+            return "void";
+        }
+        List<? extends TypeMirror> mapped = type.getTypeArguments();
+        if ("java.util.Map".equals(qualified)) {
+            return "Record<" + tsType(mapped.get(0)) + ", " + tsType(mapped.get(1)) + ">";
+        }
+        if ("java.util.List".equals(qualified)) {
+            return tsType(mapped.get(0)) + "[]";
+        }
+        if ("java.util.concurrent.CompletionStage".equals(qualified)
+                || "java.util.concurrent.CompletableFuture".equals(qualified)) {
+            return "Promise<" + (mapped.isEmpty() ? "void" : tsType(mapped.get(0))) + ">";
+        }
         StringBuilder out = new StringBuilder(element.getSimpleName().toString());
         List<? extends TypeMirror> args = type.getTypeArguments();
         if (!args.isEmpty()) {
