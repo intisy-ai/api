@@ -23,6 +23,7 @@
   ],
   "files": [
     "dist/",
+    "generated/",
     "schema/",
     "plugin.json",
     "README.md",
@@ -37,7 +38,8 @@
     "schema": "node scripts/emit-schema.mjs",
     "docs": "typedoc",
     "test": "vitest run",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "emit": "node scripts/emit-dts.mjs --java-dir java --module :contract --out generated"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
