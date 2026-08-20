@@ -332,7 +332,7 @@ public final class ServiceHub {
         return serviceId.substring(0, separator).equals(pluginId);
     }
 
-    private PluginException stoppedWaiting(String pluginId, String id) {
+    static PluginException stoppedWaiting(String pluginId, String id) {
         return new PluginException(pluginId,
                 "stopped while waiting for service \"" + id + "\"",
                 "provide \"" + id + "\" before this plugin is stopped, or use get() and carry on without it");
