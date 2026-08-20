@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * reports the count and review treats a rise in it as a defect.
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.PARAMETER})
 public @interface TsRaw {
     String value();
 }

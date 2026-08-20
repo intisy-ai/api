@@ -26,7 +26,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.StandardLocation;
 
-@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsConstant"})
+@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedOptions("tsemit.name")
 public class TsEmitProcessor extends AbstractProcessor {
@@ -44,6 +44,14 @@ public class TsEmitProcessor extends AbstractProcessor {
                 continue;
             }
             chunks.add(emit((TypeElement) element));
+        }
+        for (Element element : round.getElementsAnnotatedWith(TsModule.class)) {
+            if (element.getKind() != ElementKind.INTERFACE) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsModule applies only to interfaces", element);
+                continue;
+            }
+            chunks.add(emitModule((TypeElement) element));
         }
         for (Element element : round.getElementsAnnotatedWith(TsConstant.class)) {
             TsConstant constant = element.getAnnotation(TsConstant.class);
@@ -85,6 +93,21 @@ public class TsEmitProcessor extends AbstractProcessor {
             }
         }
         out.append("}\n");
+        return out.toString();
+    }
+
+    /**
+     * @implNote No property branch, no interface wrapper: every member is a free function, because
+     * that is what a JavaScript module actually exports and what lets a plain named import type-check
+     * against this declaration instead of merely being castable to it.
+     */
+    private String emitModule(TypeElement type) {
+        StringBuilder out = new StringBuilder();
+        for (ExecutableElement method : sortedMethods(type)) {
+            out.append("export declare function ").append(method.getSimpleName())
+                    .append(joinVars(method.getTypeParameters())).append("(").append(params(method))
+                    .append("): ").append(returnType(method)).append(";\n");
+        }
         return out.toString();
     }
 
@@ -141,9 +164,19 @@ public class TsEmitProcessor extends AbstractProcessor {
             if (i > 0) {
                 out.append(", ");
             }
-            out.append(parameters.get(i).getSimpleName()).append(": ").append(tsType(parameters.get(i).asType()));
+            out.append(parameters.get(i).getSimpleName()).append(": ").append(paramType(parameters.get(i)));
         }
         return out.toString();
+    }
+
+    private String paramType(VariableElement parameter) {
+        TsRaw raw = parameter.getAnnotation(TsRaw.class);
+        if (raw != null) {
+            rawEscapes++;
+            return raw.value();
+        }
+        String emitted = tsType(parameter.asType());
+        return parameter.getAnnotation(TsNullable.class) != null ? emitted + " | null" : emitted;
     }
 
     private String tsType(TypeMirror mirror) {
