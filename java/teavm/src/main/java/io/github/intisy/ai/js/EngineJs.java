@@ -6,7 +6,6 @@ import io.github.intisy.ai.engine.Diagnostics;
 import io.github.intisy.ai.engine.ManifestValidator;
 import io.github.intisy.ai.engine.PluginException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,14 +54,21 @@ public final class EngineJs {
     /**
      * @implNote ManifestValidator.require already composes the message and the fix, so this catches
      * and re-raises rather than describing the failure again. A second sentence here would be the
-     * engine's sentence written twice. Exported with one argument only, because two Java overloads of
-     * the same name cannot both become a JavaScript export; the well-known service vocabulary is a
-     * concern for whatever host calls this, not for this stateless boundary.
+     * engine's sentence written twice. wellKnownServices is optional rather than a second Java
+     * overload, because two Java methods sharing a name cannot both become a JavaScript export; a
+     * caller that omits it validates against an empty vocabulary, so a bare provide of a service id
+     * such as "accounts" is rejected as squatting until the caller names it well-known.
      */
     @JSExport
-    public static JSObject assertManifest(JSObject manifest) {
+    public static JSObject assertManifest(JSObject manifest, JSArray<JSObject> wellKnownServices) {
+        List<String> known = new ArrayList<String>();
+        if (wellKnownServices != null && !nullish(wellKnownServices)) {
+            for (int index = 0; index < wellKnownServices.getLength(); index++) {
+                known.add(String.valueOf(JsJson.toTree(wellKnownServices.get(index))));
+            }
+        }
         try {
-            ManifestValidator.require(JsJson.toTree(manifest), Collections.<String>emptyList());
+            ManifestValidator.require(JsJson.toTree(manifest), known);
         } catch (PluginException failure) {
             JsErrors.raise(JsErrors.of(failure));
         }

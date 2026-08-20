@@ -42,6 +42,18 @@ it("returns a valid manifest and throws a marked error for an invalid one", () =
   }
 });
 
+it("validates a bare well-known provide only when the caller names the vocabulary", () => {
+  const manifest = { id: "core-auth", api: 1, entry: "dist/index.js", services: { provides: ["accounts"] } };
+  expect(assertManifest(manifest, ["accounts"])).toEqual(manifest);
+  try {
+    assertManifest(manifest);
+    throw new Error("assertManifest accepted a bare well-known provide with no vocabulary named");
+  } catch (error) {
+    expect(isPluginError(error)).toBe(true);
+    expect((error as { detail: string }).detail).toContain("accounts");
+  }
+});
+
 it("sends a diagnostic to the sink a host installs, and stops when it is removed", () => {
   const seen: string[] = [];
   setDiagnosticSink((message) => seen.push(message));

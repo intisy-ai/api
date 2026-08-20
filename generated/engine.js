@@ -1596,19 +1596,31 @@ igiaj_EngineJs_activationOrder = $manifests => {
     $plan = igiae_Activation_order($ids, $provides, $consumes);
     return igiaj_EngineJs_plan$js_body$_13(igiaj_JsJson_fromStrings(igiae_ActivationPlan_getOrder($plan)), igiaj_JsJson_fromStringLists(igiae_ActivationPlan_getCycles($plan)));
 },
-igiaj_EngineJs_assertManifest = $manifest => {
-    let $failure, $$je;
+igiaj_EngineJs_assertManifest = ($manifest, $wellKnownServices) => {
+    let $known, $index, $failure, $$je;
     igiaj_EngineJs_$callClinit();
     a: {
+        $known = ju_ArrayList__init_();
+        if ($wellKnownServices !== null && !(igiaj_EngineJs_nullish$js_body$_11($wellKnownServices) ? 1 : 0)) {
+            $index = 0;
+            while (true) {
+                if ($index >= $wellKnownServices.length)
+                    break a;
+                $known.$add2(jl_String_valueOf(igiaj_JsJson_toTree(otji_JSWrapper_maybeUnwrap($wellKnownServices[$index]))));
+                $index = $index + 1 | 0;
+            }
+        }
+    }
+    b: {
         try {
-            igiae_ManifestValidator_require(igiaj_JsJson_toTree($manifest), ju_Collections_emptyList());
-            break a;
+            igiae_ManifestValidator_require(igiaj_JsJson_toTree($manifest), $known);
+            break b;
         } catch ($$e) {
             $$je = $rt_wrapException($$e);
             if ($$je instanceof igiae_PluginException) {
                 $failure = $$je;
                 igiaj_JsErrors_raise$js_body$_4(igiaj_JsErrors_of($failure));
-                break a;
+                break b;
             } else {
                 throw $$e;
             }
@@ -1679,9 +1691,9 @@ igiaj_EngineJs_activationOrder$exported$0 = var$1 => {
     igiaj_EngineJs_$callClinit();
     return igiaj_EngineJs_activationOrder(var$1);
 },
-igiaj_EngineJs_assertManifest$exported$1 = var$1 => {
+igiaj_EngineJs_assertManifest$exported$1 = (var$1, var$2) => {
     igiaj_EngineJs_$callClinit();
-    return igiaj_EngineJs_assertManifest(var$1);
+    return igiaj_EngineJs_assertManifest(var$1, var$2);
 },
 igiaj_EngineJs_pluginError$exported$2 = (var$1, var$2, var$3) => {
     igiaj_EngineJs_$callClinit();
@@ -8319,15 +8331,6 @@ ju_Collections$3__init_0 = () => {
     let var_0 = new ju_Collections$3();
     ju_Collections$3__init_(var_0);
     return var_0;
-},
-ju_Collections$3_get = ($this, $index) => {
-    $rt_throw(jl_IndexOutOfBoundsException__init_());
-},
-ju_Collections$3_size = $this => {
-    return 0;
-},
-ju_Collections$3_iterator = $this => {
-    return ju_Collections_emptyIterator();
 };
 function jur_DotSet() {
     jur_JointSet.call(this);
@@ -8401,12 +8404,6 @@ ju_Collections$4__init_0 = () => {
     let var_0 = new ju_Collections$4();
     ju_Collections$4__init_(var_0);
     return var_0;
-},
-ju_Collections$4_hasNext = $this => {
-    return 0;
-},
-ju_Collections$4_next = $this => {
-    $rt_throw(ju_NoSuchElementException__init_());
 };
 function jur_Matcher() {
     let a = this; jl_Object.call(a);
@@ -14233,14 +14230,6 @@ ju_Collections_$callClinit = () => {
     ju_Collections_$callClinit = $rt_eraseClinit(ju_Collections);
     ju_Collections__clinit_();
 },
-ju_Collections_emptyIterator = () => {
-    ju_Collections_$callClinit();
-    return ju_Collections_EMPTY_ITERATOR;
-},
-ju_Collections_emptyList = () => {
-    ju_Collections_$callClinit();
-    return ju_Collections_EMPTY_LIST;
-},
 ju_Collections_emptyMap = () => {
     ju_Collections_$callClinit();
     return ju_Collections_EMPTY_MAP;
@@ -14508,10 +14497,10 @@ ju_List, 0, jl_Object, [ju_SequencedCollection], 1537, 0, 0, 0,
 ju_AbstractList, 0, ju_AbstractCollection, [ju_List], 1025, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractList__init_), "$iterator", $rt_wrapFunction0(ju_AbstractList_iterator), "$equals", $rt_wrapFunction1(ju_AbstractList_equals)]]);
 $rt_metadata([ju_RandomAccess, 0, jl_Object, [], 1537, 0, 0, 0,
 ju_TemplateCollections$AbstractImmutableList, 0, ju_AbstractList, [ju_RandomAccess], 1024, 0, 0, ["$_init_", $rt_wrapFunction0(ju_TemplateCollections$AbstractImmutableList__init_)],
-ju_Collections$3, 0, ju_TemplateCollections$AbstractImmutableList, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$3__init_), "$get", $rt_wrapFunction1(ju_Collections$3_get), "$size", $rt_wrapFunction0(ju_Collections$3_size), "$iterator", $rt_wrapFunction0(ju_Collections$3_iterator)],
+ju_Collections$3, 0, ju_TemplateCollections$AbstractImmutableList, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$3__init_)],
 jur_DotSet, "DotSet", 2, jur_JointSet, [], 16, 0, 0, ["$_init_61", $rt_wrapFunction1(jur_DotSet__init_), "$matches", $rt_wrapFunction3(jur_DotSet_matches), "$getName", $rt_wrapFunction0(jur_DotSet_getName), "$setNext", $rt_wrapFunction1(jur_DotSet_setNext), "$getType", $rt_wrapFunction0(jur_DotSet_getType), "$hasConsumed", $rt_wrapFunction1(jur_DotSet_hasConsumed)],
 jur_CharClass$9, 0, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_70", $rt_wrapFunction3(jur_CharClass$9__init_), "$contains", $rt_wrapFunction1(jur_CharClass$9_contains)],
-ju_Collections$4, 0, jl_Object, [ju_Iterator], 0, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$4__init_), "$hasNext", $rt_wrapFunction0(ju_Collections$4_hasNext), "$next", $rt_wrapFunction0(ju_Collections$4_next)],
+ju_Collections$4, 0, jl_Object, [ju_Iterator], 0, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$4__init_)],
 jur_Matcher, 0, jl_Object, [jur_MatchResult], 17, 0, 0, ["$find0", $rt_wrapFunction1(jur_Matcher_find), "$find1", $rt_wrapFunction0(jur_Matcher_find0), "$start", $rt_wrapFunction1(jur_Matcher_start0), "$end", $rt_wrapFunction1(jur_Matcher_end), "$start0", $rt_wrapFunction0(jur_Matcher_start), "$end0", $rt_wrapFunction0(jur_Matcher_end0), "$hasTransparentBounds", $rt_wrapFunction0(jur_Matcher_hasTransparentBounds), "$_init_52", $rt_wrapFunction2(jur_Matcher__init_)],
 jl_Character, 0, jl_Object, [jl_Comparable], 1, 0, () => jl_Character_$callClinit(), 0,
 ju_TemplateCollections$AbstractImmutableSet, 0, ju_AbstractSet, [], 1024, 0, 0, ["$_init_", $rt_wrapFunction0(ju_TemplateCollections$AbstractImmutableSet__init_)],
