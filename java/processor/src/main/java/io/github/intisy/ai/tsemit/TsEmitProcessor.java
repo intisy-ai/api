@@ -245,8 +245,28 @@ public class TsEmitProcessor extends AbstractProcessor {
             return;
         }
         StringBuilder out = new StringBuilder("// Generated from Java sources. Do not edit.\n\n");
-        out.append("import type { CapabilityType } from \"./api.js\";\n\n");
         Collections.sort(constants);
+        // Import only the key types actually referenced, so a file of plain constants does not carry
+        // an unused import that a consumer compiling with noUnusedLocals would reject.
+        List<String> imports = new ArrayList<String>();
+        for (String candidate : new String[] {"CapabilityType", "ServiceType", "TopicType"}) {
+            for (String constant : constants) {
+                if (constant.contains(candidate)) {
+                    imports.add(candidate);
+                    break;
+                }
+            }
+        }
+        if (!imports.isEmpty()) {
+            out.append("import type { ");
+            for (int i = 0; i < imports.size(); i++) {
+                if (i > 0) {
+                    out.append(", ");
+                }
+                out.append(imports.get(i));
+            }
+            out.append(" } from \"./api.js\";\n\n");
+        }
         for (String constant : constants) {
             out.append(constant).append("\n");
         }

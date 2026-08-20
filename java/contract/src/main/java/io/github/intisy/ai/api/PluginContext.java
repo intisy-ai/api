@@ -2,7 +2,6 @@ package io.github.intisy.ai.api;
 
 import io.github.intisy.ai.tsemit.TsInterface;
 import io.github.intisy.ai.tsemit.TsProperty;
-import io.github.intisy.ai.tsemit.TsRaw;
 
 /**
  * Everything a plugin may touch, and the only way it touches any of it.
@@ -31,11 +30,6 @@ public interface PluginContext {
     @TsProperty(readOnly = true)
     PluginPaths paths();
 
-    /**
-     * @implNote Raw because the manifest type arrives with the manifest module in the next task, and
-     * a forward reference would emit an undeclared name.
-     */
     @TsProperty(readOnly = true)
-    @TsRaw("PluginManifest")
-    Object manifest();
+    PluginManifest manifest();
 }
