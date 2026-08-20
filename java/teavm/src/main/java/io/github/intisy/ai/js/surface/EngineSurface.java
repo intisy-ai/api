@@ -11,11 +11,11 @@ import java.util.List;
  *
  * @implNote Declares the shape {@code EngineJs} actually exports; it is never implemented, only
  * emitted, and {@link TsModule} renders its members as free functions rather than an interface a
- * caller would otherwise have to cast a module namespace through. pluginError's return is raw
- * because Error is a TypeScript ambient global this processor's type vocabulary does not model.
- * setDiagnosticSink's parameter is raw because the processor has no mapping from a JSFunctor
- * interface to a TypeScript function type; setStrict needs no such escape, since a boxed Boolean
- * plus {@link TsNullable} on the parameter is enough.
+ * caller would otherwise have to cast a module namespace through. setDiagnosticSink's parameter is
+ * raw because the processor has no mapping from a JSFunctor interface to a TypeScript function type;
+ * setStrict needs no such escape, since a boxed Boolean plus {@link TsNullable} on the parameter is
+ * enough. pluginError returns {@link PluginErrorShape} rather than a raw {@code Error}, because that
+ * is the real shape {@code JsErrors.mint} attaches and a caller can read it with no cast.
  */
 @TsModule
 public interface EngineSurface {
@@ -28,8 +28,7 @@ public interface EngineSurface {
 
     HostSurface createPluginHost(Object options);
 
-    @TsRaw("Error")
-    Object pluginError(String pluginId, String detail, String fix);
+    PluginErrorShape pluginError(String pluginId, String detail, String fix);
 
     boolean isPluginError(Object value);
 

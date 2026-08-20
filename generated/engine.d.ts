@@ -5,7 +5,7 @@ export declare function assertManifest(manifest: unknown): unknown;
 export declare function assertManifest(manifest: unknown, wellKnownServices: string[]): unknown;
 export declare function createPluginHost(options: unknown): HostSurface;
 export declare function isPluginError(value: unknown): boolean;
-export declare function pluginError(pluginId: string, detail: string, fix: string): Error;
+export declare function pluginError(pluginId: string, detail: string, fix: string): PluginErrorShape;
 export declare function setDiagnosticSink(sink: ((message: string) => void) | null): void;
 export declare function setStrict(enabled: boolean | null): void;
 
@@ -46,11 +46,11 @@ export interface HostSurface {
   contextFor(manifest: unknown, runtime: unknown): ContextSurface;
   readonly descriptor: HostDescriptorShape;
   readonly ledger: LedgerFacadeShape;
-  markBroken(pluginId: string, error: unknown): void;
+  markBroken(pluginId: string, error: PluginErrorShape): void;
   release(pluginId: string): void;
   service(id: string): unknown;
-  supports(manifest: unknown): unknown;
-  verifyActivation(manifest: unknown): unknown;
+  supports(manifest: unknown): PluginErrorShape | undefined;
+  verifyActivation(manifest: unknown): PluginErrorShape | undefined;
 }
 
 export interface LedgerErrorShape {
@@ -74,6 +74,14 @@ export interface LedgerRowShape {
   servicesProvided: string[];
   status: string;
   topics: string[];
+}
+
+export interface PluginErrorShape {
+  readonly detail: string;
+  readonly fix: string;
+  readonly message: string;
+  readonly name: string;
+  readonly pluginId: string;
 }
 
 export interface PluginPathsShape {

@@ -11,9 +11,9 @@ import {
 it("mints an error a separately bundled consumer recognises by its name marker", () => {
   const error = pluginError("config-ledger", "went wrong", "put it right");
   expect(error.name).toBe("PluginError");
-  expect((error as { pluginId?: string }).pluginId).toBe("config-ledger");
-  expect((error as { detail?: string }).detail).toBe("went wrong");
-  expect((error as { fix?: string }).fix).toBe("put it right");
+  expect(error.pluginId).toBe("config-ledger");
+  expect(error.detail).toBe("went wrong");
+  expect(error.fix).toBe("put it right");
   expect(error.message).toBe("[config-ledger] went wrong\n  fix: put it right");
   expect(isPluginError(error)).toBe(true);
   expect(isPluginError(new Error("plain"))).toBe(false);
@@ -119,7 +119,7 @@ it("refuses a plugin whose api floor is above the host, as a marked error", () =
   expect(host.supports({ id: "old", api: 2 })).toBeNull();
   const error = host.supports({ id: "new", api: 3 });
   expect(isPluginError(error)).toBe(true);
-  expect((error as { detail: string }).detail).toBe("needs api 3, this host has api 2");
+  expect(error?.detail).toBe("needs api 3, this host has api 2");
 });
 
 it("stops a quarantined plugin's subscriptions and drops its capabilities", () => {

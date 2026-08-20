@@ -1,17 +1,18 @@
 package io.github.intisy.ai.js.surface;
 
 import io.github.intisy.ai.tsemit.TsInterface;
+import io.github.intisy.ai.tsemit.TsNullable;
 import io.github.intisy.ai.tsemit.TsProperty;
 import java.util.List;
 
 /**
  * The object {@code createPluginHost} returns.
  *
- * @implNote {@code supports} and {@code verifyActivation} return {@code unknown} rather than a raw
- * {@code Error | null}: a caller narrows the result itself (as the contract test does, casting it to
- * a small shape before reading {@code detail}), and typing it as the ambient {@code Error} would make
- * that narrowing cast fail TypeScript's insufficient-overlap check, since {@code Error} carries no
- * {@code detail} property of its own.
+ * @implNote {@code supports} and {@code verifyActivation} return {@link PluginErrorShape}, marked
+ * {@link TsNullable}, rather than a raw {@code Error}: {@code PluginErrorShape} is the real shape
+ * {@code JsErrors.mint} attaches, so a caller reads {@code detail}/{@code fix} with no cast.
+ * {@code markBroken} takes the same shape for its error argument, since a caller passes back exactly
+ * what {@code pluginError} produced.
  */
 @TsInterface
 public interface HostSurface {
@@ -21,17 +22,19 @@ public interface HostSurface {
     @TsProperty(readOnly = true)
     LedgerFacadeShape ledger();
 
-    Object supports(Object manifest);
+    @TsNullable
+    PluginErrorShape supports(Object manifest);
 
     ContextSurface contextFor(Object manifest, Object runtime);
 
-    Object verifyActivation(Object manifest);
+    @TsNullable
+    PluginErrorShape verifyActivation(Object manifest);
 
     List<CapabilityRecordShape> capability(String id);
 
     Object service(String id);
 
-    void markBroken(String pluginId, Object error);
+    void markBroken(String pluginId, PluginErrorShape error);
 
     void release(String pluginId);
 }
