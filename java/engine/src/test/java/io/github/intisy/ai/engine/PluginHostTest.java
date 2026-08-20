@@ -222,6 +222,49 @@ class PluginHostTest {
     }
 
     @Test
+    void cancelingATrackedDisposerTwiceHasNoFurtherEffect() {
+        PluginHost host = host();
+        final RecordingBus shared = new RecordingBus();
+        final int[] underlyingCancels = new int[1];
+        EventBus counted = new EventBus() {
+            @Override
+            public void publish(String topic, Object payload) {
+                shared.publish(topic, payload);
+            }
+
+            @Override
+            public Scheduler.Cancellable subscribe(String topic, Listener listener) {
+                final Scheduler.Cancellable real = shared.subscribe(topic, listener);
+                return new Scheduler.Cancellable() {
+                    @Override
+                    public void cancel() {
+                        underlyingCancels[0]++;
+                        real.cancel();
+                    }
+                };
+            }
+        };
+        final List<Object> seen = new ArrayList<Object>();
+        PluginSession session = host.sessionFor(screens(), counted);
+        Scheduler.Cancellable stop = session.getEvents().subscribe("config.changed", new EventBus.Listener() {
+            @Override
+            public void received(Object payload) {
+                seen.add(payload);
+            }
+        });
+        shared.publish("config.changed", "before");
+        assertEquals(Arrays.asList((Object) "before"), seen);
+        stop.cancel();
+        shared.publish("config.changed", "after");
+        assertEquals(Arrays.asList((Object) "before"), seen);
+        assertEquals(1, underlyingCancels[0]);
+        stop.cancel();
+        shared.publish("config.changed", "again");
+        assertEquals(Arrays.asList((Object) "before"), seen);
+        assertEquals(1, underlyingCancels[0]);
+    }
+
+    @Test
     void scopesTheDeclaredAndProvidedCheckToTheCurrentActivation() {
         PluginHost host = host();
         host.sessionFor(screens(), new RecordingBus()).provide("screens", new Object());
