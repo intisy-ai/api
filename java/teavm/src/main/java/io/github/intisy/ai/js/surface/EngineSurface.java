@@ -26,6 +26,8 @@ public interface EngineSurface {
 
     Object assertManifest(Object manifest, List<String> wellKnownServices);
 
+    HostSurface createPluginHost(Object options);
+
     @TsRaw("Error")
     Object pluginError(String pluginId, String detail, String fix);
 

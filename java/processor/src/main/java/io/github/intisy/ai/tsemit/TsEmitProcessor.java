@@ -221,6 +221,9 @@ public class TsEmitProcessor extends AbstractProcessor {
         if ("java.lang.Void".equals(qualified)) {
             return "void";
         }
+        if ("java.lang.Runnable".equals(qualified)) {
+            return "() => void";
+        }
         List<? extends TypeMirror> mapped = type.getTypeArguments();
         if ("java.util.Map".equals(qualified)) {
             return "Record<" + tsType(mapped.get(0)) + ", " + tsType(mapped.get(1)) + ">";
