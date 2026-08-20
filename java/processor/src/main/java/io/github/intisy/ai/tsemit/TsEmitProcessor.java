@@ -25,11 +25,12 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.StandardLocation;
 
-@SupportedAnnotationTypes("io.github.intisy.ai.tsemit.TsInterface")
+@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsConstant"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 public class TsEmitProcessor extends AbstractProcessor {
 
     private final List<String> chunks = new ArrayList<String>();
+    private final List<String> constants = new ArrayList<String>();
     private int rawEscapes = 0;
 
     @Override
@@ -41,6 +42,13 @@ public class TsEmitProcessor extends AbstractProcessor {
                 continue;
             }
             chunks.add(emit((TypeElement) element));
+        }
+        for (Element element : round.getElementsAnnotatedWith(TsConstant.class)) {
+            TsConstant constant = element.getAnnotation(TsConstant.class);
+            String value = constant.literal().isEmpty()
+                    ? "{ id: \"" + constant.id() + "\" }"
+                    : constant.literal();
+            constants.add("export const " + element.getSimpleName() + ": " + constant.type() + " = " + value + ";");
         }
         if (round.processingOver()) {
             write();
@@ -223,10 +231,31 @@ public class TsEmitProcessor extends AbstractProcessor {
             } finally {
                 writer.close();
             }
+            writeConstants();
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,
-                    "tsemit: " + chunks.size() + " interfaces, " + rawEscapes + " raw escape hatches");
+                    "tsemit: " + chunks.size() + " interfaces, " + constants.size() + " constants, "
+                            + rawEscapes + " raw escape hatches");
         } catch (IOException failure) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "tsemit failed: " + failure.getMessage());
+        }
+    }
+
+    private void writeConstants() throws IOException {
+        if (constants.isEmpty()) {
+            return;
+        }
+        StringBuilder out = new StringBuilder("// Generated from Java sources. Do not edit.\n\n");
+        out.append("import type { CapabilityType } from \"./api.js\";\n\n");
+        Collections.sort(constants);
+        for (String constant : constants) {
+            out.append(constant).append("\n");
+        }
+        Writer writer = processingEnv.getFiler()
+                .createResource(StandardLocation.CLASS_OUTPUT, "", "api.keys.ts").openWriter();
+        try {
+            writer.write(out.toString());
+        } finally {
+            writer.close();
         }
     }
 }
