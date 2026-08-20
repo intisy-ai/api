@@ -1,0 +1,49 @@
+package io.github.intisy.ai.tsemit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.IOException;
+import org.junit.jupiter.api.Test;
+
+class ShapeAnnotationTest {
+
+    @Test
+    void emitsPropertiesOptionalsAndUnions() throws IOException {
+        String emitted = EmitFixtureTest.emit("fixture.Ctx", String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.*;",
+                "@TsInterface",
+                "public interface Ctx {",
+                "  @TsMaybeAsync void activate();",
+                "  @TsOptional @TsMaybeAsync void install();",
+                "  @TsProperty(readOnly = true) String app();",
+                "  @TsNullable <T> T get(String key);",
+                "  @TsRaw(\"ReadableStream<unknown>\") Object stream();",
+                "}"));
+        assertEquals(String.join("\n",
+                "export interface Ctx {",
+                "  activate(): void | Promise<void>;",
+                "  readonly app: string;",
+                "  get<T>(key: string): T | undefined;",
+                "  install?(): void | Promise<void>;",
+                "  stream(): ReadableStream<unknown>;",
+                "}") + "\n", emitted.substring(emitted.indexOf("export interface")).trim() + "\n");
+    }
+
+    @Test
+    void emitsPhantomMarkerSoStructuralTypingStillConstrains() throws IOException {
+        String emitted = EmitFixtureTest.emit("fixture.Key", String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.*;",
+                "@TsInterface",
+                "@TsPhantom(\"T\")",
+                "public interface Key<T> {",
+                "  @TsProperty(readOnly = true) String id();",
+                "}"));
+        assertEquals(String.join("\n",
+                "export interface Key<T> {",
+                "  readonly __phantom?: T;",
+                "  readonly id: string;",
+                "}") + "\n", emitted.substring(emitted.indexOf("export interface")).trim() + "\n");
+    }
+}

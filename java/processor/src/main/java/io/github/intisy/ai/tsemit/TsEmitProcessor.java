@@ -30,6 +30,7 @@ import javax.tools.StandardLocation;
 public class TsEmitProcessor extends AbstractProcessor {
 
     private final List<String> chunks = new ArrayList<String>();
+    private int rawEscapes = 0;
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
@@ -51,18 +52,43 @@ public class TsEmitProcessor extends AbstractProcessor {
         TsInterface spec = type.getAnnotation(TsInterface.class);
         StringBuilder out = new StringBuilder();
         out.append("export interface ").append(type.getSimpleName()).append(joinVars(type.getTypeParameters())).append(" {\n");
+        TsPhantom phantom = type.getAnnotation(TsPhantom.class);
+        if (phantom != null) {
+            out.append("  readonly __phantom?: ").append(phantom.value()).append(";\n");
+        }
         for (ExecutableElement method : sortedMethods(type)) {
-            boolean property = method.getParameters().isEmpty() && spec.data();
-            out.append("  ").append(method.getSimpleName());
+            TsProperty asProperty = method.getAnnotation(TsProperty.class);
+            boolean property = method.getParameters().isEmpty() && (asProperty != null || spec.data());
+            out.append("  ");
+            if (property && asProperty != null && asProperty.readOnly()) {
+                out.append("readonly ");
+            }
+            out.append(method.getSimpleName());
+            if (method.getAnnotation(TsOptional.class) != null) {
+                out.append("?");
+            }
             if (property) {
-                out.append(": ").append(tsType(method.getReturnType())).append(";\n");
+                out.append(": ").append(returnType(method)).append(";\n");
             } else {
                 out.append(joinVars(method.getTypeParameters())).append("(").append(params(method))
-                        .append("): ").append(tsType(method.getReturnType())).append(";\n");
+                        .append("): ").append(returnType(method)).append(";\n");
             }
         }
         out.append("}\n");
         return out.toString();
+    }
+
+    private String returnType(ExecutableElement method) {
+        TsRaw raw = method.getAnnotation(TsRaw.class);
+        if (raw != null) {
+            rawEscapes++;
+            return raw.value();
+        }
+        if (method.getAnnotation(TsMaybeAsync.class) != null) {
+            return "void | Promise<void>";
+        }
+        String emitted = tsType(method.getReturnType());
+        return method.getAnnotation(TsNullable.class) != null ? emitted + " | undefined" : emitted;
     }
 
     private List<ExecutableElement> sortedMethods(TypeElement type) {
@@ -72,10 +98,13 @@ public class TsEmitProcessor extends AbstractProcessor {
                 methods.add((ExecutableElement) member);
             }
         }
+        // Name first, signature only as a tiebreaker: toString() renders a generic method as
+        // "<T>get(...)", which would otherwise sort every generic member ahead of the rest.
         Collections.sort(methods, new Comparator<ExecutableElement>() {
             @Override
             public int compare(ExecutableElement left, ExecutableElement right) {
-                return left.toString().compareTo(right.toString());
+                int byName = left.getSimpleName().toString().compareTo(right.getSimpleName().toString());
+                return byName != 0 ? byName : left.toString().compareTo(right.toString());
             }
         });
         return methods;
@@ -194,6 +223,8 @@ public class TsEmitProcessor extends AbstractProcessor {
             } finally {
                 writer.close();
             }
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,
+                    "tsemit: " + chunks.size() + " interfaces, " + rawEscapes + " raw escape hatches");
         } catch (IOException failure) {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "tsemit failed: " + failure.getMessage());
         }
