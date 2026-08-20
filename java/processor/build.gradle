@@ -1,0 +1,22 @@
+// javax.lang.model.SourceVersion.RELEASE_17 does not exist in the Java 8 API, so this module cannot
+// hold the ecosystem's 1.8 floor. It is build tooling that never ships to a server, which is why the
+// exemption is safe; the root block sets release 8 via tasks.matching, and last-registered-wins.
+// The annotations stay in :annotations at release 8, because :contract could not read them otherwise.
+dependencies {
+    implementation project(":annotations")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.matching { it.name == "compileJava" || it.name == "compileTestJava" }.configureEach {
+    options.release = 17
+}
+
+// The fixture test compiles sources in memory with this processor registered, so it must not be on
+// the annotation-processor path of its own compilation.
+tasks.named("compileJava") {
+    options.compilerArgs << "-proc:none"
+}
