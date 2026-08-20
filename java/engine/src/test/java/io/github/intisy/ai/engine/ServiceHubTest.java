@@ -1,7 +1,6 @@
 package io.github.intisy.ai.engine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -9,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -74,45 +71,38 @@ class ServiceHubTest {
     }
 
     @Test
-    void wantResolvesImmediatelyWhenTheServiceIsAlreadyThere() throws Exception {
+    void wantResolvesImmediatelyWhenTheServiceIsAlreadyThere() {
         ServiceHub hub = hub(new ManualScheduler());
         hub.forPlugin("store").register("store:thing", "the service");
-        assertEquals("the service", hub.forPlugin("reader").want("store:thing").toCompletableFuture().get());
+        assertEquals("the service", Settled.of(hub.forPlugin("reader").want("store:thing")).value());
     }
 
     @Test
-    void wantResolvesWhenTheServiceArrivesLater() throws Exception {
+    void wantResolvesWhenTheServiceArrivesLater() {
         ServiceHub hub = hub(new ManualScheduler());
-        CompletableFuture<Object> pending = hub.forPlugin("reader").want("store:thing").toCompletableFuture();
-        assertFalse(pending.isDone());
+        Settled<Object> pending = Settled.of(hub.forPlugin("reader").want("store:thing"));
+        assertEquals(0, pending.settlements());
         hub.forPlugin("store").register("store:thing", "the service");
-        assertEquals("the service", pending.get());
+        assertEquals("the service", pending.value());
     }
 
     @Test
     void wantRejectsOnTheTimeout() {
         ManualScheduler scheduler = new ManualScheduler();
         ServiceHub hub = hub(scheduler);
-        final CompletableFuture<Object> pending = hub.forPlugin("reader").want("store:thing", 50L).toCompletableFuture();
+        Settled<Object> pending = Settled.of(hub.forPlugin("reader").want("store:thing", 50L));
         scheduler.fireAll();
-        ExecutionException failure = assertThrows(ExecutionException.class, new Executable() {
-            @Override
-            public void execute() throws Exception {
-                pending.get();
-            }
-        });
-        assertTrue(failure.getCause() instanceof PluginException);
-        assertTrue(((PluginException) failure.getCause()).getDetail().contains("50"));
+        assertTrue(pending.failure().getDetail().contains("50"));
     }
 
     @Test
-    void aRegistrationCancelsAPendingTimeout() throws Exception {
+    void aRegistrationCancelsAPendingTimeout() {
         ManualScheduler scheduler = new ManualScheduler();
         ServiceHub hub = hub(scheduler);
-        CompletableFuture<Object> pending = hub.forPlugin("reader").want("store:thing", 50L).toCompletableFuture();
+        Settled<Object> pending = Settled.of(hub.forPlugin("reader").want("store:thing", 50L));
         hub.forPlugin("store").register("store:thing", "the service");
         scheduler.fireAll();
-        assertEquals("the service", pending.get());
+        assertEquals("the service", pending.value());
     }
 
     @Test
@@ -127,15 +117,9 @@ class ServiceHubTest {
     @Test
     void releasingAPluginRejectsTheWantsItWasWaitingOn() {
         ServiceHub hub = hub(new ManualScheduler());
-        final CompletableFuture<Object> pending = hub.forPlugin("reader").want("store:thing").toCompletableFuture();
+        Settled<Object> pending = Settled.of(hub.forPlugin("reader").want("store:thing"));
         hub.releasePlugin("reader");
-        ExecutionException failure = assertThrows(ExecutionException.class, new Executable() {
-            @Override
-            public void execute() throws Exception {
-                pending.get();
-            }
-        });
-        assertTrue(((PluginException) failure.getCause()).getDetail().contains("stopped while waiting"));
+        assertTrue(pending.failure().getDetail().contains("stopped while waiting"));
     }
 
     @Test

@@ -7,8 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 
 /**
  * The live service registry a host shares between every plugin it loads.
@@ -35,9 +33,9 @@ public final class ServiceHub {
     public interface Registry {
         Object get(String id);
 
-        CompletionStage<Object> want(String id);
+        Pending<Object> want(String id);
 
-        CompletionStage<Object> want(String id, long timeoutMillis);
+        Pending<Object> want(String id, long timeoutMillis);
 
         Scheduler.Cancellable watch(String id, Listener listener);
 
@@ -58,10 +56,10 @@ public final class ServiceHub {
 
     private static final class Waiter {
         private final String pluginId;
-        private final CompletableFuture<Object> settled;
+        private final Pending<Object> settled;
         private Scheduler.Cancellable timer;
 
-        Waiter(String pluginId, CompletableFuture<Object> settled) {
+        Waiter(String pluginId, Pending<Object> settled) {
             this.pluginId = pluginId;
             this.settled = settled;
         }
@@ -101,12 +99,12 @@ public final class ServiceHub {
             }
 
             @Override
-            public CompletionStage<Object> want(String id) {
+            public Pending<Object> want(String id) {
                 return awaitService(pluginId, id, null);
             }
 
             @Override
-            public CompletionStage<Object> want(String id, long timeoutMillis) {
+            public Pending<Object> want(String id, long timeoutMillis) {
                 return awaitService(pluginId, id, Long.valueOf(timeoutMillis));
             }
 
@@ -167,7 +165,7 @@ public final class ServiceHub {
                 if (waiter.timer != null) {
                     waiter.timer.cancel();
                 }
-                waiter.settled.completeExceptionally(stoppedWaiting(pluginId, waiting.getKey()));
+                waiter.settled.reject(stoppedWaiting(pluginId, waiting.getKey()));
             }
             if (waiting.getValue().isEmpty()) {
                 pending.remove();
@@ -196,7 +194,7 @@ public final class ServiceHub {
                 if (waiter.timer != null) {
                     waiter.timer.cancel();
                 }
-                waiter.settled.complete(service);
+                waiter.settled.resolve(service);
             }
         }
         notifyWatchers(id, service, true);
@@ -218,17 +216,16 @@ public final class ServiceHub {
     }
 
     /**
-     * @implNote The TypeScript attaches a no-op catch to the returned promise, because an unhandled
-     * JavaScript rejection would take the host down. A CompletableFuture nobody observes is inert on
-     * the JVM, so there is nothing to guard against here.
+     * @implNote A Pending nobody watched is inert, so a want whose caller dropped it needs no guard.
+     * The JavaScript boundary is where that stops being true, and it attaches the catch there.
      */
-    private CompletionStage<Object> awaitService(final String pluginId, final String id, Long timeoutMillis) {
+    private Pending<Object> awaitService(final String pluginId, final String id, Long timeoutMillis) {
         consumed(pluginId, id);
         Entry entry = entries.get(id);
         if (entry != null) {
-            return CompletableFuture.completedFuture(entry.service);
+            return Pending.of(entry.service);
         }
-        CompletableFuture<Object> settled = new CompletableFuture<Object>();
+        Pending<Object> settled = new Pending<Object>();
         final Waiter waiter = new Waiter(pluginId, settled);
         if (timeoutMillis != null) {
             final long millis = timeoutMillis.longValue();
@@ -239,7 +236,7 @@ public final class ServiceHub {
                     if (pending != null) {
                         pending.remove(waiter);
                     }
-                    waiter.settled.completeExceptionally(new PluginException(pluginId,
+                    waiter.settled.reject(new PluginException(pluginId,
                             "waited " + millis + "ms for service \"" + id + "\" and nothing registered it",
                             "install a plugin that provides \"" + id + "\", or use get() and carry on without it"));
                 }

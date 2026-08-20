@@ -7,10 +7,10 @@ import java.util.List;
  * A value that arrives later, or the failure that means it never will.
  *
  * @implNote The engine's own rather than a CompletionStage, because TeaVM 0.15.0's class library has
- * neither CompletableFuture nor CompletionStage: its java.util.concurrent carries the executor
- * interfaces, the concurrent collections and nothing more. Same seam as {@link Scheduler}, so the
- * engine owns no concurrency primitive at all: a JVM caller adapts this to a CompletableFuture and a
- * TeaVM build to a JSPromise.
+ * neither CompletableFuture nor CompletionStage: the concurrency support it does ship stops at the
+ * executor interfaces and the concurrent collections, nothing more. Same seam as {@link Scheduler}, so
+ * the engine owns no concurrency primitive at all: a JVM caller adapts this to a CompletableFuture and
+ * a TeaVM build to a JSPromise.
  *
  * <p>Nothing guards an unobserved failure, because there is nothing to guard: an unhandled JavaScript
  * rejection would take a host down, but a Pending nobody watched is inert.

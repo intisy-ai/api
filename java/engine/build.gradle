@@ -4,3 +4,24 @@ dependencies {
     compileOnly project(":annotations")
     annotationProcessor project(":processor")
 }
+
+// The one gate that catches a JDK type TeaVM cannot compile before :teavm does. javac at release 8
+// accepts CompletableFuture happily; TeaVM 0.15.0's classlib has no such class, so the engine would
+// compile here and fail to transpile there.
+def noConcurrency = tasks.register("noConcurrency") {
+    def mainDir = file("src/main/java")
+    inputs.dir mainDir
+    doLast {
+        def offenders = []
+        mainDir.eachFileRecurse { file ->
+            if (file.name.endsWith(".java") && file.text.contains("java.util.concurrent")) {
+                offenders << file.name
+            }
+        }
+        if (!offenders.isEmpty()) {
+            throw new GradleException("java.util.concurrent is not transpilable by TeaVM 0.15.0, found in: " + offenders.join(", "))
+        }
+    }
+}
+
+tasks.named("check") { dependsOn noConcurrency }
