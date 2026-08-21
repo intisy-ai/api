@@ -272,3 +272,36 @@ it("releases a plugin's capabilities and marks it stopped", () => {
   expect(host.capability("screens")).toEqual([]);
   expect(host.ledger.entry("config-ledger")?.status).toBe("stopped");
 });
+
+it("assembles the host object with exactly these keys, pinning it against HostSurface drift", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  expect(Object.keys(host).sort()).toEqual([
+    "capability",
+    "contextFor",
+    "descriptor",
+    "ledger",
+    "markBroken",
+    "release",
+    "service",
+    "supports",
+    "verifyActivation",
+  ]);
+  expect(Object.keys(host.ledger).sort()).toEqual(["entries", "entry", "recordDeclared"]);
+});
+
+it("assembles the context object with exactly these keys, pinning it against ContextSurface drift", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const context = host.contextFor(SCREENS, runtime());
+  expect(Object.keys(context).sort()).toEqual([
+    "config",
+    "events",
+    "host",
+    "log",
+    "manifest",
+    "paths",
+    "provide",
+    "services",
+  ]);
+  expect(Object.keys(context.services).sort()).toEqual(["get", "ids", "register", "want", "watch"]);
+  expect(Object.keys(context.events).sort()).toEqual(["publish", "subscribe"]);
+});
