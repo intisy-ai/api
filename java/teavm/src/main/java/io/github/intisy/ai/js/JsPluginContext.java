@@ -14,7 +14,9 @@ import org.teavm.jso.JSObject;
 /**
  * @implNote Shape only, exactly like {@link JsPluginHost}: it converts a Java list to a JSArray (via
  * {@code services.ids()}), a Pending to a Promise, and a PluginException to a marked JavaScript Error
- * for {@code provide}. Every other branch here is the engine's, reached through the session it built.
+ * for {@code provide} and for {@code register}, reusing {@link JsPluginHost#serviceEvent} for the
+ * watch listener's event string and {@link JsPluginHost#orUndefined} for a missing {@code get}. Every
+ * other branch here is the engine's, reached through the session it built.
  *
  * <p>{@code manifest}, {@code config}, {@code log} and {@code paths} cross untouched and by identity,
  * because {@code context.manifest} must be the very object a plugin's manifest was parsed from, not a
@@ -47,12 +49,12 @@ final class JsPluginContext implements JSObject {
 
     @JSFunctor
     interface WatchFn extends JSObject {
-        JSObject call(String id, ServiceListenerFn listener);
+        JsRuntime.Disposer call(String id, ServiceListenerFn listener);
     }
 
     @JSFunctor
     interface RegisterFn extends JSObject {
-        JSObject call(String id, JSObject service);
+        JsRuntime.Disposer call(String id, JSObject service);
     }
 
     @JSFunctor
@@ -67,7 +69,7 @@ final class JsPluginContext implements JSObject {
 
     @JSFunctor
     interface SubscribeFn extends JSObject {
-        JSObject call(String topic, PayloadListenerFn listener);
+        JsRuntime.Disposer call(String topic, PayloadListenerFn listener);
     }
 
     @JSFunctor
@@ -84,7 +86,7 @@ final class JsPluginContext implements JSObject {
         IdFn get = new IdFn() {
             @Override
             public JSObject call(String id) {
-                return (JSObject) services.get(id);
+                return JsPluginHost.orUndefined((JSObject) services.get(id));
             }
         };
         WantFn want = new WantFn() {
@@ -97,11 +99,11 @@ final class JsPluginContext implements JSObject {
         };
         WatchFn watch = new WatchFn() {
             @Override
-            public JSObject call(String id, final ServiceListenerFn listener) {
+            public JsRuntime.Disposer call(String id, final ServiceListenerFn listener) {
                 Scheduler.Cancellable cancellable = services.watch(id, new ServiceHub.Listener() {
                     @Override
                     public void changed(Object service, boolean registered) {
-                        listener.call((JSObject) service, registered ? "register" : "unregister");
+                        listener.call(JsPluginHost.orUndefined((JSObject) service), JsPluginHost.serviceEvent(registered));
                     }
                 });
                 return disposerOf(cancellable);
@@ -109,7 +111,7 @@ final class JsPluginContext implements JSObject {
         };
         RegisterFn register = new RegisterFn() {
             @Override
-            public JSObject call(String id, JSObject service) {
+            public JsRuntime.Disposer call(String id, JSObject service) {
                 try {
                     Scheduler.Cancellable cancellable = services.register(id, service);
                     return disposerOf(cancellable);
@@ -135,7 +137,7 @@ final class JsPluginContext implements JSObject {
         };
         SubscribeFn subscribe = new SubscribeFn() {
             @Override
-            public JSObject call(String topic, final PayloadListenerFn listener) {
+            public JsRuntime.Disposer call(String topic, final PayloadListenerFn listener) {
                 Scheduler.Cancellable cancellable = events.subscribe(topic, new EventBus.Listener() {
                     @Override
                     public void received(Object payload) {
@@ -171,7 +173,7 @@ final class JsPluginContext implements JSObject {
         };
     }
 
-    /** Null when the plugin called {@code want(id)} with no options, or a well-formed options object. */
+    /** Null when the plugin called {@code want(id)} with no options, or the {@code timeoutMs} it gave. */
     private static Long timeoutOf(JSObject options) {
         if (options == null) {
             return null;

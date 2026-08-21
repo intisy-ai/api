@@ -22,10 +22,13 @@ import org.teavm.jso.core.JSPromise;
 import org.teavm.jso.function.JSConsumer;
 
 /**
- * @implNote Shape only. Every decision this class appears to make is the engine's: it converts an
- * enum to the lower-case string a surface renders, a Pending to a Promise, a Java list to a JSArray,
- * and a PluginException to a marked JavaScript Error. A branch here that is not one of those four
- * conversions belongs in {@link io.github.intisy.ai.engine.PluginHost} instead.
+ * @implNote Shape only. Every decision this class appears to make is the engine's: it converts a
+ * status enum to the lower-case string a surface renders ({@link #lower}), a boolean to the
+ * "register"/"unregister" string a service watcher renders ({@link #serviceEvent}), a Pending to a
+ * Promise, a Java list to a JSArray, a PluginException to a marked JavaScript Error, and an absent
+ * Java null to the JavaScript undefined a missing value actually is ({@link #orUndefined}). A branch
+ * here that is not one of those six conversions belongs in
+ * {@link io.github.intisy.ai.engine.PluginHost} instead.
  *
  * <p>A capability implementation and a service travel as opaque JSObject and are handed back by
  * identity, never rebuilt, because a plugin's implementation is a live object with methods and a copy
@@ -72,7 +75,7 @@ final class JsPluginHost implements JSObject {
     }
 
     /** Reads the options tree {@code EngineJs.createPluginHost} already converted, and builds the host. */
-    static JsPluginHost from(Object tree, JSObject options) {
+    static JsPluginHost from(Object tree) {
         String app = text(tree, "app");
         int api = intOr(tree, "api", Api.API_VERSION);
         List<String> surfaces = strings(member(tree, "surfaces"));
@@ -126,7 +129,7 @@ final class JsPluginHost implements JSObject {
         IdFn service = new IdFn() {
             @Override
             public JSObject call(String id) {
-                return (JSObject) host.service(id);
+                return orUndefined((JSObject) host.service(id));
             }
         };
         MarkBrokenFn markBroken = new MarkBrokenFn() {
@@ -156,7 +159,7 @@ final class JsPluginHost implements JSObject {
             @Override
             public JSObject call(String pluginId) {
                 LedgerEntry found = host.getLedger().entry(pluginId);
-                return found == null ? null : ledgerRow(found);
+                return orUndefined(found == null ? null : ledgerRow(found));
             }
         };
         RecordDeclaredFn recordDeclared = new RecordDeclaredFn() {
@@ -172,8 +175,9 @@ final class JsPluginHost implements JSObject {
     }
 
     /**
-     * @implNote Runs immediately when the outcome already happened, so a caller reading a service
-     * that arrived before it asked never waits for something that will not come again.
+     * @implNote {@code JSPromise.Resolver}/{@code Rejector} do not exist in teavm-jso-apis 0.15.0,
+     * hence the {@link JSConsumer} executor shape rather than the resolve/reject objects a newer
+     * TeaVM might offer.
      */
     static JSPromise<JSObject> promise(final Pending<Object> pending) {
         return new JSPromise<JSObject>(new JSPromise.Executor<JSObject>() {
@@ -245,6 +249,20 @@ final class JsPluginHost implements JSObject {
         }
         return "activating";
     }
+
+    /** The other named mapping table, beside {@link #lower}: what a service watcher's event string reads. */
+    static String serviceEvent(boolean registered) {
+        return registered ? "register" : "unregister";
+    }
+
+    /**
+     * @implNote A Java null reference crosses to JavaScript as {@code null}, but several members
+     * (a missing service, a missing ledger entry, the service a watcher sees on unregister) are
+     * {@code host.ts} absences, which are {@code undefined}. This is the one place that difference
+     * is corrected, rather than leaving every caller to tell {@code null} and {@code undefined} apart.
+     */
+    @JSBody(params = "value", script = "return value === null ? undefined : value;")
+    static native JSObject orUndefined(JSObject value);
 
     private static JSObject ledgerRow(LedgerEntry entry) {
         return ledgerRowObject(entry.getPluginId(), lower(entry.getStatus()),

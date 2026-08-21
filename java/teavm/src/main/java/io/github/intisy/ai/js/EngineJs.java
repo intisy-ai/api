@@ -93,8 +93,7 @@ public final class EngineJs {
 
     @JSExport
     public static JsPluginHost createPluginHost(JSObject options) {
-        Object tree = JsJson.toTree(options);
-        return JsPluginHost.from(tree, options);
+        return JsPluginHost.from(JsJson.toTree(options));
     }
 
     @JSExport
