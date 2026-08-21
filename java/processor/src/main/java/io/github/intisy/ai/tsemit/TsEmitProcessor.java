@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -32,6 +34,9 @@ import javax.tools.StandardLocation;
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedOptions({"tsemit.name", "tsemit.ext", "tsemit.keys", "tsemit.imports", "tsemit.reexport"})
 public class TsEmitProcessor extends AbstractProcessor {
+
+    private static final Pattern CODE_TAG = Pattern.compile("\\{@code ([^}]*)\\}");
+    private static final Pattern LINK_TAG = Pattern.compile("\\{@link ([^}]*)\\}");
 
     private static final List<String> KEY_TYPES =
             Collections.unmodifiableList(Arrays.asList("CapabilityType", "ServiceType", "TopicType"));
@@ -60,7 +65,7 @@ public class TsEmitProcessor extends AbstractProcessor {
             }
             TypeElement type = (TypeElement) element;
             emittedTypes.add(type.getSimpleName().toString());
-            chunks.add("export type " + type.getSimpleName() + " = " + enumUnion(type) + ";\n");
+            chunks.add(docBlock(type, "") + "export type " + type.getSimpleName() + " = " + enumUnion(type) + ";\n");
         }
         for (Element element : round.getElementsAnnotatedWith(TsModule.class)) {
             if (element.getKind() != ElementKind.INTERFACE) {
@@ -75,7 +80,7 @@ public class TsEmitProcessor extends AbstractProcessor {
             String value = constant.literal().isEmpty()
                     ? "{ id: \"" + constant.id() + "\" }"
                     : constant.literal();
-            constants.add("export const " + element.getSimpleName() + ": " + constant.type() + " = " + value + ";");
+            constants.add(docBlock(element, "") + "export const " + element.getSimpleName() + ": " + constant.type() + " = " + value + ";");
         }
         if (round.processingOver()) {
             write();
@@ -86,14 +91,17 @@ public class TsEmitProcessor extends AbstractProcessor {
     private String emit(TypeElement type) {
         TsInterface spec = type.getAnnotation(TsInterface.class);
         StringBuilder out = new StringBuilder();
+        out.append(docBlock(type, ""));
         out.append("export interface ").append(type.getSimpleName()).append(joinVars(type.getTypeParameters())).append(" {\n");
         TsPhantom phantom = type.getAnnotation(TsPhantom.class);
         if (phantom != null) {
+            out.append("  /** Never present at run time. It exists so two keys parameterised differently cannot be interchanged. */\n");
             out.append("  readonly __phantom?: ").append(phantom.value()).append(";\n");
         }
         for (ExecutableElement method : sortedMethods(type)) {
             TsProperty asProperty = method.getAnnotation(TsProperty.class);
             boolean property = method.getParameters().isEmpty() && (asProperty != null || spec.data());
+            out.append(docBlock(method, "  "));
             out.append("  ");
             if (property && asProperty != null && asProperty.readOnly()) {
                 out.append("readonly ");
@@ -125,11 +133,98 @@ public class TsEmitProcessor extends AbstractProcessor {
     private String emitModule(TypeElement type) {
         StringBuilder out = new StringBuilder();
         for (ExecutableElement method : sortedMethods(type)) {
+            out.append(docBlock(method, ""));
             out.append("export declare function ").append(method.getSimpleName())
                     .append(joinVars(method.getTypeParameters())).append("(").append(params(method))
                     .append("): ").append(returnType(method)).append(";\n");
         }
         return out.toString();
+    }
+
+    /**
+     * One element's javadoc, rendered as the TSDoc block that precedes its declaration.
+     *
+     * @implNote Carried rather than dropped because the Java IS the documentation: the generated
+     * surface is what a plugin author reads, and a declaration file with no prose is a reference
+     * nobody can use. {@code @link} targets are left for {@link #resolveLinks} to finish, since
+     * whether a target is an emitted type is only known once every round is over.
+     */
+    private String docBlock(Element element, String indent) {
+        List<String> lines = tsdoc(processingEnv.getElementUtils().getDocComment(element));
+        if (lines.isEmpty()) {
+            return "";
+        }
+        if (lines.size() == 1) {
+            return indent + "/** " + lines.get(0) + " */\n";
+        }
+        StringBuilder out = new StringBuilder(indent).append("/**\n");
+        for (String line : lines) {
+            out.append(indent).append(line.isEmpty() ? " *" : " * " + line).append("\n");
+        }
+        return out.append(indent).append(" */\n").toString();
+    }
+
+    /**
+     * @implNote {@code @implNote} becomes {@code @remarks} because both mean the same thing to their
+     * own reader: rationale that belongs with the declaration rather than in its summary. A javadoc
+     * {@code @param} has no dash and a TSDoc one requires it.
+     */
+    private static List<String> tsdoc(String raw) {
+        List<String> lines = new ArrayList<String>();
+        if (raw == null || raw.trim().isEmpty()) {
+            return lines;
+        }
+        for (String line : raw.split("\n", -1)) {
+            String text = line.trim();
+            if (text.startsWith("<p>")) {
+                lines.add("");
+                text = text.substring(3).trim();
+            }
+            text = text.replace("</p>", "").trim();
+            if (text.startsWith("@implNote")) {
+                lines.add("@remarks");
+                text = text.substring("@implNote".length()).trim();
+            } else if (text.startsWith("@return ")) {
+                text = "@returns " + text.substring("@return ".length());
+            } else if (text.startsWith("@param ")) {
+                String rest = text.substring("@param ".length()).trim();
+                int space = rest.indexOf(' ');
+                text = space < 0 ? "@param " + rest
+                        : "@param " + rest.substring(0, space) + " - " + rest.substring(space + 1).trim();
+            }
+            text = CODE_TAG.matcher(text).replaceAll("`$1`");
+            if (!text.isEmpty() || !lines.isEmpty()) {
+                lines.add(text);
+            }
+        }
+        while (!lines.isEmpty() && lines.get(lines.size() - 1).isEmpty()) {
+            lines.remove(lines.size() - 1);
+        }
+        return lines;
+    }
+
+    /**
+     * Turns every carried {@code @link} into a TSDoc link when its target is a type this surface
+     * declares, and into a code span when it is not.
+     *
+     * @implNote A link to a Java name TypeScript never sees resolves to nothing, and typedoc runs
+     * with invalid links treated as errors, so an unresolvable target has to stop being a link
+     * rather than stay one and break the docs build. The member separator differs too: javadoc's
+     * {@code #} is TSDoc's {@code .}.
+     */
+    private String resolveLinks(String body) {
+        Matcher found = LINK_TAG.matcher(body);
+        StringBuffer out = new StringBuffer();
+        while (found.find()) {
+            String target = found.group(1).trim();
+            int hash = target.indexOf('#');
+            String owner = hash < 0 ? target : target.substring(0, hash);
+            String replacement = emittedTypes.contains(owner)
+                    ? "{@link " + target.replace('#', '.') + "}"
+                    : "`" + (hash < 0 ? target : target.substring(hash + 1)) + "`";
+            found.appendReplacement(out, Matcher.quoteReplacement(replacement));
+        }
+        return found.appendTail(out).toString();
     }
 
     private String returnType(ExecutableElement method) {
@@ -348,7 +443,7 @@ public class TsEmitProcessor extends AbstractProcessor {
             body.append(chunk).append("\n");
         }
         try {
-            writeResource(basename() + surfaceExtension(), banner(body.toString(), null));
+            writeResource(basename() + surfaceExtension(), resolveLinks(banner(body.toString(), null)));
             writeConstants();
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,
                     "tsemit: " + chunks.size() + " interfaces, " + constants.size() + " constants, "
@@ -368,7 +463,7 @@ public class TsEmitProcessor extends AbstractProcessor {
         for (String constant : constants) {
             body.append(constant).append("\n");
         }
-        writeResource(basename() + ".keys.ts", banner(body.toString(), "./" + basename() + ".js", reexport));
+        writeResource(basename() + ".keys.ts", resolveLinks(banner(body.toString(), "./" + basename() + ".js", reexport)));
     }
 
     private String banner(String body, String localSpecifier) {

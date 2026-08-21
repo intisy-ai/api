@@ -12,16 +12,20 @@ import io.github.intisy.ai.tsemit.TsOptional;
  */
 @TsInterface
 public interface Plugin {
+    /** Supplies the implementation behind every capability the manifest declares. */
     @TsMaybeAsync
     void activate(PluginContext context);
 
+    /** Releases whatever `activate` took: timers, watchers, child processes. */
     @TsMaybeAsync
     void deactivate();
 
+    /** Runs once after the first deploy. */
     @TsOptional
     @TsMaybeAsync
     void install(PluginContext context);
 
+    /** Runs on demand from a host, to put a broken installation right. */
     @TsOptional
     @TsMaybeAsync
     void repair(PluginContext context);

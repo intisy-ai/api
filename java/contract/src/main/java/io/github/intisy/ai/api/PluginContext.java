@@ -13,23 +13,30 @@ import io.github.intisy.ai.tsemit.TsProperty;
 @TsInterface
 public interface PluginContext {
     /**
+     * Supplies the implementation behind a capability the manifest declares.
+     *
      * @implNote One signature, never a plain-string overload beside it: the pair would let a wrong
      * payload compile through the string side.
      */
     <T> void provide(CapabilityType<T> type, T implementation);
 
+    /** What this plugin may know about the host. */
     @TsProperty(readOnly = true)
     HostDescriptor host();
 
+    /** This plugin's resolved configuration. */
     @TsProperty(readOnly = true)
     PluginConfig config();
 
+    /** This plugin's logger. */
     @TsProperty(readOnly = true)
     Logger log();
 
+    /** The storage directories of the home this plugin runs in. */
     @TsProperty(readOnly = true)
     PluginPaths paths();
 
+    /** This plugin's own manifest, as the host validated it. */
     @TsProperty(readOnly = true)
     PluginManifest manifest();
 }

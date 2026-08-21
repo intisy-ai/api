@@ -12,6 +12,7 @@ import io.github.intisy.ai.tsemit.TsConstant;
  */
 public final class Api {
 
+    /** The API major version this package implements. */
     @TsConstant(type = "number", literal = "2")
     public static final int API_VERSION = 2;
 

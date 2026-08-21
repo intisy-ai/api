@@ -43,6 +43,7 @@ class ShapeAnnotationTest {
                 "}"));
         assertEquals(String.join("\n",
                 "export interface Key<T> {",
+                "  /** Never present at run time. It exists so two keys parameterised differently cannot be interchanged. */",
                 "  readonly __phantom?: T;",
                 "  readonly id: string;",
                 "}") + "\n", emitted.substring(emitted.indexOf("export interface")).trim() + "\n");

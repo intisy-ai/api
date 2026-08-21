@@ -6,24 +6,31 @@ import io.github.intisy.ai.tsemit.TsProperty;
 /** The context a plugin's activate receives. */
 @TsInterface
 public interface ContextSurface {
+    /** The plugin's own manifest, by identity, as it was parsed. */
     @TsProperty(readOnly = true)
     Object manifest();
 
+    /** What the plugin may know about the host. */
     @TsProperty(readOnly = true)
     HostDescriptorShape host();
 
+    /** The plugin's resolved configuration, as the runtime supplied it. */
     @TsProperty(readOnly = true)
     Object config();
 
+    /** The plugin's logger, as the runtime supplied it. */
     @TsProperty(readOnly = true)
     Object log();
 
+    /** The storage directories of the home the plugin runs in. */
     @TsProperty(readOnly = true)
     PluginPathsShape paths();
 
+    /** The service registry, fenced to this plugin's namespace. */
     @TsProperty(readOnly = true)
     ServiceRegistryShape services();
 
+    /** Publish and subscribe, attributed to this plugin. */
     @TsProperty(readOnly = true)
     EventBusShape events();
 

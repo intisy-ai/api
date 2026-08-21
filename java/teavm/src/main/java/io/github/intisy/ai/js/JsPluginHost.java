@@ -200,7 +200,7 @@ final class JsPluginHost implements JSObject {
 
     /**
      * @implNote A dropped {@code want} (nobody awaits or catches it) must not raise an unhandled
-     * rejection and take the whole host down, mirroring {@code services.ts}'s own no-op catch.
+     * rejection and take the whole host down.
      */
     @JSBody(params = "promise", script = "promise.catch(function () {}); return promise;")
     private static native JSPromise<JSObject> guarded(JSPromise<JSObject> promise);
@@ -265,7 +265,8 @@ final class JsPluginHost implements JSObject {
     /**
      * @implNote A Java null reference crosses to JavaScript as {@code null}, but several members
      * (a missing service, a missing ledger entry, the service a watcher sees on unregister) are
-     * {@code host.ts} absences, which are {@code undefined}. This is the one place that difference
+     * declared absent rather than null, and an absence in JavaScript is {@code undefined} rather
+     * than {@code null}. This is the one place that difference
      * is corrected, rather than leaving every caller to tell {@code null} and {@code undefined} apart.
      */
     @JSBody(params = "value", script = "return value === null ? undefined : value;")

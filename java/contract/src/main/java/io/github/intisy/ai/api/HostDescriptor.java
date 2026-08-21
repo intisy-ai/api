@@ -11,9 +11,12 @@ import java.util.List;
  */
 @TsInterface(data = true)
 public interface HostDescriptor {
+    /** The app id, for example `claude` or `opencode`. */
     String app();
 
+    /** The API major version this host implements. */
     int api();
 
+    /** Surface ids this host renders, for example `tui` or `gui`. An unknown id is ignored. */
     List<String> surfaces();
 }
