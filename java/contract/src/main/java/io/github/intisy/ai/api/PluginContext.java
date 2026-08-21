@@ -1,5 +1,6 @@
 package io.github.intisy.ai.api;
 
+import io.github.intisy.ai.api.seam.Logger;
 import io.github.intisy.ai.tsemit.TsInterface;
 import io.github.intisy.ai.tsemit.TsProperty;
 

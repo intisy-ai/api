@@ -140,11 +140,11 @@ export interface Plugin {
 }
 
 /**
- * Where a plugin writes what happened.
+ * Where a component writes what happened.
  *
  * @remarks
  * The host decides where the lines go, whether they mirror to a console, and how they are
- * attributed, so a plugin never opens a log file itself.
+ * attributed, so a component never opens a log file itself.
  */
 export interface Logger {
   /** Detail only useful while debugging. */

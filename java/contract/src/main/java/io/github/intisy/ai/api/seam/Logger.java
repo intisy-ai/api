@@ -1,12 +1,12 @@
-package io.github.intisy.ai.api;
+package io.github.intisy.ai.api.seam;
 
 import io.github.intisy.ai.tsemit.TsInterface;
 
 /**
- * Where a plugin writes what happened.
+ * Where a component writes what happened.
  *
  * @implNote The host decides where the lines go, whether they mirror to a console, and how they are
- * attributed, so a plugin never opens a log file itself.
+ * attributed, so a component never opens a log file itself.
  */
 @TsInterface
 public interface Logger {
