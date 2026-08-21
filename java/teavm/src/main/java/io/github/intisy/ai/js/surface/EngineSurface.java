@@ -1,21 +1,20 @@
 package io.github.intisy.ai.js.surface;
 
-import io.github.intisy.ai.js.EngineJs;
 import io.github.intisy.ai.tsemit.TsModule;
 import io.github.intisy.ai.tsemit.TsNullable;
-import io.github.intisy.ai.tsemit.TsRaw;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * The engine's JavaScript module surface, typed for a TypeScript consumer.
  *
  * @implNote Declares the shape {@code EngineJs} actually exports; it is never implemented, only
  * emitted, and {@link TsModule} renders its members as free functions rather than an interface a
- * caller would otherwise have to cast a module namespace through. setDiagnosticSink's parameter is
- * raw because the processor has no mapping from a JSFunctor interface to a TypeScript function type;
- * setStrict needs no such escape, since a boxed Boolean plus {@link TsNullable} on the parameter is
- * enough. pluginError returns {@link PluginErrorShape} rather than a raw {@code Error}, because that
- * is the real shape {@code JsErrors.mint} attaches and a caller can read it with no cast.
+ * caller would otherwise have to cast a module namespace through. pluginError returns
+ * {@link PluginErrorShape} rather than a raw {@code Error}, because that is the real shape
+ * {@code JsErrors.mint} attaches and a caller can read it with no cast. setDiagnosticSink's sink is a
+ * {@link Consumer}, which this processor maps to a function type, so no raw escape remains anywhere
+ * in this surface.
  */
 @TsModule
 public interface EngineSurface {
@@ -26,7 +25,7 @@ public interface EngineSurface {
 
     Object assertManifest(Object manifest, List<String> wellKnownServices);
 
-    HostSurface createPluginHost(Object options);
+    HostSurface createPluginHost(PluginHostOptionsShape options);
 
     PluginErrorShape pluginError(String pluginId, String detail, String fix);
 
@@ -34,5 +33,5 @@ public interface EngineSurface {
 
     void setStrict(@TsNullable Boolean enabled);
 
-    void setDiagnosticSink(@TsRaw("((message: string) => void) | null") EngineJs.Sink sink);
+    void setDiagnosticSink(@TsNullable Consumer<String> sink);
 }

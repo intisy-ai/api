@@ -121,7 +121,11 @@ public class TsEmitProcessor extends AbstractProcessor {
             return "void | Promise<void>";
         }
         String emitted = tsType(method.getReturnType());
-        return method.getAnnotation(TsNullable.class) != null ? emitted + " | undefined" : emitted;
+        TsNullable nullable = method.getAnnotation(TsNullable.class);
+        if (nullable == null) {
+            return emitted;
+        }
+        return emitted + (nullable.asNull() ? " | null" : " | undefined");
     }
 
     private List<ExecutableElement> sortedMethods(TypeElement type) {
@@ -205,6 +209,9 @@ public class TsEmitProcessor extends AbstractProcessor {
 
     private String declared(DeclaredType type) {
         TypeElement element = (TypeElement) type.asElement();
+        if (element.getKind() == ElementKind.ENUM) {
+            return enumLiteral(element);
+        }
         String qualified = element.getQualifiedName().toString();
         if ("java.lang.String".equals(qualified)) {
             return "string";
@@ -235,6 +242,12 @@ public class TsEmitProcessor extends AbstractProcessor {
                 || "java.util.concurrent.CompletableFuture".equals(qualified)) {
             return "Promise<" + (mapped.isEmpty() ? "void" : tsType(mapped.get(0))) + ">";
         }
+        if ("java.util.function.Consumer".equals(qualified)) {
+            return "((value: " + tsType(mapped.get(0)) + ") => void)";
+        }
+        if ("java.util.function.BiConsumer".equals(qualified)) {
+            return "((a: " + tsType(mapped.get(0)) + ", b: " + tsType(mapped.get(1)) + ") => void)";
+        }
         StringBuilder out = new StringBuilder(element.getSimpleName().toString());
         List<? extends TypeMirror> args = type.getTypeArguments();
         if (!args.isEmpty()) {
@@ -248,6 +261,24 @@ public class TsEmitProcessor extends AbstractProcessor {
             out.append(">");
         }
         return out.toString();
+    }
+
+    /**
+     * @implNote An enum used purely as a type-level vocabulary (never itself annotated) emits as the
+     * literal union of its constant names, so a two-value enum such as a service event becomes
+     * {@code "register" | "unregister"} rather than a class name TypeScript cannot resolve.
+     */
+    private String enumLiteral(TypeElement element) {
+        StringBuilder union = new StringBuilder();
+        for (Element member : element.getEnclosedElements()) {
+            if (member.getKind() == ElementKind.ENUM_CONSTANT) {
+                if (union.length() > 0) {
+                    union.append(" | ");
+                }
+                union.append("\"").append(member.getSimpleName()).append("\"");
+            }
+        }
+        return union.toString();
     }
 
     /**
