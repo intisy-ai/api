@@ -22,7 +22,7 @@ final class JsErrors {
     }
 
     static JSObject of(PluginException failure) {
-        return mint(failure.getPluginId(), failure.getDetail(), failure.getFix());
+        return build(failure.getPluginId(), failure.getDetail(), failure.getFix(), failure.getMessage());
     }
 
     @JSBody(params = {"pluginId", "detail", "fix", "message"}, script =

@@ -1314,7 +1314,7 @@ igiaj_JsPluginContext$1__init_0 = var_0 => {
     return var_1;
 },
 igiaj_JsPluginContext$1_call = ($this, $id) => {
-    return igiaj_JsPluginHost_orUndefined$js_body$_9(otji_JSWrapper_unwrap($this.$val$services1.$get0($id)));
+    return igiaj_JsPluginHost_orUndefined$js_body$_10(otji_JSWrapper_unwrap($this.$val$services1.$get0($id)));
 },
 igiaj_JsPluginContext$1_call$exported$0 = (var$1, var$2) => {
     var$2 = $rt_str(var$2);
@@ -1648,7 +1648,7 @@ igiaj_JsPluginHost_build = $host => {
     var$2 = igiae_PluginHost_getApp($host);
     var$3 = igiae_PluginHost_getApi($host);
     var$4 = igiaj_JsJson_fromStrings(igiae_PluginHost_getSurfaces($host));
-    $descriptor = igiaj_JsPluginHost_descriptorObject$js_body$_15($rt_ustr(var$2), var$3, var$4);
+    $descriptor = igiaj_JsPluginHost_descriptorObject$js_body$_16($rt_ustr(var$2), var$3, var$4);
     $supports = igiaj_JsPluginHost$1__init_0($host);
     $verifyActivation = igiaj_JsPluginHost$2__init_0($host);
     $contextFor = igiaj_JsPluginHost$3__init_0($host, $descriptor);
@@ -1659,8 +1659,8 @@ igiaj_JsPluginHost_build = $host => {
     $entries = igiaj_JsPluginHost$8__init_0($host);
     $entry = igiaj_JsPluginHost$9__init_0($host);
     $recordDeclared = igiaj_JsPluginHost$10__init_0($host);
-    $ledger = igiaj_JsPluginHost_ledgerObject$js_body$_16(otji_JS_function(otji_JSWrapper_unwrap($entries), "call"), otji_JS_function(otji_JSWrapper_unwrap($entry), "call"), otji_JS_function(otji_JSWrapper_unwrap($recordDeclared), "call"));
-    return igiaj_JsPluginHost_assemble$js_body$_19($descriptor, $ledger, otji_JS_function(otji_JSWrapper_unwrap($supports), "call"), otji_JS_function(otji_JSWrapper_unwrap($contextFor), "call"), otji_JS_function(otji_JSWrapper_unwrap($verifyActivation), "call"), otji_JS_function(otji_JSWrapper_unwrap($capability), "call"), otji_JS_function(otji_JSWrapper_unwrap($service), "call"), otji_JS_function(otji_JSWrapper_unwrap($markBroken), "call"), otji_JS_function(otji_JSWrapper_unwrap($release), "call"));
+    $ledger = igiaj_JsPluginHost_ledgerObject$js_body$_17(otji_JS_function(otji_JSWrapper_unwrap($entries), "call"), otji_JS_function(otji_JSWrapper_unwrap($entry), "call"), otji_JS_function(otji_JSWrapper_unwrap($recordDeclared), "call"));
+    return igiaj_JsPluginHost_assemble$js_body$_20($descriptor, $ledger, otji_JS_function(otji_JSWrapper_unwrap($supports), "call"), otji_JS_function(otji_JSWrapper_unwrap($contextFor), "call"), otji_JS_function(otji_JSWrapper_unwrap($verifyActivation), "call"), otji_JS_function(otji_JSWrapper_unwrap($capability), "call"), otji_JS_function(otji_JSWrapper_unwrap($service), "call"), otji_JS_function(otji_JSWrapper_unwrap($markBroken), "call"), otji_JS_function(otji_JSWrapper_unwrap($release), "call"));
 },
 igiaj_JsPluginHost_promise = $pending => {
     let var$2;
@@ -1709,7 +1709,7 @@ igiaj_JsPluginHost_ledgerRow = $entry => {
     var$9 = igiaj_JsJson_fromStrings(igiae_LedgerEntry_getPermissions($entry));
     var$10 = igiae_LedgerEntry_getErrorDetail($entry);
     var$11 = igiae_LedgerEntry_getErrorFix($entry);
-    return igiaj_JsPluginHost_ledgerRowObject$js_body$_18($rt_ustr(var$2), $rt_ustr(var$3), var$4, var$5, var$6, var$7, var$8, var$9, $rt_ustr(var$10), $rt_ustr(var$11));
+    return igiaj_JsPluginHost_ledgerRowObject$js_body$_19($rt_ustr(var$2), $rt_ustr(var$3), var$4, var$5, var$6, var$7, var$8, var$9, $rt_ustr(var$10), $rt_ustr(var$11));
 },
 igiaj_JsPluginHost_member = ($tree, $name) => {
     return !$rt_isInstance($tree, ju_Map) ? null : $tree.$get1($name);
@@ -1742,26 +1742,26 @@ igiaj_JsPluginHost_strings = $value => {
     }
     return $out;
 },
-igiaj_JsPluginHost_orUndefined$js_body$_9 = var$1 => {
+igiaj_JsPluginHost_orUndefined$js_body$_10 = var$1 => {
     return var$1 === null ? undefined : var$1;
 },
-igiaj_JsPluginHost_descriptorObject$js_body$_15 = (var$1, var$2, var$3) => {
+igiaj_JsPluginHost_descriptorObject$js_body$_16 = (var$1, var$2, var$3) => {
     return { app : var$1, api : var$2, surfaces : var$3 };
 },
-igiaj_JsPluginHost_ledgerObject$js_body$_16 = (var$1, var$2, var$3) => {
+igiaj_JsPluginHost_ledgerObject$js_body$_17 = (var$1, var$2, var$3) => {
     return { entries : var$1, entry : var$2, recordDeclared : var$3 };
 },
-igiaj_JsPluginHost_capabilityRecord$js_body$_17 = (var$1, var$2) => {
+igiaj_JsPluginHost_capabilityRecord$js_body$_18 = (var$1, var$2) => {
     return { pluginId : var$1, implementation : var$2 };
 },
-igiaj_JsPluginHost_ledgerRowObject$js_body$_18 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10) => {
+igiaj_JsPluginHost_ledgerRowObject$js_body$_19 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10) => {
     var row = { pluginId : var$1, status : var$2, capabilitiesDeclared : var$3, capabilitiesProvided : var$4, servicesProvided : var$5, servicesConsumed : var$6, topics : var$7, permissions : var$8 };
     if (var$9 !== null) {
         row.error = { detail : var$9, fix : var$10 };
     }
     return row;
 },
-igiaj_JsPluginHost_assemble$js_body$_19 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9) => {
+igiaj_JsPluginHost_assemble$js_body$_20 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9) => {
     return { descriptor : var$1, ledger : var$2, supports : var$3, contextFor : var$4, verifyActivation : var$5, capability : var$6, service : var$7, markBroken : var$8, release : var$9 };
 },
 igiae_Activation = $rt_classWithoutFields(),
@@ -5136,7 +5136,7 @@ igiaj_JsPluginContext$3$1__init_0 = (var_0, var_1) => {
 igiaj_JsPluginContext$3$1_changed = ($this, $service, $registered) => {
     let var$3, var$4, var$5;
     var$3 = $this.$val$listener2;
-    var$4 = igiaj_JsPluginHost_orUndefined$js_body$_9(otji_JSWrapper_unwrap($service));
+    var$4 = igiaj_JsPluginHost_orUndefined$js_body$_10(otji_JSWrapper_unwrap($service));
     var$5 = igiaj_JsPluginHost_serviceEvent($registered);
     var$3.call(var$4, $rt_ustr(var$5));
 },
@@ -11931,7 +11931,7 @@ igiaj_JsPluginHost$5__init_0 = var_0 => {
     return var_1;
 },
 igiaj_JsPluginHost$5_call = ($this, $id) => {
-    return igiaj_JsPluginHost_orUndefined$js_body$_9(otji_JSWrapper_unwrap(igiae_PluginHost_service($this.$val$host, $id)));
+    return igiaj_JsPluginHost_orUndefined$js_body$_10(otji_JSWrapper_unwrap(igiae_PluginHost_service($this.$val$host, $id)));
 },
 igiaj_JsPluginHost$5_call$exported$0 = (var$1, var$2) => {
     var$2 = $rt_str(var$2);
@@ -11959,7 +11959,7 @@ igiaj_JsPluginHost$4_call = ($this, $id) => {
         $record = $records.$get($index);
         var$6 = igiae_CapabilityRecord_getPluginId($record);
         var$7 = otji_JSWrapper_unwrap(igiae_CapabilityRecord_getImplementation($record));
-        var$6 = igiaj_JsPluginHost_capabilityRecord$js_body$_17($rt_ustr(var$6), var$7);
+        var$6 = igiaj_JsPluginHost_capabilityRecord$js_body$_18($rt_ustr(var$6), var$7);
         $out[$index] = var$6;
         $index = $index + 1 | 0;
     }
@@ -12759,7 +12759,7 @@ igiaj_JsErrors_mint = ($pluginId, $detail, $fix) => {
     return igiaj_JsErrors_build$js_body$_3($rt_ustr($pluginId), $rt_ustr($detail), $rt_ustr($fix), $rt_ustr(jl_StringBuilder_toString(var$4)));
 },
 igiaj_JsErrors_of = $failure => {
-    return igiaj_JsErrors_mint($failure.$getPluginId(), $failure.$getDetail(), $failure.$getFix());
+    return igiaj_JsErrors_build$js_body$_3($rt_ustr($failure.$getPluginId()), $rt_ustr($failure.$getDetail()), $rt_ustr($failure.$getFix()), $rt_ustr($failure.$getMessage()));
 },
 igiaj_JsErrors_build$js_body$_3 = (var$1, var$2, var$3, var$4) => {
     var error = new Error(var$4);
@@ -13196,7 +13196,7 @@ igiaj_JsPluginHost$9__init_0 = var_0 => {
 igiaj_JsPluginHost$9_call = ($this, $pluginId) => {
     let $found;
     $found = igiae_PluginLedger_entry(igiae_PluginHost_getLedger($this.$val$host7), $pluginId);
-    return igiaj_JsPluginHost_orUndefined$js_body$_9($found !== null ? igiaj_JsPluginHost_ledgerRow($found) : null);
+    return igiaj_JsPluginHost_orUndefined$js_body$_10($found !== null ? igiaj_JsPluginHost_ledgerRow($found) : null);
 },
 igiaj_JsPluginHost$9_call$exported$0 = (var$1, var$2) => {
     var$2 = $rt_str(var$2);
