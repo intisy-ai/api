@@ -3,10 +3,10 @@
 export declare function activationOrder(manifests: unknown[]): ActivationPlanShape;
 export declare function assertManifest(manifest: unknown): unknown;
 export declare function assertManifest(manifest: unknown, wellKnownServices: string[]): unknown;
-export declare function createPluginHost(options: unknown): HostSurface;
+export declare function createPluginHost(options: PluginHostOptionsShape): HostSurface;
 export declare function isPluginError(value: unknown): boolean;
 export declare function pluginError(pluginId: string, detail: string, fix: string): PluginErrorShape;
-export declare function setDiagnosticSink(sink: ((message: string) => void) | null): void;
+export declare function setDiagnosticSink(sink: ((value: string) => void) | null): void;
 export declare function setStrict(enabled: boolean | null): void;
 
 export interface ActivationPlanShape {
@@ -32,7 +32,7 @@ export interface ContextSurface {
 
 export interface EventBusShape {
   publish(topic: string, payload: unknown): void;
-  subscribe(topic: string, listener: unknown): () => void;
+  subscribe(topic: string, listener: ((value: unknown) => void)): () => void;
 }
 
 export interface HostDescriptorShape {
@@ -43,14 +43,14 @@ export interface HostDescriptorShape {
 
 export interface HostSurface {
   capability(id: string): CapabilityRecordShape[];
-  contextFor(manifest: unknown, runtime: unknown): ContextSurface;
+  contextFor(manifest: unknown, runtime: PluginRuntimeShape): ContextSurface;
   readonly descriptor: HostDescriptorShape;
   readonly ledger: LedgerFacadeShape;
   markBroken(pluginId: string, error: PluginErrorShape): void;
   release(pluginId: string): void;
-  service(id: string): unknown;
-  supports(manifest: unknown): PluginErrorShape | undefined;
-  verifyActivation(manifest: unknown): PluginErrorShape | undefined;
+  service(id: string): unknown | undefined;
+  supports(manifest: unknown): PluginErrorShape | null;
+  verifyActivation(manifest: unknown): PluginErrorShape | null;
 }
 
 export interface LedgerErrorShape {
@@ -84,6 +84,14 @@ export interface PluginErrorShape {
   readonly pluginId: string;
 }
 
+export interface PluginHostOptionsShape {
+  api?: number;
+  app: string;
+  surfaces?: string[];
+  vocabulary?: string[];
+  wellKnownServices?: string[];
+}
+
 export interface PluginPathsShape {
   cache: string;
   config: string;
@@ -92,13 +100,20 @@ export interface PluginPathsShape {
   repos: string;
 }
 
+export interface PluginRuntimeShape {
+  config: unknown;
+  events: EventBusShape;
+  log: unknown;
+  paths: PluginPathsShape;
+}
+
 export interface ServiceRegistryShape {
-  get(id: string): unknown;
+  get(id: string): unknown | undefined;
   ids(): string[];
   register(id: string, service: unknown): () => void;
   want(id: string): Promise<unknown>;
   want(id: string, options: WantOptionsShape): Promise<unknown>;
-  watch(id: string, listener: unknown): () => void;
+  watch(id: string, listener: ((a: unknown, b: "register" | "unregister") => void)): () => void;
 }
 
 export interface WantOptionsShape {

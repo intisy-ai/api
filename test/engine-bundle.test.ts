@@ -172,3 +172,103 @@ it("reports an unknown capability id only when the host declared a vocabulary", 
   expect(seen).toEqual(['ignored unknown capability "screns" from b']);
   setDiagnosticSink(null);
 });
+
+it("returns callable disposers from subscribe, watch and register, which is what unsubscribing actually needs", () => {
+  const host = createPluginHost({ app: "claude", api: 1, wellKnownServices: ["accounts"] });
+  const shared = runtime();
+  const context = host.contextFor(SCREENS, shared);
+
+  const published: unknown[] = [];
+  const stopSubscribe = context.events.subscribe("config.changed", (payload) => published.push(payload));
+  expect(typeof stopSubscribe).toBe("function");
+  shared.events.publish("config.changed", { name: "first" });
+  stopSubscribe();
+  shared.events.publish("config.changed", { name: "second" });
+  expect(published).toHaveLength(1);
+
+  const watched: unknown[] = [];
+  const stopWatch = context.services.watch("accounts", (service, event) => watched.push({ service, event }));
+  expect(typeof stopWatch).toBe("function");
+  const provider = host.contextFor({ id: "core-auth", api: 1, capabilities: [] }, runtime());
+  const stopProvide = provider.services.register("accounts", { list: () => [] });
+  stopWatch();
+  stopProvide();
+  expect(watched).toHaveLength(1);
+
+  const stopRegister = context.services.register("config-ledger:custom", {});
+  expect(typeof stopRegister).toBe("function");
+  stopRegister();
+  expect(host.service("config-ledger:custom")).toBeUndefined();
+});
+
+it("reports service watch events as register then unregister, with the service itself undefined on unregister", () => {
+  const host = createPluginHost({ app: "claude", api: 1, wellKnownServices: ["accounts"] });
+  const watcher = host.contextFor(SCREENS, runtime());
+  const seen: Array<{ service: unknown; event: string }> = [];
+  watcher.services.watch("accounts", (service, event) => seen.push({ service, event }));
+
+  const provider = host.contextFor({ id: "core-auth", api: 1, capabilities: [] }, runtime());
+  const stop = provider.services.register("accounts", { list: () => [] });
+  stop();
+
+  expect(seen).toEqual([
+    { service: { list: expect.any(Function) }, event: "register" },
+    { service: undefined, event: "unregister" },
+  ]);
+});
+
+it("answers host.service with undefined precisely, never null, and the service by identity once one arrives", () => {
+  const host = createPluginHost({ app: "claude", api: 1, wellKnownServices: ["accounts"] });
+  expect(host.service("accounts")).toBeUndefined();
+  const accounts = { list: () => [] };
+  host.contextFor({ id: "core-auth", api: 1, capabilities: [] }, runtime()).services.register("accounts", accounts);
+  expect(host.service("accounts")).toBe(accounts);
+});
+
+it("answers context.services.get with undefined precisely, and the service by identity once one arrives", () => {
+  const host = createPluginHost({ app: "claude", api: 1, wellKnownServices: ["accounts"] });
+  const context = host.contextFor(SCREENS, runtime());
+  expect(context.services.get("accounts")).toBeUndefined();
+  const accounts = { list: () => [] };
+  host.contextFor({ id: "core-auth", api: 1, capabilities: [] }, runtime()).services.register("accounts", accounts);
+  expect(context.services.get("accounts")).toBe(accounts);
+});
+
+it("lists every service id currently registered", () => {
+  const host = createPluginHost({ app: "claude", api: 1, wellKnownServices: ["accounts"] });
+  const context = host.contextFor(SCREENS, runtime());
+  expect(context.services.ids()).toEqual([]);
+  host.contextFor({ id: "core-auth", api: 1, capabilities: [] }, runtime()).services.register("accounts", { list: () => [] });
+  expect(context.services.ids()).toEqual(["accounts"]);
+});
+
+it("lists every ledger row, and a non-broken row carries no error property at all", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  host.contextFor(SCREENS, runtime());
+  expect(host.ledger.entries()).toEqual([expect.objectContaining({ pluginId: "config-ledger", status: "activating" })]);
+  expect(host.ledger.entry("config-ledger")).not.toHaveProperty("error");
+});
+
+it("opens a fresh ledger entry directly through ledger.recordDeclared, without going through contextFor", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  host.ledger.recordDeclared({ id: "config-ledger", api: 1, capabilities: ["screens"], permissions: ["config:write"] });
+  expect(host.ledger.entry("config-ledger")).toEqual({
+    pluginId: "config-ledger",
+    status: "activating",
+    capabilitiesDeclared: ["screens"],
+    capabilitiesProvided: [],
+    servicesProvided: [],
+    servicesConsumed: [],
+    topics: [],
+    permissions: ["config:write"],
+  });
+});
+
+it("releases a plugin's capabilities and marks it stopped", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const screens = { screens: () => [] };
+  host.contextFor(SCREENS, runtime()).provide("screens", screens);
+  host.release("config-ledger");
+  expect(host.capability("screens")).toEqual([]);
+  expect(host.ledger.entry("config-ledger")?.status).toBe("stopped");
+});

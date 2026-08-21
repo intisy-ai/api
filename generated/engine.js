@@ -1146,7 +1146,7 @@ igiaj_JsPluginContext$7_call = ($this, $topic, $listener) => {
 igiaj_JsPluginContext$7_call$exported$0 = (var$1, var$2, var$3) => {
     var$2 = $rt_str(var$2);
     var$3 = otji_JS_functionAsObject(var$3, "call");
-    return var$1.$call(var$2, var$3);
+    return otji_JS_function(var$1.$call(var$2, var$3), "dispose");
 },
 igiaj_JsPluginContext$ProvideFn = $rt_classWithoutFields(0);
 function igiaj_JsPluginContext$8() {
@@ -1247,7 +1247,7 @@ igiaj_JsPluginContext$3_call = ($this, $id, $listener) => {
 igiaj_JsPluginContext$3_call$exported$0 = (var$1, var$2, var$3) => {
     var$2 = $rt_str(var$2);
     var$3 = otji_JS_functionAsObject(var$3, "call");
-    return var$1.$call2(var$2, var$3);
+    return otji_JS_function(var$1.$call2(var$2, var$3), "dispose");
 },
 igiaj_JsPluginContext$RegisterFn = $rt_classWithoutFields(0);
 function igiaj_JsPluginContext$4() {
@@ -1285,7 +1285,7 @@ igiaj_JsPluginContext$4_call = ($this, $id, $service) => {
 },
 igiaj_JsPluginContext$4_call$exported$0 = (var$1, var$2, var$3) => {
     var$2 = $rt_str(var$2);
-    return var$1.$call3(var$2, var$3);
+    return otji_JS_function(var$1.$call3(var$2, var$3), "dispose");
 },
 jur_AbstractCharClass$LazyAlpha = $rt_classWithoutFields(jur_AbstractCharClass$LazyCharClass),
 jur_AbstractCharClass$LazyAlpha__init_ = $this => {
@@ -1314,7 +1314,7 @@ igiaj_JsPluginContext$1__init_0 = var_0 => {
     return var_1;
 },
 igiaj_JsPluginContext$1_call = ($this, $id) => {
-    return otji_JSWrapper_unwrap($this.$val$services1.$get0($id));
+    return igiaj_JsPluginHost_orUndefined$js_body$_9(otji_JSWrapper_unwrap($this.$val$services1.$get0($id)));
 },
 igiaj_JsPluginContext$1_call$exported$0 = (var$1, var$2) => {
     var$2 = $rt_str(var$2);
@@ -1342,7 +1342,7 @@ igiaj_JsPluginContext$2_call = ($this, $id, $options) => {
 },
 igiaj_JsPluginContext$2_call$exported$0 = (var$1, var$2, var$3) => {
     var$2 = $rt_str(var$2);
-    return var$1.$call3(var$2, var$3);
+    return var$1.$call5(var$2, var$3);
 },
 jur_BackReferencedSingleSet = $rt_classWithoutFields(jur_SingleSet),
 jur_BackReferencedSingleSet__init_ = ($this, $node) => {
@@ -1631,7 +1631,7 @@ ju_MissingResourceException__init_0 = (var_0, var_1, var_2) => {
     return var_3;
 },
 igiaj_JsPluginHost = $rt_classWithoutFields(),
-igiaj_JsPluginHost_from = ($tree, $options) => {
+igiaj_JsPluginHost_from = $tree => {
     let $app, $api, $surfaces, $vocabulary, $wellKnownServices, $host;
     $app = igiaj_JsPluginHost_text($tree, $rt_s(11));
     $api = igiaj_JsPluginHost_intOr($tree, $rt_s(12), 2);
@@ -1648,7 +1648,7 @@ igiaj_JsPluginHost_build = $host => {
     var$2 = igiae_PluginHost_getApp($host);
     var$3 = igiae_PluginHost_getApi($host);
     var$4 = igiaj_JsJson_fromStrings(igiae_PluginHost_getSurfaces($host));
-    $descriptor = igiaj_JsPluginHost_descriptorObject$js_body$_13($rt_ustr(var$2), var$3, var$4);
+    $descriptor = igiaj_JsPluginHost_descriptorObject$js_body$_15($rt_ustr(var$2), var$3, var$4);
     $supports = igiaj_JsPluginHost$1__init_0($host);
     $verifyActivation = igiaj_JsPluginHost$2__init_0($host);
     $contextFor = igiaj_JsPluginHost$3__init_0($host, $descriptor);
@@ -1659,8 +1659,8 @@ igiaj_JsPluginHost_build = $host => {
     $entries = igiaj_JsPluginHost$8__init_0($host);
     $entry = igiaj_JsPluginHost$9__init_0($host);
     $recordDeclared = igiaj_JsPluginHost$10__init_0($host);
-    $ledger = igiaj_JsPluginHost_ledgerObject$js_body$_14(otji_JS_function(otji_JSWrapper_unwrap($entries), "call"), otji_JS_function(otji_JSWrapper_unwrap($entry), "call"), otji_JS_function(otji_JSWrapper_unwrap($recordDeclared), "call"));
-    return igiaj_JsPluginHost_assemble$js_body$_17($descriptor, $ledger, otji_JS_function(otji_JSWrapper_unwrap($supports), "call"), otji_JS_function(otji_JSWrapper_unwrap($contextFor), "call"), otji_JS_function(otji_JSWrapper_unwrap($verifyActivation), "call"), otji_JS_function(otji_JSWrapper_unwrap($capability), "call"), otji_JS_function(otji_JSWrapper_unwrap($service), "call"), otji_JS_function(otji_JSWrapper_unwrap($markBroken), "call"), otji_JS_function(otji_JSWrapper_unwrap($release), "call"));
+    $ledger = igiaj_JsPluginHost_ledgerObject$js_body$_16(otji_JS_function(otji_JSWrapper_unwrap($entries), "call"), otji_JS_function(otji_JSWrapper_unwrap($entry), "call"), otji_JS_function(otji_JSWrapper_unwrap($recordDeclared), "call"));
+    return igiaj_JsPluginHost_assemble$js_body$_19($descriptor, $ledger, otji_JS_function(otji_JSWrapper_unwrap($supports), "call"), otji_JS_function(otji_JSWrapper_unwrap($contextFor), "call"), otji_JS_function(otji_JSWrapper_unwrap($verifyActivation), "call"), otji_JS_function(otji_JSWrapper_unwrap($capability), "call"), otji_JS_function(otji_JSWrapper_unwrap($service), "call"), otji_JS_function(otji_JSWrapper_unwrap($markBroken), "call"), otji_JS_function(otji_JSWrapper_unwrap($release), "call"));
 },
 igiaj_JsPluginHost_promise = $pending => {
     let var$2;
@@ -1694,6 +1694,9 @@ igiaj_JsPluginHost_lower = $status => {
         return $rt_s(23);
     return $rt_s(24);
 },
+igiaj_JsPluginHost_serviceEvent = $registered => {
+    return !$registered ? $rt_s(25) : $rt_s(26);
+},
 igiaj_JsPluginHost_ledgerRow = $entry => {
     let var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10, var$11;
     var$2 = igiae_LedgerEntry_getPluginId($entry);
@@ -1706,7 +1709,7 @@ igiaj_JsPluginHost_ledgerRow = $entry => {
     var$9 = igiaj_JsJson_fromStrings(igiae_LedgerEntry_getPermissions($entry));
     var$10 = igiae_LedgerEntry_getErrorDetail($entry);
     var$11 = igiae_LedgerEntry_getErrorFix($entry);
-    return igiaj_JsPluginHost_ledgerRowObject$js_body$_16($rt_ustr(var$2), $rt_ustr(var$3), var$4, var$5, var$6, var$7, var$8, var$9, $rt_ustr(var$10), $rt_ustr(var$11));
+    return igiaj_JsPluginHost_ledgerRowObject$js_body$_18($rt_ustr(var$2), $rt_ustr(var$3), var$4, var$5, var$6, var$7, var$8, var$9, $rt_ustr(var$10), $rt_ustr(var$11));
 },
 igiaj_JsPluginHost_member = ($tree, $name) => {
     return !$rt_isInstance($tree, ju_Map) ? null : $tree.$get1($name);
@@ -1739,23 +1742,26 @@ igiaj_JsPluginHost_strings = $value => {
     }
     return $out;
 },
-igiaj_JsPluginHost_descriptorObject$js_body$_13 = (var$1, var$2, var$3) => {
+igiaj_JsPluginHost_orUndefined$js_body$_9 = var$1 => {
+    return var$1 === null ? undefined : var$1;
+},
+igiaj_JsPluginHost_descriptorObject$js_body$_15 = (var$1, var$2, var$3) => {
     return { app : var$1, api : var$2, surfaces : var$3 };
 },
-igiaj_JsPluginHost_ledgerObject$js_body$_14 = (var$1, var$2, var$3) => {
+igiaj_JsPluginHost_ledgerObject$js_body$_16 = (var$1, var$2, var$3) => {
     return { entries : var$1, entry : var$2, recordDeclared : var$3 };
 },
-igiaj_JsPluginHost_capabilityRecord$js_body$_15 = (var$1, var$2) => {
+igiaj_JsPluginHost_capabilityRecord$js_body$_17 = (var$1, var$2) => {
     return { pluginId : var$1, implementation : var$2 };
 },
-igiaj_JsPluginHost_ledgerRowObject$js_body$_16 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10) => {
+igiaj_JsPluginHost_ledgerRowObject$js_body$_18 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10) => {
     var row = { pluginId : var$1, status : var$2, capabilitiesDeclared : var$3, capabilitiesProvided : var$4, servicesProvided : var$5, servicesConsumed : var$6, topics : var$7, permissions : var$8 };
     if (var$9 !== null) {
         row.error = { detail : var$9, fix : var$10 };
     }
     return row;
 },
-igiaj_JsPluginHost_assemble$js_body$_17 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9) => {
+igiaj_JsPluginHost_assemble$js_body$_19 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9) => {
     return { descriptor : var$1, ledger : var$2, supports : var$3, contextFor : var$4, verifyActivation : var$5, capability : var$6, service : var$7, markBroken : var$8, release : var$9 };
 },
 igiae_Activation = $rt_classWithoutFields(),
@@ -1894,7 +1900,7 @@ jur_CIBackReferenceSet_getName = $this => {
     let var$1, var$2;
     var$1 = $this.$groupIndex;
     var$2 = jl_StringBuilder__init_();
-    jl_StringBuilder_append1(jl_StringBuilder_append(var$2, $rt_s(25)), var$1);
+    jl_StringBuilder_append1(jl_StringBuilder_append(var$2, $rt_s(27)), var$1);
     return jl_StringBuilder_toString(var$2);
 },
 jur_CIBackReferenceSet_hasConsumed = ($this, $matchResult) => {
@@ -1940,7 +1946,7 @@ jur_UCIBackReferenceSet_getName = $this => {
     let var$1, var$2;
     var$1 = $this.$groupIndex1;
     var$2 = jl_StringBuilder__init_();
-    jl_StringBuilder_append1(jl_StringBuilder_append(var$2, $rt_s(26)), var$1);
+    jl_StringBuilder_append1(jl_StringBuilder_append(var$2, $rt_s(28)), var$1);
     return jl_StringBuilder_toString(var$2);
 };
 function jur_AbstractCharClass$LazyCategory() {
@@ -2043,7 +2049,7 @@ jur_DotAllQuantifierSet_find = ($this, $stringIndex, $testString, $matchResult) 
     return (-1);
 },
 jur_DotAllQuantifierSet_getName = $this => {
-    return $rt_s(27);
+    return $rt_s(29);
 },
 otji_JSWrapper$Helper = $rt_classWithoutFields(),
 otji_JSWrapper$Helper_hashCodes = null,
@@ -2132,7 +2138,7 @@ jur_FSet_getGroupIndex = $this => {
     return $this.$groupIndex0;
 },
 jur_FSet_getName = $this => {
-    return $rt_s(28);
+    return $rt_s(30);
 },
 jur_FSet_hasConsumed = ($this, $mr) => {
     return 0;
@@ -2158,7 +2164,7 @@ jur_BehindFSet_matches = ($this, $stringIndex, $testString, $matchResult) => {
     return $stringIndex;
 },
 jur_BehindFSet_getName = $this => {
-    return $rt_s(29);
+    return $rt_s(31);
 },
 igiae_Diagnostics = $rt_classWithoutFields(),
 igiae_Diagnostics_strict = null,
@@ -2170,7 +2176,7 @@ igiae_Diagnostics_$callClinit = () => {
 igiae_Diagnostics_isStrict = () => {
     igiae_Diagnostics_$callClinit();
     if (igiae_Diagnostics_strict === null)
-        igiae_Diagnostics_strict = jl_Boolean_valueOf(jl_String_equals($rt_s(30), jl_System_getenv($rt_s(31))));
+        igiae_Diagnostics_strict = jl_Boolean_valueOf(jl_String_equals($rt_s(32), jl_System_getenv($rt_s(33))));
     return igiae_Diagnostics_strict.$booleanValue();
 },
 igiae_Diagnostics_setStrict = $enabled => {
@@ -2183,7 +2189,7 @@ igiae_Diagnostics_setSink = $destination => {
 },
 igiae_Diagnostics_ignoreUnknown = ($kind, $id, $source) => {
     igiae_Diagnostics_$callClinit();
-    igiae_Diagnostics_report((((((((jl_StringBuilder__init_()).$append3($rt_s(32))).$append3($kind)).$append3($rt_s(33))).$append3($id)).$append3($rt_s(34))).$append3($source)).$toString());
+    igiae_Diagnostics_report((((((((jl_StringBuilder__init_()).$append3($rt_s(34))).$append3($kind)).$append3($rt_s(35))).$append3($id)).$append3($rt_s(36))).$append3($source)).$toString());
 },
 igiae_Diagnostics_report = $message => {
     let $destination;
@@ -2194,7 +2200,7 @@ igiae_Diagnostics_report = $message => {
         return;
     }
     if (igiae_Diagnostics_isStrict())
-        (jl_System_err()).$println((((jl_StringBuilder__init_()).$append3($rt_s(35))).$append3($message)).$toString());
+        (jl_System_err()).$println((((jl_StringBuilder__init_()).$append3($rt_s(37))).$append3($message)).$toString());
 },
 igiae_Diagnostics__clinit_ = () => {
     igiae_Diagnostics_strict = null;
@@ -2247,10 +2253,10 @@ jur_LowHighSurrogateRangeSet_matches = ($this, $stringIndex, $testString, $match
 },
 jur_LowHighSurrogateRangeSet_getName = $this => {
     let var$1, var$2, var$3;
-    var$1 = !$this.$alt1 ? $rt_s(36) : $rt_s(37);
+    var$1 = !$this.$alt1 ? $rt_s(38) : $rt_s(39);
     var$2 = $this.$surrChars.$toString();
     var$3 = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(38)), var$1), var$2);
+    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(40)), var$1), var$2);
     return jl_StringBuilder_toString(var$3);
 },
 jur_GroupQuantifierSet = $rt_classWithoutFields(jur_QuantifierSet),
@@ -2272,7 +2278,7 @@ jur_GroupQuantifierSet_matches = ($this, $stringIndex, $testString, $matchResult
     return $this.$next2.$matches($stringIndex, $testString, $matchResult);
 },
 jur_GroupQuantifierSet_getName = $this => {
-    return $rt_s(39);
+    return $rt_s(41);
 },
 jur_ReluctantGroupQuantifierSet = $rt_classWithoutFields(jur_GroupQuantifierSet),
 jur_ReluctantGroupQuantifierSet__init_ = ($this, $innerSet, $next, $type) => {
@@ -2409,16 +2415,16 @@ ju_AbstractMap_toString = $this => {
     $iter = ($this.$entrySet()).$iterator();
     if ($iter.$hasNext()) {
         $e = $iter.$next();
-        $sb.$append($e.$getKey() !== $this ? $e.$getKey() : $rt_s(40));
+        $sb.$append($e.$getKey() !== $this ? $e.$getKey() : $rt_s(42));
         $sb.$append0(61);
-        $sb.$append($e.$getValue() !== $this ? $e.$getValue() : $rt_s(40));
+        $sb.$append($e.$getValue() !== $this ? $e.$getValue() : $rt_s(42));
     }
     while ($iter.$hasNext()) {
-        $sb.$append3($rt_s(41));
+        $sb.$append3($rt_s(43));
         $e = $iter.$next();
-        $sb.$append($e.$getKey() !== $this ? $e.$getKey() : $rt_s(40));
+        $sb.$append($e.$getKey() !== $this ? $e.$getKey() : $rt_s(42));
         $sb.$append0(61);
-        $sb.$append($e.$getValue() !== $this ? $e.$getValue() : $rt_s(40));
+        $sb.$append($e.$getValue() !== $this ? $e.$getValue() : $rt_s(42));
     }
     $sb.$append0(125);
     return $sb.$toString();
@@ -2896,7 +2902,7 @@ jl_AbstractStringBuilder_insert2 = ($this, $index, $string) => {
     let $i, var$4, var$5;
     if ($index >= 0 && $index <= $this.$length1) {
         if ($string === null)
-            $string = $rt_s(42);
+            $string = $rt_s(44);
         else if (jl_String_isEmpty($string))
             return $this;
         $this.$ensureCapacity($this.$length1 + jl_String_length($string) | 0);
@@ -3274,7 +3280,7 @@ jl_AbstractStringBuilder_insert0 = ($this, $index, $c) => {
     return $this;
 },
 jl_AbstractStringBuilder_insert3 = ($this, $index, $obj) => {
-    return $this.$insert0($index, $obj === null ? $rt_s(42) : $obj.$toString());
+    return $this.$insert0($index, $obj === null ? $rt_s(44) : $obj.$toString());
 },
 jl_AbstractStringBuilder_ensureCapacity = ($this, $capacity) => {
     let $newLength;
@@ -3564,972 +3570,972 @@ jur_AbstractCharClass$PredefinedCharacterClasses__clinit_ = () => {
     var$2 = var$1.data;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(43);
+    var$4[0] = $rt_s(45);
     var$4[1] = jur_AbstractCharClass$LazyLower__init_0();
     var$2[0] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(44);
+    var$4[0] = $rt_s(46);
     var$4[1] = jur_AbstractCharClass$LazyUpper__init_0();
     var$2[1] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(45);
+    var$4[0] = $rt_s(47);
     var$4[1] = jur_AbstractCharClass$LazyASCII__init_0();
     var$2[2] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(46);
+    var$4[0] = $rt_s(48);
     var$4[1] = jur_AbstractCharClass$LazyAlpha__init_0();
     var$2[3] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(47);
+    var$4[0] = $rt_s(49);
     var$4[1] = jur_AbstractCharClass$PredefinedCharacterClasses_digit;
     var$2[4] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(48);
+    var$4[0] = $rt_s(50);
     var$4[1] = jur_AbstractCharClass$LazyAlnum__init_0();
     var$2[5] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(49);
+    var$4[0] = $rt_s(51);
     var$4[1] = jur_AbstractCharClass$LazyPunct__init_0();
     var$2[6] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(50);
+    var$4[0] = $rt_s(52);
     var$4[1] = jur_AbstractCharClass$LazyGraph__init_0();
     var$2[7] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(51);
+    var$4[0] = $rt_s(53);
     var$4[1] = jur_AbstractCharClass$LazyPrint__init_0();
     var$2[8] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(52);
+    var$4[0] = $rt_s(54);
     var$4[1] = jur_AbstractCharClass$LazyBlank__init_0();
     var$2[9] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(53);
+    var$4[0] = $rt_s(55);
     var$4[1] = jur_AbstractCharClass$LazyCntrl__init_0();
     var$2[10] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(54);
+    var$4[0] = $rt_s(56);
     var$4[1] = jur_AbstractCharClass$LazyXDigit__init_0();
     var$2[11] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(55);
+    var$4[0] = $rt_s(57);
     var$4[1] = jur_AbstractCharClass$LazyJavaLowerCase__init_0();
     var$2[12] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(56);
+    var$4[0] = $rt_s(58);
     var$4[1] = jur_AbstractCharClass$LazyJavaUpperCase__init_0();
     var$2[13] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(57);
+    var$4[0] = $rt_s(59);
     var$4[1] = jur_AbstractCharClass$LazyJavaWhitespace__init_0();
     var$2[14] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(58);
+    var$4[0] = $rt_s(60);
     var$4[1] = jur_AbstractCharClass$LazyJavaMirrored__init_0();
     var$2[15] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(59);
+    var$4[0] = $rt_s(61);
     var$4[1] = jur_AbstractCharClass$LazyJavaDefined__init_0();
     var$2[16] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(60);
+    var$4[0] = $rt_s(62);
     var$4[1] = jur_AbstractCharClass$LazyJavaDigit__init_0();
     var$2[17] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(61);
+    var$4[0] = $rt_s(63);
     var$4[1] = jur_AbstractCharClass$LazyJavaIdentifierIgnorable__init_0();
     var$2[18] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(62);
+    var$4[0] = $rt_s(64);
     var$4[1] = jur_AbstractCharClass$LazyJavaISOControl__init_0();
     var$2[19] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(63);
+    var$4[0] = $rt_s(65);
     var$4[1] = jur_AbstractCharClass$LazyJavaJavaIdentifierPart__init_0();
     var$2[20] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(64);
+    var$4[0] = $rt_s(66);
     var$4[1] = jur_AbstractCharClass$LazyJavaJavaIdentifierStart__init_0();
     var$2[21] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(65);
+    var$4[0] = $rt_s(67);
     var$4[1] = jur_AbstractCharClass$LazyJavaLetter__init_0();
     var$2[22] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(66);
+    var$4[0] = $rt_s(68);
     var$4[1] = jur_AbstractCharClass$LazyJavaLetterOrDigit__init_0();
     var$2[23] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(67);
+    var$4[0] = $rt_s(69);
     var$4[1] = jur_AbstractCharClass$LazyJavaSpaceChar__init_0();
     var$2[24] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(68);
+    var$4[0] = $rt_s(70);
     var$4[1] = jur_AbstractCharClass$LazyJavaTitleCase__init_0();
     var$2[25] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(69);
+    var$4[0] = $rt_s(71);
     var$4[1] = jur_AbstractCharClass$LazyJavaUnicodeIdentifierPart__init_0();
     var$2[26] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(70);
+    var$4[0] = $rt_s(72);
     var$4[1] = jur_AbstractCharClass$LazyJavaUnicodeIdentifierStart__init_0();
     var$2[27] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(71);
+    var$4[0] = $rt_s(73);
     var$4[1] = jur_AbstractCharClass$PredefinedCharacterClasses_space;
     var$2[28] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(72);
+    var$4[0] = $rt_s(74);
     var$4[1] = jur_AbstractCharClass$LazyWord__init_0();
     var$2[29] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(73);
+    var$4[0] = $rt_s(75);
     var$4[1] = jur_AbstractCharClass$LazyNonWord__init_0();
     var$2[30] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(74);
+    var$4[0] = $rt_s(76);
     var$4[1] = jur_AbstractCharClass$PredefinedCharacterClasses_space;
     var$2[31] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(75);
+    var$4[0] = $rt_s(77);
     var$4[1] = jur_AbstractCharClass$LazyNonSpace__init_0();
     var$2[32] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(76);
+    var$4[0] = $rt_s(78);
     var$4[1] = jur_AbstractCharClass$PredefinedCharacterClasses_digit;
     var$2[33] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(77);
+    var$4[0] = $rt_s(79);
     var$4[1] = jur_AbstractCharClass$LazyNonDigit__init_0();
     var$2[34] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(78);
+    var$4[0] = $rt_s(80);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(0, 127);
     var$2[35] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(79);
+    var$4[0] = $rt_s(81);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(128, 255);
     var$2[36] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(80);
+    var$4[0] = $rt_s(82);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(256, 383);
     var$2[37] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(81);
+    var$4[0] = $rt_s(83);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(384, 591);
     var$2[38] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(82);
+    var$4[0] = $rt_s(84);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(592, 687);
     var$2[39] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(83);
+    var$4[0] = $rt_s(85);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(688, 767);
     var$2[40] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(84);
+    var$4[0] = $rt_s(86);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(768, 879);
     var$2[41] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(85);
+    var$4[0] = $rt_s(87);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(880, 1023);
     var$2[42] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(86);
+    var$4[0] = $rt_s(88);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(1024, 1279);
     var$2[43] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(87);
+    var$4[0] = $rt_s(89);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(1280, 1327);
     var$2[44] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(88);
+    var$4[0] = $rt_s(90);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(1328, 1423);
     var$2[45] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(89);
+    var$4[0] = $rt_s(91);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(1424, 1535);
     var$2[46] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(90);
+    var$4[0] = $rt_s(92);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(1536, 1791);
     var$2[47] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(91);
+    var$4[0] = $rt_s(93);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(1792, 1871);
     var$2[48] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(92);
+    var$4[0] = $rt_s(94);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(1872, 1919);
     var$2[49] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(93);
+    var$4[0] = $rt_s(95);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(1920, 1983);
     var$2[50] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(94);
+    var$4[0] = $rt_s(96);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(2304, 2431);
     var$2[51] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(95);
+    var$4[0] = $rt_s(97);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(2432, 2559);
     var$2[52] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(96);
+    var$4[0] = $rt_s(98);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(2560, 2687);
     var$2[53] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(97);
+    var$4[0] = $rt_s(99);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(2688, 2815);
     var$2[54] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(98);
+    var$4[0] = $rt_s(100);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(2816, 2943);
     var$2[55] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(99);
+    var$4[0] = $rt_s(101);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(2944, 3071);
     var$2[56] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(100);
+    var$4[0] = $rt_s(102);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(3072, 3199);
     var$2[57] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(101);
+    var$4[0] = $rt_s(103);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(3200, 3327);
     var$2[58] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(102);
+    var$4[0] = $rt_s(104);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(3328, 3455);
     var$2[59] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(103);
+    var$4[0] = $rt_s(105);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(3456, 3583);
     var$2[60] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(104);
+    var$4[0] = $rt_s(106);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(3584, 3711);
     var$2[61] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(105);
+    var$4[0] = $rt_s(107);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(3712, 3839);
     var$2[62] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(106);
+    var$4[0] = $rt_s(108);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(3840, 4095);
     var$2[63] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(107);
+    var$4[0] = $rt_s(109);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(4096, 4255);
     var$2[64] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(108);
+    var$4[0] = $rt_s(110);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(4256, 4351);
     var$2[65] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(109);
+    var$4[0] = $rt_s(111);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(4352, 4607);
     var$2[66] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(110);
+    var$4[0] = $rt_s(112);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(4608, 4991);
     var$2[67] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(111);
+    var$4[0] = $rt_s(113);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(4992, 5023);
     var$2[68] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(112);
+    var$4[0] = $rt_s(114);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(5024, 5119);
     var$2[69] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(113);
+    var$4[0] = $rt_s(115);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(5120, 5759);
     var$2[70] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(114);
+    var$4[0] = $rt_s(116);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(5760, 5791);
     var$2[71] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(115);
+    var$4[0] = $rt_s(117);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(5792, 5887);
     var$2[72] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(116);
+    var$4[0] = $rt_s(118);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(5888, 5919);
     var$2[73] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(117);
+    var$4[0] = $rt_s(119);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(5920, 5951);
     var$2[74] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(118);
+    var$4[0] = $rt_s(120);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(5952, 5983);
     var$2[75] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(119);
+    var$4[0] = $rt_s(121);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(5984, 6015);
     var$2[76] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(120);
+    var$4[0] = $rt_s(122);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(6016, 6143);
     var$2[77] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(121);
+    var$4[0] = $rt_s(123);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(6144, 6319);
     var$2[78] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(122);
+    var$4[0] = $rt_s(124);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(6400, 6479);
     var$2[79] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(123);
+    var$4[0] = $rt_s(125);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(6480, 6527);
     var$2[80] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(124);
+    var$4[0] = $rt_s(126);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(6528, 6623);
     var$2[81] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(125);
+    var$4[0] = $rt_s(127);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(6624, 6655);
     var$2[82] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(126);
+    var$4[0] = $rt_s(128);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(6656, 6687);
     var$2[83] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(127);
+    var$4[0] = $rt_s(129);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(7424, 7551);
     var$2[84] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(128);
+    var$4[0] = $rt_s(130);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(7552, 7615);
     var$2[85] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(129);
+    var$4[0] = $rt_s(131);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(7616, 7679);
     var$2[86] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(130);
+    var$4[0] = $rt_s(132);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(7680, 7935);
     var$2[87] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(131);
+    var$4[0] = $rt_s(133);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(7936, 8191);
     var$2[88] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(132);
+    var$4[0] = $rt_s(134);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(8192, 8303);
     var$2[89] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(133);
+    var$4[0] = $rt_s(135);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(8304, 8351);
     var$2[90] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(134);
+    var$4[0] = $rt_s(136);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(8352, 8399);
     var$2[91] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(135);
+    var$4[0] = $rt_s(137);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(8400, 8447);
     var$2[92] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(136);
+    var$4[0] = $rt_s(138);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(8448, 8527);
     var$2[93] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(137);
+    var$4[0] = $rt_s(139);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(8528, 8591);
     var$2[94] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(138);
+    var$4[0] = $rt_s(140);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(8592, 8703);
     var$2[95] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(139);
+    var$4[0] = $rt_s(141);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(8704, 8959);
     var$2[96] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(140);
+    var$4[0] = $rt_s(142);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(8960, 9215);
     var$2[97] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(141);
+    var$4[0] = $rt_s(143);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(9216, 9279);
     var$2[98] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(142);
+    var$4[0] = $rt_s(144);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(9280, 9311);
     var$2[99] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(143);
+    var$4[0] = $rt_s(145);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(9312, 9471);
     var$2[100] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(144);
+    var$4[0] = $rt_s(146);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(9472, 9599);
     var$2[101] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(145);
+    var$4[0] = $rt_s(147);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(9600, 9631);
     var$2[102] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(146);
+    var$4[0] = $rt_s(148);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(9632, 9727);
     var$2[103] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(147);
+    var$4[0] = $rt_s(149);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(9728, 9983);
     var$2[104] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(148);
+    var$4[0] = $rt_s(150);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(9984, 10175);
     var$2[105] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(149);
+    var$4[0] = $rt_s(151);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(10176, 10223);
     var$2[106] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(150);
+    var$4[0] = $rt_s(152);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(10224, 10239);
     var$2[107] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(151);
+    var$4[0] = $rt_s(153);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(10240, 10495);
     var$2[108] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(152);
+    var$4[0] = $rt_s(154);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(10496, 10623);
     var$2[109] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(153);
+    var$4[0] = $rt_s(155);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(10624, 10751);
     var$2[110] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(154);
+    var$4[0] = $rt_s(156);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(10752, 11007);
     var$2[111] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(155);
+    var$4[0] = $rt_s(157);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(11008, 11263);
     var$2[112] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(156);
+    var$4[0] = $rt_s(158);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(11264, 11359);
     var$2[113] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(157);
+    var$4[0] = $rt_s(159);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(11392, 11519);
     var$2[114] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(158);
+    var$4[0] = $rt_s(160);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(11520, 11567);
     var$2[115] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(159);
+    var$4[0] = $rt_s(161);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(11568, 11647);
     var$2[116] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(160);
+    var$4[0] = $rt_s(162);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(11648, 11743);
     var$2[117] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(161);
+    var$4[0] = $rt_s(163);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(11776, 11903);
     var$2[118] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(162);
+    var$4[0] = $rt_s(164);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(11904, 12031);
     var$2[119] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(163);
+    var$4[0] = $rt_s(165);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12032, 12255);
     var$2[120] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(164);
+    var$4[0] = $rt_s(166);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12272, 12287);
     var$2[121] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(165);
+    var$4[0] = $rt_s(167);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12288, 12351);
     var$2[122] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(166);
+    var$4[0] = $rt_s(168);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12352, 12447);
     var$2[123] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(167);
+    var$4[0] = $rt_s(169);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12448, 12543);
     var$2[124] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(168);
+    var$4[0] = $rt_s(170);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12544, 12591);
     var$2[125] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(169);
+    var$4[0] = $rt_s(171);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12592, 12687);
     var$2[126] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(170);
+    var$4[0] = $rt_s(172);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12688, 12703);
     var$2[127] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(171);
+    var$4[0] = $rt_s(173);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12704, 12735);
     var$2[128] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(172);
+    var$4[0] = $rt_s(174);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12736, 12783);
     var$2[129] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(173);
+    var$4[0] = $rt_s(175);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12784, 12799);
     var$2[130] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(174);
+    var$4[0] = $rt_s(176);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(12800, 13055);
     var$2[131] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(175);
+    var$4[0] = $rt_s(177);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(13056, 13311);
     var$2[132] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(176);
+    var$4[0] = $rt_s(178);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(13312, 19893);
     var$2[133] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(177);
+    var$4[0] = $rt_s(179);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(19904, 19967);
     var$2[134] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(178);
+    var$4[0] = $rt_s(180);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(19968, 40959);
     var$2[135] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(179);
+    var$4[0] = $rt_s(181);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(40960, 42127);
     var$2[136] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(180);
+    var$4[0] = $rt_s(182);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(42128, 42191);
     var$2[137] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(181);
+    var$4[0] = $rt_s(183);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(42752, 42783);
     var$2[138] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(182);
+    var$4[0] = $rt_s(184);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(43008, 43055);
     var$2[139] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(183);
+    var$4[0] = $rt_s(185);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(44032, 55203);
     var$2[140] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(184);
+    var$4[0] = $rt_s(186);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(55296, 56191);
     var$2[141] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(185);
+    var$4[0] = $rt_s(187);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(56192, 56319);
     var$2[142] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(186);
+    var$4[0] = $rt_s(188);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(56320, 57343);
     var$2[143] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(187);
+    var$4[0] = $rt_s(189);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(57344, 63743);
     var$2[144] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(188);
+    var$4[0] = $rt_s(190);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(63744, 64255);
     var$2[145] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(189);
+    var$4[0] = $rt_s(191);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(64256, 64335);
     var$2[146] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(190);
+    var$4[0] = $rt_s(192);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(64336, 65023);
     var$2[147] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(191);
+    var$4[0] = $rt_s(193);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(65024, 65039);
     var$2[148] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(192);
+    var$4[0] = $rt_s(194);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(65040, 65055);
     var$2[149] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(193);
+    var$4[0] = $rt_s(195);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(65056, 65071);
     var$2[150] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(194);
+    var$4[0] = $rt_s(196);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(65072, 65103);
     var$2[151] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(195);
+    var$4[0] = $rt_s(197);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(65104, 65135);
     var$2[152] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(196);
+    var$4[0] = $rt_s(198);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(65136, 65279);
     var$2[153] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(197);
+    var$4[0] = $rt_s(199);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(65280, 65519);
     var$2[154] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(198);
+    var$4[0] = $rt_s(200);
     var$4[1] = jur_AbstractCharClass$LazyRange__init_(0, 1114111);
     var$2[155] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(199);
+    var$4[0] = $rt_s(201);
     var$4[1] = jur_AbstractCharClass$LazySpecialsBlock__init_0();
     var$2[156] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(200);
+    var$4[0] = $rt_s(202);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(0, 1);
     var$2[157] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(201);
+    var$4[0] = $rt_s(203);
     var$4[1] = jur_AbstractCharClass$LazyCategoryScope__init_(62, 1);
     var$2[158] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(202);
+    var$4[0] = $rt_s(204);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(1, 1);
     var$2[159] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(203);
+    var$4[0] = $rt_s(205);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(2, 1);
     var$2[160] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(204);
+    var$4[0] = $rt_s(206);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(3, 0);
     var$2[161] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(205);
+    var$4[0] = $rt_s(207);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(4, 0);
     var$2[162] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(206);
+    var$4[0] = $rt_s(208);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(5, 1);
     var$2[163] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(207);
+    var$4[0] = $rt_s(209);
     var$4[1] = jur_AbstractCharClass$LazyCategoryScope__init_(448, 1);
     var$2[164] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(208);
+    var$4[0] = $rt_s(210);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(6, 1);
     var$2[165] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(209);
+    var$4[0] = $rt_s(211);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(7, 0);
     var$2[166] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(210);
+    var$4[0] = $rt_s(212);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(8, 1);
     var$2[167] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(211);
+    var$4[0] = $rt_s(213);
     var$4[1] = jur_AbstractCharClass$LazyCategoryScope__init_(3584, 1);
     var$2[168] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(212);
+    var$4[0] = $rt_s(214);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(9, 1);
     var$2[169] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(213);
+    var$4[0] = $rt_s(215);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(10, 1);
     var$2[170] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(214);
+    var$4[0] = $rt_s(216);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(11, 1);
     var$2[171] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(215);
+    var$4[0] = $rt_s(217);
     var$4[1] = jur_AbstractCharClass$LazyCategoryScope__init_(28672, 0);
     var$2[172] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(216);
+    var$4[0] = $rt_s(218);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(12, 0);
     var$2[173] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(217);
+    var$4[0] = $rt_s(219);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(13, 0);
     var$2[174] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(218);
+    var$4[0] = $rt_s(220);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(14, 0);
     var$2[175] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(219);
+    var$4[0] = $rt_s(221);
     var$4[1] = jur_AbstractCharClass$LazyCategoryScope__init_2(983040, 1, 1);
     var$2[176] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(220);
+    var$4[0] = $rt_s(222);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(15, 0);
     var$2[177] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(221);
+    var$4[0] = $rt_s(223);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(16, 1);
     var$2[178] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(222);
+    var$4[0] = $rt_s(224);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(18, 1);
     var$2[179] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(223);
+    var$4[0] = $rt_s(225);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_2(19, 0, 1);
     var$2[180] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(224);
+    var$4[0] = $rt_s(226);
     var$4[1] = jur_AbstractCharClass$LazyCategoryScope__init_(1643118592, 1);
     var$2[181] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(225);
+    var$4[0] = $rt_s(227);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(20, 0);
     var$2[182] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(226);
+    var$4[0] = $rt_s(228);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(21, 0);
     var$2[183] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(227);
+    var$4[0] = $rt_s(229);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(22, 0);
     var$2[184] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(228);
+    var$4[0] = $rt_s(230);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(23, 0);
     var$2[185] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(229);
+    var$4[0] = $rt_s(231);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(24, 1);
     var$2[186] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(230);
+    var$4[0] = $rt_s(232);
     var$4[1] = jur_AbstractCharClass$LazyCategoryScope__init_(2113929216, 1);
     var$2[187] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(231);
+    var$4[0] = $rt_s(233);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(25, 1);
     var$2[188] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(232);
+    var$4[0] = $rt_s(234);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(26, 0);
     var$2[189] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(233);
+    var$4[0] = $rt_s(235);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(27, 0);
     var$2[190] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(234);
+    var$4[0] = $rt_s(236);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(28, 1);
     var$2[191] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(235);
+    var$4[0] = $rt_s(237);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(29, 0);
     var$2[192] = var$3;
     var$3 = $rt_createArray(jl_Object, 2);
     var$4 = var$3.data;
-    var$4[0] = $rt_s(236);
+    var$4[0] = $rt_s(238);
     var$4[1] = jur_AbstractCharClass$LazyCategory__init_(30, 0);
     var$2[193] = var$3;
     jur_AbstractCharClass$PredefinedCharacterClasses_contents = var$1;
@@ -4594,14 +4600,14 @@ ju_AbstractCollection_toString = $this => {
     if ($iter.$hasNext()) {
         $e = $iter.$next();
         if ($e === $this)
-            $e = $rt_s(237);
+            $e = $rt_s(239);
         $sb.$append($e);
     }
     while ($iter.$hasNext()) {
         $e = $iter.$next();
-        var$4 = $sb.$append3($rt_s(41));
+        var$4 = $sb.$append3($rt_s(43));
         if ($e === $this)
-            $e = $rt_s(237);
+            $e = $rt_s(239);
         var$4.$append($e);
     }
     $sb.$append0(93);
@@ -4755,7 +4761,7 @@ jur_DecomposedCharSet_getName = $this => {
     let var$1, var$2;
     var$1 = jur_DecomposedCharSet_getDecomposedChar($this);
     var$2 = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(238)), var$1);
+    jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(240)), var$1);
     return jl_StringBuilder_toString(var$2);
 },
 jur_DecomposedCharSet_codePointAt = ($this, $strIndex, $testString, $rightBound) => {
@@ -4814,7 +4820,7 @@ jur_AheadFSet_matches = ($this, $stringIndex, $testString, $matchResult) => {
     return $stringIndex;
 },
 jur_AheadFSet_getName = $this => {
-    return $rt_s(239);
+    return $rt_s(241);
 },
 jur_NonCapJointSet = $rt_classWithoutFields(jur_JointSet),
 jur_NonCapJointSet__init_ = ($this, $children, $fSet) => {
@@ -4845,7 +4851,7 @@ jur_NonCapJointSet_matches = ($this, $stringIndex, $testString, $matchResult) =>
     return $shift;
 },
 jur_NonCapJointSet_getName = $this => {
-    return $rt_s(240);
+    return $rt_s(242);
 },
 jur_NonCapJointSet_hasConsumed = ($this, $matchResult) => {
     let $cons;
@@ -4881,7 +4887,7 @@ jur_AtomicJointSet_setNext = ($this, $next) => {
     $this.$next2 = $next;
 },
 jur_AtomicJointSet_getName = $this => {
-    return $rt_s(240);
+    return $rt_s(242);
 },
 jur_PositiveLookAhead = $rt_classWithoutFields(jur_AtomicJointSet),
 jur_PositiveLookAhead__init_ = ($this, $children, $fSet) => {
@@ -4909,7 +4915,7 @@ jur_PositiveLookAhead_hasConsumed = ($this, $matchResult) => {
     return 0;
 },
 jur_PositiveLookAhead_getName = $this => {
-    return $rt_s(241);
+    return $rt_s(243);
 },
 jur_NegativeLookAhead = $rt_classWithoutFields(jur_AtomicJointSet),
 jur_NegativeLookAhead__init_ = ($this, $children, $fSet) => {
@@ -4938,7 +4944,7 @@ jur_NegativeLookAhead_hasConsumed = ($this, $matchResult) => {
     return 0;
 },
 jur_NegativeLookAhead_getName = $this => {
-    return $rt_s(242);
+    return $rt_s(244);
 },
 jlr_Array = $rt_classWithoutFields(),
 jlr_Array_getLength = $array => {
@@ -4980,7 +4986,7 @@ function igiae_PluginException() {
     a.$fix1 = null;
 }
 let igiae_PluginException__init_ = ($this, $pluginId, $detail, $fix) => {
-    jl_RuntimeException__init_0($this, (((((((jl_StringBuilder__init_()).$append3($rt_s(243))).$append3($pluginId)).$append3($rt_s(244))).$append3($detail)).$append3($rt_s(245))).$append3($fix)).$toString());
+    jl_RuntimeException__init_0($this, (((((((jl_StringBuilder__init_()).$append3($rt_s(245))).$append3($pluginId)).$append3($rt_s(246))).$append3($detail)).$append3($rt_s(247))).$append3($fix)).$toString());
     $this.$pluginId2 = $pluginId;
     $this.$detail = $detail;
     $this.$fix1 = $fix;
@@ -5018,7 +5024,7 @@ otci_IntegerUtil = $rt_classWithoutFields(),
 otci_IntegerUtil_toUnsignedLogRadixString = ($value, $radixLog2) => {
     let $radix, $mask, $sz, $chars, $pos, $target, var$9, $target_0;
     if (!$value)
-        return $rt_s(246);
+        return $rt_s(248);
     $radix = 1 << $radixLog2;
     $mask = $radix - 1 | 0;
     $sz = (((32 - jl_Integer_numberOfLeadingZeros($value) | 0) + $radixLog2 | 0) - 1 | 0) / $radixLog2 | 0;
@@ -5071,7 +5077,7 @@ jur_LeafQuantifierSet_matches = ($this, $stringIndex, $testString, $matchResult)
     return var$5;
 },
 jur_LeafQuantifierSet_getName = $this => {
-    return $rt_s(247);
+    return $rt_s(249);
 },
 jur_AltQuantifierSet = $rt_classWithoutFields(jur_LeafQuantifierSet),
 jur_AltQuantifierSet__init_ = ($this, $innerSet, $next, $type) => {
@@ -5130,8 +5136,8 @@ igiaj_JsPluginContext$3$1__init_0 = (var_0, var_1) => {
 igiaj_JsPluginContext$3$1_changed = ($this, $service, $registered) => {
     let var$3, var$4, var$5;
     var$3 = $this.$val$listener2;
-    var$4 = otji_JSWrapper_unwrap($service);
-    var$5 = !$registered ? $rt_s(248) : $rt_s(249);
+    var$4 = igiaj_JsPluginHost_orUndefined$js_body$_9(otji_JSWrapper_unwrap($service));
+    var$5 = igiaj_JsPluginHost_serviceEvent($registered);
     var$3.call(var$4, $rt_ustr(var$5));
 },
 otjc_JSObjects = $rt_classWithoutFields(),
@@ -5822,7 +5828,7 @@ jur_UCIRangeSet_accepts = ($this, $strIndex, $testString) => {
 },
 jur_UCIRangeSet_getName = $this => {
     let var$1, var$2, var$3;
-    var$1 = !$this.$alt3 ? $rt_s(36) : $rt_s(37);
+    var$1 = !$this.$alt3 ? $rt_s(38) : $rt_s(39);
     var$2 = $this.$chars1.$toString();
     var$3 = jl_StringBuilder__init_();
     jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(252)), var$1), var$2);
@@ -6158,7 +6164,7 @@ igiaj_JsPluginHost$10_call = ($this, $manifest) => {
     igiae_PluginLedger_recordDeclared(igiae_PluginHost_getLedger($this.$val$host4), igiae_ManifestFacts_getId($facts), igiae_ManifestFacts_getCapabilities($facts), igiae_ManifestFacts_getPermissions($facts));
 },
 igiaj_JsPluginHost$10_call$exported$0 = (var$1, var$2) => {
-    var$1.$call5(var$2);
+    var$1.$call6(var$2);
 },
 otjc_JSPromise$Executor = $rt_classWithoutFields(0);
 function igiaj_JsPluginHost$11() {
@@ -8630,10 +8636,10 @@ ju_ArrayList_toString = $this => {
     $buffer.$append0(91);
     $i = 0;
     while ($i < $length) {
-        ($buffer.$append($this.$array.data[$i] === $this ? $rt_s(237) : $this.$array.data[$i])).$append3($rt_s(41));
+        ($buffer.$append($this.$array.data[$i] === $this ? $rt_s(239) : $this.$array.data[$i])).$append3($rt_s(43));
         $i = $i + 1 | 0;
     }
-    $buffer.$append($this.$array.data[$length] === $this ? $rt_s(237) : $this.$array.data[$length]);
+    $buffer.$append($this.$array.data[$length] === $this ? $rt_s(239) : $this.$array.data[$length]);
     return ($buffer.$append0(93)).$toString();
 },
 ju_ArrayList_hashCode = $this => {
@@ -8795,10 +8801,10 @@ jur_SupplRangeSet_matches = ($this, $stringIndex, $testString, $matchResult) => 
 },
 jur_SupplRangeSet_getName = $this => {
     let var$1, var$2, var$3;
-    var$1 = !$this.$alt0 ? $rt_s(36) : $rt_s(37);
+    var$1 = !$this.$alt0 ? $rt_s(38) : $rt_s(39);
     var$2 = $this.$chars.$toString();
     var$3 = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(38)), var$1), var$2);
+    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(40)), var$1), var$2);
     return jl_StringBuilder_toString(var$3);
 },
 jur_SupplRangeSet_contains = ($this, $ch) => {
@@ -9076,7 +9082,7 @@ jl_String_toCharArray = $this => {
 },
 jl_String_valueOf = $obj => {
     jl_String_$callClinit();
-    return $obj === null ? $rt_s(42) : $obj.$toString();
+    return $obj === null ? $rt_s(44) : $obj.$toString();
 },
 jl_String_valueOf0 = $i => {
     jl_String_$callClinit();
@@ -9725,7 +9731,7 @@ jur_PatternSyntaxException_getMessage = $this => {
         var$4 = $this.$index1;
         var$5 = $this.$pattern1;
         var$6 = jl_StringBuilder__init_();
-        jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append1(var$6, var$4), $rt_s(41)), var$5), $rt_s(41)), $filler);
+        jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append1(var$6, var$4), $rt_s(43)), var$5), $rt_s(43)), $filler);
         var$5 = jl_StringBuilder_toString(var$6);
     } else
         var$5 = $rt_s(10);
@@ -10921,10 +10927,10 @@ jur_RangeSet_accepts = ($this, $strIndex, $testString) => {
 },
 jur_RangeSet_getName = $this => {
     let var$1, var$2, var$3;
-    var$1 = !$this.$alt2 ? $rt_s(36) : $rt_s(37);
+    var$1 = !$this.$alt2 ? $rt_s(38) : $rt_s(39);
     var$2 = $this.$chars0.$toString();
     var$3 = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(38)), var$1), var$2);
+    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(40)), var$1), var$2);
     return jl_StringBuilder_toString(var$3);
 },
 jur_RangeSet_first = ($this, $set) => {
@@ -11612,10 +11618,8 @@ igiaj_EngineJs_setStrict = $enabled => {
     igiae_Diagnostics_setStrict(igiaj_EngineJs_booleanOrNull($enabled));
 },
 igiaj_EngineJs_createPluginHost = $options => {
-    let $tree;
     igiaj_EngineJs_$callClinit();
-    $tree = igiaj_JsJson_toTree($options);
-    return igiaj_JsPluginHost_from($tree, $options);
+    return igiaj_JsPluginHost_from(igiaj_JsJson_toTree($options));
 },
 igiaj_EngineJs_setDiagnosticSink = $sink => {
     igiaj_EngineJs_$callClinit();
@@ -11797,7 +11801,7 @@ igiaj_JsPluginHost$1_call = ($this, $manifest) => {
     return $failure !== null ? igiaj_JsErrors_of($failure) : null;
 },
 igiaj_JsPluginHost$1_call$exported$0 = (var$1, var$2) => {
-    return var$1.$call6(var$2);
+    return var$1.$call7(var$2);
 };
 function jur_AbstractCharClass$LazyJavaLetterOrDigit$1() {
     jur_AbstractCharClass.call(this);
@@ -11869,7 +11873,7 @@ igiaj_JsPluginHost$3_call = ($this, $manifest, $runtime) => {
     return otji_JSWrapper_unwrap(igiaj_JsPluginContext_build($session, $runtime, $this.$val$descriptor));
 },
 igiaj_JsPluginHost$3_call$exported$0 = (var$1, var$2, var$3) => {
-    return var$1.$call7(var$2, var$3);
+    return var$1.$call8(var$2, var$3);
 },
 jur_PossessiveGroupQuantifierSet = $rt_classWithoutFields(jur_GroupQuantifierSet),
 jur_PossessiveGroupQuantifierSet__init_ = ($this, $innerSet, $next, $type) => {
@@ -11911,7 +11915,7 @@ igiaj_JsPluginHost$2_call = ($this, $manifest) => {
     return $failure !== null ? igiaj_JsErrors_of($failure) : null;
 },
 igiaj_JsPluginHost$2_call$exported$0 = (var$1, var$2) => {
-    return var$1.$call6(var$2);
+    return var$1.$call7(var$2);
 };
 function igiaj_JsPluginHost$5() {
     jl_Object.call(this);
@@ -11927,7 +11931,7 @@ igiaj_JsPluginHost$5__init_0 = var_0 => {
     return var_1;
 },
 igiaj_JsPluginHost$5_call = ($this, $id) => {
-    return otji_JSWrapper_unwrap(igiae_PluginHost_service($this.$val$host, $id));
+    return igiaj_JsPluginHost_orUndefined$js_body$_9(otji_JSWrapper_unwrap(igiae_PluginHost_service($this.$val$host, $id)));
 },
 igiaj_JsPluginHost$5_call$exported$0 = (var$1, var$2) => {
     var$2 = $rt_str(var$2);
@@ -11955,7 +11959,7 @@ igiaj_JsPluginHost$4_call = ($this, $id) => {
         $record = $records.$get($index);
         var$6 = igiae_CapabilityRecord_getPluginId($record);
         var$7 = otji_JSWrapper_unwrap(igiae_CapabilityRecord_getImplementation($record));
-        var$6 = igiaj_JsPluginHost_capabilityRecord$js_body$_15($rt_ustr(var$6), var$7);
+        var$6 = igiaj_JsPluginHost_capabilityRecord$js_body$_17($rt_ustr(var$6), var$7);
         $out[$index] = var$6;
         $index = $index + 1 | 0;
     }
@@ -12751,7 +12755,7 @@ igiaj_JsErrors = $rt_classWithoutFields(),
 igiaj_JsErrors_mint = ($pluginId, $detail, $fix) => {
     let var$4;
     var$4 = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append0(var$4, 91), $pluginId), $rt_s(244)), $detail), $rt_s(245)), $fix);
+    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append0(var$4, 91), $pluginId), $rt_s(246)), $detail), $rt_s(247)), $fix);
     return igiaj_JsErrors_build$js_body$_3($rt_ustr($pluginId), $rt_ustr($detail), $rt_ustr($fix), $rt_ustr(jl_StringBuilder_toString(var$4)));
 },
 igiaj_JsErrors_of = $failure => {
@@ -12930,7 +12934,7 @@ igiae_ManifestValidator_duplicateIssues = ($path, $values) => {
     while ($index < $values.$size()) {
         $value = jl_String_valueOf($values.$get($index));
         if (!$seen.$add2($value))
-            $issues.$add2(igiae_SchemaIssue__init_0((((((jl_StringBuilder__init_()).$append3($path)).$append3($rt_s(243))).$append2($index)).$append3($rt_s(310))).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(301))).$append3($value)).$append3($rt_s(314))).$toString(), $rt_s(315)));
+            $issues.$add2(igiae_SchemaIssue__init_0((((((jl_StringBuilder__init_()).$append3($path)).$append3($rt_s(245))).$append2($index)).$append3($rt_s(310))).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(301))).$append3($value)).$append3($rt_s(314))).$toString(), $rt_s(315)));
         $index = $index + 1 | 0;
     }
     return $issues;
@@ -12965,7 +12969,7 @@ igiae_ManifestValidator_join = $values => {
     $index = 0;
     while ($index < $values.$size()) {
         if ($index > 0)
-            $out.$append3($rt_s(41));
+            $out.$append3($rt_s(43));
         $out.$append3($values.$get($index));
         $index = $index + 1 | 0;
     }
@@ -13153,7 +13157,7 @@ igiaj_JsPluginHost$7_call = ($this, $pluginId) => {
 },
 igiaj_JsPluginHost$7_call$exported$0 = (var$1, var$2) => {
     var$2 = $rt_str(var$2);
-    var$1.$call8(var$2);
+    var$1.$call9(var$2);
 },
 igiaj_JsPluginHost$MarkBrokenFn = $rt_classWithoutFields(0);
 function igiaj_JsPluginHost$6() {
@@ -13192,7 +13196,7 @@ igiaj_JsPluginHost$9__init_0 = var_0 => {
 igiaj_JsPluginHost$9_call = ($this, $pluginId) => {
     let $found;
     $found = igiae_PluginLedger_entry(igiae_PluginHost_getLedger($this.$val$host7), $pluginId);
-    return $found !== null ? igiaj_JsPluginHost_ledgerRow($found) : null;
+    return igiaj_JsPluginHost_orUndefined$js_body$_9($found !== null ? igiaj_JsPluginHost_ledgerRow($found) : null);
 },
 igiaj_JsPluginHost$9_call$exported$0 = (var$1, var$2) => {
     var$2 = $rt_str(var$2);
@@ -13469,7 +13473,7 @@ igiae_ServiceHub_notifyWatchers = ($this, $id, $service, $registered) => {
                 if ($$je instanceof jl_RuntimeException) {
                     $failure = $$je;
                     var$7 = (((jl_StringBuilder__init_()).$append3($rt_s(328))).$append3($id)).$append3($rt_s(329));
-                    var$7 = (((var$7.$append3(!$registered ? $rt_s(248) : $rt_s(249))).$append3($rt_s(4))).$append($failure)).$toString();
+                    var$7 = (((var$7.$append3(!$registered ? $rt_s(25) : $rt_s(26))).$append3($rt_s(4))).$append($failure)).$toString();
                     igiae_Diagnostics_report(var$7);
                     break a;
                 } else {
@@ -13505,7 +13509,7 @@ igiae_ServiceHub_join = $values => {
     $index = 0;
     while ($index < $values.$size()) {
         if ($index > 0)
-            $out.$append3($rt_s(41));
+            $out.$append3($rt_s(43));
         $out.$append3($values.$get($index));
         $index = $index + 1 | 0;
     }
@@ -13550,7 +13554,7 @@ otcic_JSStderrPrintStream__init_0 = () => {
 },
 otcic_JSStderrPrintStream_print = ($this, $s) => {
     if ($s === null)
-        $s = $rt_s(42);
+        $s = $rt_s(44);
     $rt_putStderr($rt_ustr($s));
 },
 jur_AbstractCharClass$LazyLower = $rt_classWithoutFields(jur_AbstractCharClass$LazyCharClass),
@@ -13932,7 +13936,7 @@ igiae_PluginHost_strip = ($this, $pluginId) => {
 igiae_PluginHost_refuseLate = ($this, $pluginId, $what, $id) => {
     if (!$this.$revoked.$contains($pluginId))
         return 0;
-    igiae_Diagnostics_report(((((((((jl_StringBuilder__init_()).$append3($rt_s(352))).$append3($what)).$append3($rt_s(33))).$append3($id)).$append3($rt_s(34))).$append3($pluginId)).$append3($rt_s(353))).$toString());
+    igiae_Diagnostics_report(((((((((jl_StringBuilder__init_()).$append3($rt_s(352))).$append3($what)).$append3($rt_s(35))).$append3($id)).$append3($rt_s(36))).$append3($pluginId)).$append3($rt_s(353))).$toString());
     return 1;
 },
 igiae_PluginHost_fenced = ($this, $pluginId, $registry) => {
@@ -14021,7 +14025,7 @@ igiae_PluginHost_join = $values => {
     $index = 0;
     while ($index < $values.$size()) {
         if ($index > 0)
-            $out.$append3($rt_s(41));
+            $out.$append3($rt_s(43));
         $out.$append3($values.$get($index));
         $index = $index + 1 | 0;
     }
@@ -14341,7 +14345,7 @@ jur_UCISupplRangeSet_contains = ($this, $ch) => {
 },
 jur_UCISupplRangeSet_getName = $this => {
     let var$1, var$2, var$3;
-    var$1 = !$this.$alt0 ? $rt_s(36) : $rt_s(37);
+    var$1 = !$this.$alt0 ? $rt_s(38) : $rt_s(39);
     var$2 = $this.$chars.$toString();
     var$3 = jl_StringBuilder__init_();
     jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(252)), var$1), var$2);
@@ -14695,7 +14699,7 @@ igiae_SchemaValidator_checkArray = ($value, $schema, $path, $issues, $source) =>
     $values = $value;
     $index = 0;
     while ($index < $values.$size()) {
-        igiae_SchemaValidator_check($values.$get($index), $items, (((((jl_StringBuilder__init_()).$append3($path)).$append3($rt_s(243))).$append2($index)).$append3($rt_s(310))).$toString(), $issues, $source);
+        igiae_SchemaValidator_check($values.$get($index), $items, (((((jl_StringBuilder__init_()).$append3($path)).$append3($rt_s(245))).$append2($index)).$append3($rt_s(310))).$toString(), $issues, $source);
         $index = $index + 1 | 0;
     }
 },
@@ -14770,7 +14774,7 @@ igiae_SchemaValidator_typeIssue = ($value, $schema, $path) => {
 },
 igiae_SchemaValidator_describe = $value => {
     if ($value === null)
-        return $rt_s(42);
+        return $rt_s(44);
     if ($rt_isInstance($value, ju_List))
         return $rt_s(363);
     if ($value instanceof jl_String)
@@ -14787,7 +14791,7 @@ igiae_SchemaValidator_join = $values => {
     $index = 0;
     while ($index < $values.$size()) {
         if ($index > 0)
-            $out.$append3($rt_s(41));
+            $out.$append3($rt_s(43));
         $out.$append3($values.$get($index));
         $index = $index + 1 | 0;
     }
@@ -16787,7 +16791,7 @@ jur_AbstractCharClass$LazyAlpha, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 
 igiaj_JsPluginContext$IdFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
 igiaj_JsPluginContext$1, 0, jl_Object, [igiaj_JsPluginContext$IdFn], 0, 0, 0, ["$_init_89", $rt_wrapFunction1(igiaj_JsPluginContext$1__init_), "$call4", $rt_wrapFunction1(igiaj_JsPluginContext$1_call)],
 igiaj_JsPluginContext$WantFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
-igiaj_JsPluginContext$2, 0, jl_Object, [igiaj_JsPluginContext$WantFn], 0, 0, 0, ["$_init_89", $rt_wrapFunction1(igiaj_JsPluginContext$2__init_), "$call3", $rt_wrapFunction2(igiaj_JsPluginContext$2_call)],
+igiaj_JsPluginContext$2, 0, jl_Object, [igiaj_JsPluginContext$WantFn], 0, 0, 0, ["$_init_89", $rt_wrapFunction1(igiaj_JsPluginContext$2__init_), "$call5", $rt_wrapFunction2(igiaj_JsPluginContext$2_call)],
 jur_BackReferencedSingleSet, "BackReferencedSingleSet", 2, jur_SingleSet, [], 0, 0, 0, ["$_init_2", $rt_wrapFunction1(jur_BackReferencedSingleSet__init_), "$find", $rt_wrapFunction3(jur_BackReferencedSingleSet_find), "$findBack", $rt_wrapFunction4(jur_BackReferencedSingleSet_findBack), "$processBackRefReplacement", $rt_wrapFunction0(jur_BackReferencedSingleSet_processBackRefReplacement)],
 jur_AbstractCharClass$LazyWord, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyWord__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyWord_computeValue)],
 jur_AbstractCharClass$LazyNonWord, 0, jur_AbstractCharClass$LazyWord, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyNonWord__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyNonWord_computeValue)],
@@ -16909,7 +16913,7 @@ jur_BackReferenceSet, "BackReferenceSet", 2, jur_CIBackReferenceSet, [], 0, 0, 0
 jur_DotQuantifierSet, "DotQuantifierSet", 2, jur_QuantifierSet, [], 0, 0, 0, ["$_init_58", $rt_wrapFunction4(jur_DotQuantifierSet__init_), "$matches", $rt_wrapFunction3(jur_DotQuantifierSet_matches), "$find", $rt_wrapFunction3(jur_DotQuantifierSet_find), "$getName", $rt_wrapFunction0(jur_DotQuantifierSet_getName)],
 jur_AbstractCharClass$LazyJavaJavaIdentifierPart, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaJavaIdentifierPart__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaJavaIdentifierPart_computeValue)],
 igiaj_JsPluginHost$RecordDeclaredFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
-igiaj_JsPluginHost$10, 0, jl_Object, [igiaj_JsPluginHost$RecordDeclaredFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$10__init_), "$call5", $rt_wrapFunction1(igiaj_JsPluginHost$10_call)],
+igiaj_JsPluginHost$10, 0, jl_Object, [igiaj_JsPluginHost$RecordDeclaredFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$10__init_), "$call6", $rt_wrapFunction1(igiaj_JsPluginHost$10_call)],
 otjc_JSPromise$Executor, 0, jl_Object, [otj_JSObject], 1537, 0, 0, 0,
 igiaj_JsPluginHost$11, 0, jl_Object, [otjc_JSPromise$Executor], 0, 0, 0, ["$_init_10", $rt_wrapFunction1(igiaj_JsPluginHost$11__init_), "$onExecute", $rt_wrapFunction2(igiaj_JsPluginHost$11_onExecute)],
 igiae_EventBus, 0, jl_Object, [], 1537, 0, 0, 0,
@@ -17052,12 +17056,12 @@ jur_AbstractCharClass$2, "AbstractCharClass$2", 2, jur_AbstractCharClass, [], 0,
 jur_AbstractCharClass$LazyJavaLowerCase, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaLowerCase__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaLowerCase_computeValue)],
 jur_PossessiveCompositeQuantifierSet, "PossessiveCompositeQuantifierSet", 2, jur_CompositeQuantifierSet, [], 0, 0, 0, ["$_init_59", $rt_wrapFunction4(jur_PossessiveCompositeQuantifierSet__init_), "$matches", $rt_wrapFunction3(jur_PossessiveCompositeQuantifierSet_matches)],
 igiaj_JsPluginHost$ManifestFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
-igiaj_JsPluginHost$1, 0, jl_Object, [igiaj_JsPluginHost$ManifestFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$1__init_), "$call6", $rt_wrapFunction1(igiaj_JsPluginHost$1_call)],
+igiaj_JsPluginHost$1, 0, jl_Object, [igiaj_JsPluginHost$ManifestFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$1__init_), "$call7", $rt_wrapFunction1(igiaj_JsPluginHost$1_call)],
 jur_AbstractCharClass$LazyJavaLetterOrDigit$1, "AbstractCharClass$LazyJavaLetterOrDigit$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_64", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaLetterOrDigit$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaLetterOrDigit$1_contains)],
 jur_CharClass$18, "CharClass$18", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_70", $rt_wrapFunction2(jur_CharClass$18__init_), "$contains0", $rt_wrapFunction1(jur_CharClass$18_contains), "$toString", $rt_wrapFunction0(jur_CharClass$18_toString)],
-igiaj_JsPluginHost$3, 0, jl_Object, [igiaj_JsPluginHost$ContextForFn], 0, 0, 0, ["$_init_9", $rt_wrapFunction2(igiaj_JsPluginHost$3__init_), "$call7", $rt_wrapFunction2(igiaj_JsPluginHost$3_call)],
+igiaj_JsPluginHost$3, 0, jl_Object, [igiaj_JsPluginHost$ContextForFn], 0, 0, 0, ["$_init_9", $rt_wrapFunction2(igiaj_JsPluginHost$3__init_), "$call8", $rt_wrapFunction2(igiaj_JsPluginHost$3_call)],
 jur_PossessiveGroupQuantifierSet, "PossessiveGroupQuantifierSet", 2, jur_GroupQuantifierSet, [], 0, 0, 0, ["$_init_17", $rt_wrapFunction3(jur_PossessiveGroupQuantifierSet__init_), "$matches", $rt_wrapFunction3(jur_PossessiveGroupQuantifierSet_matches)],
-igiaj_JsPluginHost$2, 0, jl_Object, [igiaj_JsPluginHost$ManifestFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$2__init_), "$call6", $rt_wrapFunction1(igiaj_JsPluginHost$2_call)],
+igiaj_JsPluginHost$2, 0, jl_Object, [igiaj_JsPluginHost$ManifestFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$2__init_), "$call7", $rt_wrapFunction1(igiaj_JsPluginHost$2_call)],
 igiaj_JsPluginHost$5, 0, jl_Object, [igiaj_JsPluginHost$IdFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$5__init_), "$call4", $rt_wrapFunction1(igiaj_JsPluginHost$5_call)],
 igiaj_JsPluginHost$4, 0, jl_Object, [igiaj_JsPluginHost$IdFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$4__init_), "$call4", $rt_wrapFunction1(igiaj_JsPluginHost$4_call)],
 jur_CharClass$13, 0, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_67", $rt_wrapFunction2(jur_CharClass$13__init_), "$contains0", $rt_wrapFunction1(jur_CharClass$13_contains)],
@@ -17106,7 +17110,7 @@ ju_HashMap$KeyIterator, 0, ju_HashMap$AbstractMapIterator, [ju_Iterator], 0, 0, 
 igiae_PluginSession, 0, jl_Object, [], 17, 0, 0, ["$_init_94", $rt_wrapFunction4(igiae_PluginSession__init_), "$getFacts", $rt_wrapFunction0(igiae_PluginSession_getFacts), "$getServices", $rt_wrapFunction0(igiae_PluginSession_getServices), "$getEvents", $rt_wrapFunction0(igiae_PluginSession_getEvents), "$provide", $rt_wrapFunction2(igiae_PluginSession_provide)],
 otji_JSWrapper, 0, jl_Object, [], 17, 0, 0, 0,
 igiaj_JsPluginHost$ReleaseFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
-igiaj_JsPluginHost$7, 0, jl_Object, [igiaj_JsPluginHost$ReleaseFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$7__init_), "$call8", $rt_wrapFunction1(igiaj_JsPluginHost$7_call)],
+igiaj_JsPluginHost$7, 0, jl_Object, [igiaj_JsPluginHost$ReleaseFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$7__init_), "$call9", $rt_wrapFunction1(igiaj_JsPluginHost$7_call)],
 igiaj_JsPluginHost$MarkBrokenFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
 igiaj_JsPluginHost$6, 0, jl_Object, [igiaj_JsPluginHost$MarkBrokenFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$6__init_), "$call0", $rt_wrapFunction2(igiaj_JsPluginHost$6_call)],
 igiaj_JsPluginHost$9, 0, jl_Object, [igiaj_JsPluginHost$IdFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$9__init_), "$call4", $rt_wrapFunction1(igiaj_JsPluginHost$9_call)],
@@ -17190,16 +17194,16 @@ $rt_byteArrayCls = $rt_arraycls($rt_bytecls),
 $rt_shortArrayCls = $rt_arraycls($rt_shortcls),
 $rt_intArrayCls = $rt_arraycls($rt_intcls),
 $rt_longArrayCls = $rt_arraycls($rt_longcls);
-$rt_stringPool(["String is null", "String is empty", "String contains invalid digits: ", "String contains digits out of radix ", ": ", "The value is too big for int type: ", "The value is too big for integer type", "Illegal radix: ", "JointSet", "CI sequence: ", "", "app", "api", "surfaces", "vocabulary", "wellKnownServices", "id", "capabilities", "permissions", "detail", "fix", "active", "broken", "activating", "stopped", "CI back reference: ", "UCI back reference: ", "<DotAllQuant>", "fSet", "BehindFSet",
-"1", "INTISY_PLUGIN_STRICT", "ignored unknown ", " \"", "\" from ", "[plugin-api] ", " ", "^ ", "range:", "<GroupQuant>", "(this Map)", ", ", "null", "Lower", "Upper", "ASCII", "Alpha", "Digit", "Alnum", "Punct", "Graph", "Print", "Blank", "Cntrl", "XDigit", "javaLowerCase", "javaUpperCase", "javaWhitespace", "javaMirrored", "javaDefined", "javaDigit", "javaIdentifierIgnorable", "javaISOControl", "javaJavaIdentifierPart", "javaJavaIdentifierStart", "javaLetter", "javaLetterOrDigit", "javaSpaceChar", "javaTitleCase",
-"javaUnicodeIdentifierPart", "javaUnicodeIdentifierStart", "Space", "w", "W", "s", "S", "d", "D", "BasicLatin", "Latin-1Supplement", "LatinExtended-A", "LatinExtended-B", "IPAExtensions", "SpacingModifierLetters", "CombiningDiacriticalMarks", "Greek", "Cyrillic", "CyrillicSupplement", "Armenian", "Hebrew", "Arabic", "Syriac", "ArabicSupplement", "Thaana", "Devanagari", "Bengali", "Gurmukhi", "Gujarati", "Oriya", "Tamil", "Telugu", "Kannada", "Malayalam", "Sinhala", "Thai", "Lao", "Tibetan", "Myanmar", "Georgian",
-"HangulJamo", "Ethiopic", "EthiopicSupplement", "Cherokee", "UnifiedCanadianAboriginalSyllabics", "Ogham", "Runic", "Tagalog", "Hanunoo", "Buhid", "Tagbanwa", "Khmer", "Mongolian", "Limbu", "TaiLe", "NewTaiLue", "KhmerSymbols", "Buginese", "PhoneticExtensions", "PhoneticExtensionsSupplement", "CombiningDiacriticalMarksSupplement", "LatinExtendedAdditional", "GreekExtended", "GeneralPunctuation", "SuperscriptsandSubscripts", "CurrencySymbols", "CombiningMarksforSymbols", "LetterlikeSymbols", "NumberForms", "Arrows",
-"MathematicalOperators", "MiscellaneousTechnical", "ControlPictures", "OpticalCharacterRecognition", "EnclosedAlphanumerics", "BoxDrawing", "BlockElements", "GeometricShapes", "MiscellaneousSymbols", "Dingbats", "MiscellaneousMathematicalSymbols-A", "SupplementalArrows-A", "BraillePatterns", "SupplementalArrows-B", "MiscellaneousMathematicalSymbols-B", "SupplementalMathematicalOperators", "MiscellaneousSymbolsandArrows", "Glagolitic", "Coptic", "GeorgianSupplement", "Tifinagh", "EthiopicExtended", "SupplementalPunctuation",
-"CJKRadicalsSupplement", "KangxiRadicals", "IdeographicDescriptionCharacters", "CJKSymbolsandPunctuation", "Hiragana", "Katakana", "Bopomofo", "HangulCompatibilityJamo", "Kanbun", "BopomofoExtended", "CJKStrokes", "KatakanaPhoneticExtensions", "EnclosedCJKLettersandMonths", "CJKCompatibility", "CJKUnifiedIdeographsExtensionA", "YijingHexagramSymbols", "CJKUnifiedIdeographs", "YiSyllables", "YiRadicals", "ModifierToneLetters", "SylotiNagri", "HangulSyllables", "HighSurrogates", "HighPrivateUseSurrogates", "LowSurrogates",
-"PrivateUseArea", "CJKCompatibilityIdeographs", "AlphabeticPresentationForms", "ArabicPresentationForms-A", "VariationSelectors", "VerticalForms", "CombiningHalfMarks", "CJKCompatibilityForms", "SmallFormVariants", "ArabicPresentationForms-B", "HalfwidthandFullwidthForms", "all", "Specials", "Cn", "IsL", "Lu", "Ll", "Lt", "Lm", "Lo", "IsM", "Mn", "Me", "Mc", "N", "Nd", "Nl", "No", "IsZ", "Zs", "Zl", "Zp", "IsC", "Cc", "Cf", "Co", "Cs", "IsP", "Pd", "Ps", "Pe", "Pc", "Po", "IsS", "Sm", "Sc", "Sk", "So", "Pi",
-"Pf", "(this Collection)", "decomposed char:", "AheadFSet", "NonCapJointSet", "PosLookaheadJointSet", "NegLookaheadJointSet", "[", "] ", "\n  fix: ", "0", "<Quant>", "unregister", "register", "PosBehindJointSet", "sequence: ", "UCI range:", "\n", "false", "true", "NegBehindJointSet", "back reference: ", "<DotQuant>", "[L", "string", "number", "boolean", ".", "CI ", "waited ", "ms for service \"", "\" and nothing registered it", "install a plugin that provides \"", "\", or use get() and carry on without it",
-"<EOL>", "UCI ", "AtomicFSet", "[]", "posFSet", "<MultiLine $>", "Patter is null", "\\Q", "\\E", "\\\\E\\Q", "ACTIVATING", "ACTIVE", "BROKEN", "STOPPED", "services", "provides", "consumes", "UCI sequence: ", "CompositeRangeSet:  <nonsurrogate> ", " <surrogate> ", "FinalSet", "<Empty set>", "the manifest", "(root)", "services.provides", "services.consumes", "(unknown plugin)", "plugin.json ", "entry", "capabilities are declared but no entry names the module that provides them", "add \"entry\": \"dist/index.js\"",
-"\"", "\" is not a path inside the repo", "use a repo-relative path with no leading slash and no ..", "/", "\\", "[\\\\/]", "..", ":", "services.provides[", "]", "\" is neither namespaced by this plugin nor a well-known service id", "rename it to \"", "\", or use one of: ", "\" is listed twice", "remove the duplicate entry", "EOI", "object", "function", "undefined", "^", "service \"", "\" is already registered by ", "disable one of the two plugins, or have each register its own namespaced id so consumers can ask for the one they want",
+$rt_stringPool(["String is null", "String is empty", "String contains invalid digits: ", "String contains digits out of radix ", ": ", "The value is too big for int type: ", "The value is too big for integer type", "Illegal radix: ", "JointSet", "CI sequence: ", "", "app", "api", "surfaces", "vocabulary", "wellKnownServices", "id", "capabilities", "permissions", "detail", "fix", "active", "broken", "activating", "stopped", "unregister", "register", "CI back reference: ", "UCI back reference: ", "<DotAllQuant>",
+"fSet", "BehindFSet", "1", "INTISY_PLUGIN_STRICT", "ignored unknown ", " \"", "\" from ", "[plugin-api] ", " ", "^ ", "range:", "<GroupQuant>", "(this Map)", ", ", "null", "Lower", "Upper", "ASCII", "Alpha", "Digit", "Alnum", "Punct", "Graph", "Print", "Blank", "Cntrl", "XDigit", "javaLowerCase", "javaUpperCase", "javaWhitespace", "javaMirrored", "javaDefined", "javaDigit", "javaIdentifierIgnorable", "javaISOControl", "javaJavaIdentifierPart", "javaJavaIdentifierStart", "javaLetter", "javaLetterOrDigit", "javaSpaceChar",
+"javaTitleCase", "javaUnicodeIdentifierPart", "javaUnicodeIdentifierStart", "Space", "w", "W", "s", "S", "d", "D", "BasicLatin", "Latin-1Supplement", "LatinExtended-A", "LatinExtended-B", "IPAExtensions", "SpacingModifierLetters", "CombiningDiacriticalMarks", "Greek", "Cyrillic", "CyrillicSupplement", "Armenian", "Hebrew", "Arabic", "Syriac", "ArabicSupplement", "Thaana", "Devanagari", "Bengali", "Gurmukhi", "Gujarati", "Oriya", "Tamil", "Telugu", "Kannada", "Malayalam", "Sinhala", "Thai", "Lao", "Tibetan",
+"Myanmar", "Georgian", "HangulJamo", "Ethiopic", "EthiopicSupplement", "Cherokee", "UnifiedCanadianAboriginalSyllabics", "Ogham", "Runic", "Tagalog", "Hanunoo", "Buhid", "Tagbanwa", "Khmer", "Mongolian", "Limbu", "TaiLe", "NewTaiLue", "KhmerSymbols", "Buginese", "PhoneticExtensions", "PhoneticExtensionsSupplement", "CombiningDiacriticalMarksSupplement", "LatinExtendedAdditional", "GreekExtended", "GeneralPunctuation", "SuperscriptsandSubscripts", "CurrencySymbols", "CombiningMarksforSymbols", "LetterlikeSymbols",
+"NumberForms", "Arrows", "MathematicalOperators", "MiscellaneousTechnical", "ControlPictures", "OpticalCharacterRecognition", "EnclosedAlphanumerics", "BoxDrawing", "BlockElements", "GeometricShapes", "MiscellaneousSymbols", "Dingbats", "MiscellaneousMathematicalSymbols-A", "SupplementalArrows-A", "BraillePatterns", "SupplementalArrows-B", "MiscellaneousMathematicalSymbols-B", "SupplementalMathematicalOperators", "MiscellaneousSymbolsandArrows", "Glagolitic", "Coptic", "GeorgianSupplement", "Tifinagh", "EthiopicExtended",
+"SupplementalPunctuation", "CJKRadicalsSupplement", "KangxiRadicals", "IdeographicDescriptionCharacters", "CJKSymbolsandPunctuation", "Hiragana", "Katakana", "Bopomofo", "HangulCompatibilityJamo", "Kanbun", "BopomofoExtended", "CJKStrokes", "KatakanaPhoneticExtensions", "EnclosedCJKLettersandMonths", "CJKCompatibility", "CJKUnifiedIdeographsExtensionA", "YijingHexagramSymbols", "CJKUnifiedIdeographs", "YiSyllables", "YiRadicals", "ModifierToneLetters", "SylotiNagri", "HangulSyllables", "HighSurrogates", "HighPrivateUseSurrogates",
+"LowSurrogates", "PrivateUseArea", "CJKCompatibilityIdeographs", "AlphabeticPresentationForms", "ArabicPresentationForms-A", "VariationSelectors", "VerticalForms", "CombiningHalfMarks", "CJKCompatibilityForms", "SmallFormVariants", "ArabicPresentationForms-B", "HalfwidthandFullwidthForms", "all", "Specials", "Cn", "IsL", "Lu", "Ll", "Lt", "Lm", "Lo", "IsM", "Mn", "Me", "Mc", "N", "Nd", "Nl", "No", "IsZ", "Zs", "Zl", "Zp", "IsC", "Cc", "Cf", "Co", "Cs", "IsP", "Pd", "Ps", "Pe", "Pc", "Po", "IsS", "Sm", "Sc",
+"Sk", "So", "Pi", "Pf", "(this Collection)", "decomposed char:", "AheadFSet", "NonCapJointSet", "PosLookaheadJointSet", "NegLookaheadJointSet", "[", "] ", "\n  fix: ", "0", "<Quant>", "PosBehindJointSet", "sequence: ", "UCI range:", "\n", "false", "true", "NegBehindJointSet", "back reference: ", "<DotQuant>", "[L", "string", "number", "boolean", ".", "CI ", "waited ", "ms for service \"", "\" and nothing registered it", "install a plugin that provides \"", "\", or use get() and carry on without it", "<EOL>",
+"UCI ", "AtomicFSet", "[]", "posFSet", "<MultiLine $>", "Patter is null", "\\Q", "\\E", "\\\\E\\Q", "ACTIVATING", "ACTIVE", "BROKEN", "STOPPED", "services", "provides", "consumes", "UCI sequence: ", "CompositeRangeSet:  <nonsurrogate> ", " <surrogate> ", "FinalSet", "<Empty set>", "the manifest", "(root)", "services.provides", "services.consumes", "(unknown plugin)", "plugin.json ", "entry", "capabilities are declared but no entry names the module that provides them", "add \"entry\": \"dist/index.js\"", "\"",
+"\" is not a path inside the repo", "use a repo-relative path with no leading slash and no ..", "/", "\\", "[\\\\/]", "..", ":", "services.provides[", "]", "\" is neither namespaced by this plugin nor a well-known service id", "rename it to \"", "\", or use one of: ", "\" is listed twice", "remove the duplicate entry", "EOI", "object", "function", "undefined", "^", "service \"", "\" is already registered by ", "disable one of the two plugins, or have each register its own namespaced id so consumers can ask for the one they want",
 "cannot register service \"", "\", which belongs to another plugin", "namespace it as \"", "\", or register one of the well-known ids: ", "a watcher of \"", "\" threw while handling ", "stopped while waiting for service \"", "provide \"", "\" before this plugin is stopped, or use get() and carry on without it", "PreviousMatch", "NonCapFSet", "Either src or dest is null", "timeoutMs", "needs api ", ", this host has api ", "update the app to a version that implements api ", " or later", "capabilities declared but never provided: ",
 "call ctx.provide(\"", "\", ...) in activate, or remove it from \"capabilities\" in plugin.json", "capabilities provided but never declared: ", "add \"", "\" to \"capabilities\" in plugin.json", "a late provision of capability", "capability", "provided capability \"", "\" twice", "call ctx.provide once per capability in activate", "ignored ", ", which is no longer running", "a late subscription to topic", "a late want of service", "a late watch of service", "a late registration of service", "DotAll", "decomposed Hangul syllable:",
 " (fix: ", ")", "WordBoundary", "array", "integer", "required field \"", "\" is missing", "\" to ", "field", "\" does not match ", "make ", " match ", "\" is not one of ", "set ", " to one of ", "expected a value >= ", ", got ", " to a value >= ", "expected ", " to a ", "<SOL>", "<Unix MultiLine $>", "Name capturing group should start with letter", "Is", "In", "$schema", "Pointer at the published manifest schema, for an editor\'s completion and validation.", "The plugin\'s permanent identity, matching its repository name.",
