@@ -3,6 +3,7 @@ package io.github.intisy.ai.tsemit;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -28,11 +29,15 @@ import javax.tools.StandardLocation;
 
 @SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
-@SupportedOptions("tsemit.name")
+@SupportedOptions({"tsemit.name", "tsemit.ext", "tsemit.keys", "tsemit.imports"})
 public class TsEmitProcessor extends AbstractProcessor {
+
+    private static final List<String> KEY_TYPES =
+            Collections.unmodifiableList(Arrays.asList("CapabilityType", "ServiceType", "TopicType"));
 
     private final List<String> chunks = new ArrayList<String>();
     private final List<String> constants = new ArrayList<String>();
+    private final List<String> emittedTypes = new ArrayList<String>();
     private int rawEscapes = 0;
 
     @Override
@@ -43,6 +48,7 @@ public class TsEmitProcessor extends AbstractProcessor {
                         "@TsInterface applies only to interfaces", element);
                 continue;
             }
+            emittedTypes.add(element.getSimpleName().toString());
             chunks.add(emit((TypeElement) element));
         }
         for (Element element : round.getElementsAnnotatedWith(TsModule.class)) {
@@ -287,19 +293,13 @@ public class TsEmitProcessor extends AbstractProcessor {
      * otherwise differ by line ending alone, and the drift gate would fail on one of the two.
      */
     private void write() {
-        StringBuilder out = new StringBuilder("// Generated from Java sources. Do not edit.\n\n");
+        StringBuilder body = new StringBuilder();
         Collections.sort(chunks);
         for (String chunk : chunks) {
-            out.append(chunk).append("\n");
+            body.append(chunk).append("\n");
         }
         try {
-            Writer writer = processingEnv.getFiler()
-                    .createResource(StandardLocation.CLASS_OUTPUT, "", basename() + ".d.ts").openWriter();
-            try {
-                writer.write(out.toString());
-            } finally {
-                writer.close();
-            }
+            writeResource(basename() + surfaceExtension(), banner(body.toString(), null));
             writeConstants();
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,
                     "tsemit: " + chunks.size() + " interfaces, " + constants.size() + " constants, "
@@ -309,47 +309,125 @@ public class TsEmitProcessor extends AbstractProcessor {
         }
     }
 
-    private String basename() {
-        String name = processingEnv.getOptions().get("tsemit.name");
-        return name == null || name.isEmpty() ? "api" : name;
-    }
-
     private void writeConstants() throws IOException {
         if (constants.isEmpty()) {
             return;
         }
-        StringBuilder out = new StringBuilder("// Generated from Java sources. Do not edit.\n\n");
+        StringBuilder body = new StringBuilder();
         Collections.sort(constants);
-        // Import only the key types actually referenced, so a file of plain constants does not carry
-        // an unused import that a consumer compiling with noUnusedLocals would reject.
-        List<String> imports = new ArrayList<String>();
-        for (String candidate : new String[] {"CapabilityType", "ServiceType", "TopicType"}) {
-            for (String constant : constants) {
-                if (constant.contains(candidate)) {
-                    imports.add(candidate);
-                    break;
-                }
-            }
-        }
-        if (!imports.isEmpty()) {
-            out.append("import type { ");
-            for (int i = 0; i < imports.size(); i++) {
-                if (i > 0) {
-                    out.append(", ");
-                }
-                out.append(imports.get(i));
-            }
-            out.append(" } from \"./api.js\";\n\n");
-        }
         for (String constant : constants) {
-            out.append(constant).append("\n");
+            body.append(constant).append("\n");
         }
+        writeResource(basename() + ".keys.ts", banner(body.toString(), "./" + basename() + ".js"));
+    }
+
+    private String banner(String body, String localSpecifier) {
+        StringBuilder out = new StringBuilder("// Generated from Java sources. Do not edit.\n\n");
+        String imports = importLines(body, localSpecifier);
+        if (!imports.isEmpty()) {
+            out.append(imports).append("\n");
+        }
+        return out.append(body).toString();
+    }
+
+    private void writeResource(String name, String content) throws IOException {
         Writer writer = processingEnv.getFiler()
-                .createResource(StandardLocation.CLASS_OUTPUT, "", basename() + ".keys.ts").openWriter();
+                .createResource(StandardLocation.CLASS_OUTPUT, "", name).openWriter();
         try {
-            writer.write(out.toString());
+            writer.write(content);
         } finally {
             writer.close();
         }
+    }
+
+    private String basename() {
+        return option("tsemit.name", "api");
+    }
+
+    /**
+     * @implNote The surface's suffix is a choice, not a constant: an ambient {@code .d.ts} is right
+     * for a repo whose generated file sits outside its TypeScript rootDir, and a compilable
+     * {@code .ts} is right for one whose whole package IS the generated surface, because tsc copies
+     * a declaration file to no output directory.
+     */
+    private String surfaceExtension() {
+        return option("tsemit.ext", ".d.ts");
+    }
+
+    private String option(String key, String fallback) {
+        String value = processingEnv.getOptions().get(key);
+        return value == null || value.isEmpty() ? fallback : value;
+    }
+
+    /**
+     * @implNote A file never imports a name it declares, which is why the surface passes its own
+     * emitted types as already-declared: api's surface both declares {@code CapabilityType} and
+     * references it, and importing it from itself is a cycle the emitted text cannot resolve. The
+     * keys file is a separate file and declares none of them, so it imports every name it uses.
+     */
+    private String importLines(String body, String localSpecifier) {
+        List<String> declared = localSpecifier == null ? emittedTypes : Collections.<String>emptyList();
+        StringBuilder out = new StringBuilder();
+        out.append(importLine(body, option("tsemit.keys", "./api.js"), KEY_TYPES, declared));
+        if (localSpecifier != null) {
+            out.append(importLine(body, localSpecifier, emittedTypes, declared));
+        }
+        for (String entry : option("tsemit.imports", "").split(";")) {
+            int split = entry.indexOf('=');
+            if (split <= 0) {
+                continue;
+            }
+            List<String> names = new ArrayList<String>();
+            for (String name : entry.substring(split + 1).split(",")) {
+                if (!name.trim().isEmpty()) {
+                    names.add(name.trim());
+                }
+            }
+            out.append(importLine(body, entry.substring(0, split), names, declared));
+        }
+        return out.toString();
+    }
+
+    /**
+     * @implNote Only names the emitted text actually mentions are imported, because a consumer
+     * compiling with noUnusedLocals rejects a generated file carrying an import it does not use.
+     */
+    private String importLine(String body, String specifier, List<String> candidates, List<String> declared) {
+        List<String> used = new ArrayList<String>();
+        for (String candidate : candidates) {
+            if (!used.contains(candidate) && !declared.contains(candidate) && mentions(body, candidate)) {
+                used.add(candidate);
+            }
+        }
+        if (used.isEmpty()) {
+            return "";
+        }
+        Collections.sort(used);
+        StringBuilder line = new StringBuilder("import type { ");
+        for (int i = 0; i < used.size(); i++) {
+            if (i > 0) {
+                line.append(", ");
+            }
+            line.append(used.get(i));
+        }
+        return line.append(" } from \"").append(specifier).append("\";\n").toString();
+    }
+
+    /**
+     * @implNote Whole-word rather than substring: {@code ScreenData} contains {@code Screen}, and a
+     * substring match would import a name the file never references.
+     */
+    private boolean mentions(String body, String name) {
+        int at = body.indexOf(name);
+        while (at >= 0) {
+            boolean leftClean = at == 0 || !Character.isJavaIdentifierPart(body.charAt(at - 1));
+            int after = at + name.length();
+            boolean rightClean = after >= body.length() || !Character.isJavaIdentifierPart(body.charAt(after));
+            if (leftClean && rightClean) {
+                return true;
+            }
+            at = body.indexOf(name, at + 1);
+        }
+        return false;
     }
 }
