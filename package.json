@@ -13,6 +13,9 @@
     "./engine": {
       "types": "./generated/engine.d.ts",
       "default": "./generated/engine.js"
+    },
+    "./contract": {
+      "types": "./generated/api.d.ts"
     }
   },
   "bin": {
