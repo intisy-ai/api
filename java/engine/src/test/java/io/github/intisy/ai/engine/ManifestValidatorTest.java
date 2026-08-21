@@ -84,6 +84,24 @@ class ManifestValidatorTest {
     }
 
     @Test
+    void skipsTheProvidedServiceCheckWhenTheCallerCannotVerifyIt() {
+        Map<String, Object> services = new HashMap<String, Object>();
+        services.put("provides", Arrays.asList("accounts"));
+        Map<String, Object> manifest = valid();
+        manifest.put("services", services);
+        assertTrue(ManifestValidator.validate(manifest, null).isEmpty());
+    }
+
+    @Test
+    void stillReportsEveryOtherRuleWhenTheVocabularyIsUnverifiable() {
+        Map<String, Object> manifest = valid();
+        manifest.put("capabilities", Arrays.asList("screens"));
+        List<SchemaIssue> issues = ManifestValidator.validate(manifest, null);
+        assertEquals(1, issues.size());
+        assertEquals("entry", issues.get(0).getPath());
+    }
+
+    @Test
     void reportsDuplicatesByIndex() {
         Map<String, Object> manifest = valid();
         manifest.put("entry", "dist/index.js");

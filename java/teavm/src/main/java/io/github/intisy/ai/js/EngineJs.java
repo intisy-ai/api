@@ -3,8 +3,10 @@ package io.github.intisy.ai.js;
 import io.github.intisy.ai.engine.Activation;
 import io.github.intisy.ai.engine.ActivationPlan;
 import io.github.intisy.ai.engine.Diagnostics;
+import io.github.intisy.ai.engine.ManifestSchema;
 import io.github.intisy.ai.engine.ManifestValidator;
 import io.github.intisy.ai.engine.PluginException;
+import io.github.intisy.ai.engine.SchemaIssue;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,6 +75,36 @@ public final class EngineJs {
             JsErrors.raise(JsErrors.of(failure));
         }
         return manifest;
+    }
+
+    /**
+     * @implNote An omitted wellKnownServices becomes null here, not the empty list assertManifest
+     * uses, and the difference is the whole point of both signatures. assertManifest's caller is a
+     * host, which knows its own vocabulary and is held to it. This one's callers include a plugin
+     * author's own test suite, which cannot know a vocabulary that lives outside api, so null tells
+     * the engine to skip the question rather than answer it wrongly.
+     */
+    @JSExport
+    public static JSArray<JSObject> validateManifest(JSObject manifest, JSArray<JSObject> wellKnownServices) {
+        List<String> known = null;
+        if (wellKnownServices != null && !nullish(wellKnownServices)) {
+            known = new ArrayList<String>();
+            for (int index = 0; index < wellKnownServices.getLength(); index++) {
+                known.add(String.valueOf(JsJson.toTree(wellKnownServices.get(index))));
+            }
+        }
+        List<SchemaIssue> issues = ManifestValidator.validate(JsJson.toTree(manifest), known);
+        JSArray<JSObject> out = JSArray.create();
+        for (int index = 0; index < issues.size(); index++) {
+            SchemaIssue issue = issues.get(index);
+            out.set(index, validationIssue(issue.getPath(), issue.getMessage(), issue.getFix()));
+        }
+        return out;
+    }
+
+    @JSExport
+    public static JSObject manifestSchema() {
+        return JsJson.fromTree(ManifestSchema.get().toTree());
     }
 
     @JSExport
@@ -144,4 +176,7 @@ public final class EngineJs {
 
     @JSBody(params = {"order", "cycles"}, script = "return { order: order, cycles: cycles };")
     private static native JSObject plan(JSObject order, JSObject cycles);
+
+    @JSBody(params = {"path", "message", "fix"}, script = "return { path: path, message: message, fix: fix };")
+    private static native JSObject validationIssue(String path, String message, String fix);
 }

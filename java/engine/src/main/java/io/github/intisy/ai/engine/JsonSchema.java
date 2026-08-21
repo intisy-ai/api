@@ -1,5 +1,6 @@
 package io.github.intisy.ai.engine;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ import java.util.Map;
 public final class JsonSchema {
 
     private final String type;
+    private String schemaDraft;
+    private String schemaId;
     private String title;
     private String description;
     private Map<String, JsonSchema> properties;
@@ -120,5 +123,66 @@ public final class JsonSchema {
 
     public void setFix(String value) {
         this.fix = value;
+    }
+
+    /** Draft this schema is written against, emitted as $schema and otherwise unused. */
+    public String getSchemaDraft() {
+        return schemaDraft;
+    }
+
+    public void setSchemaDraft(String value) {
+        this.schemaDraft = value;
+    }
+
+    /** Canonical URL this schema is published at, emitted as $id and otherwise unused. */
+    public String getSchemaId() {
+        return schemaId;
+    }
+
+    public void setSchemaId(String value) {
+        this.schemaId = value;
+    }
+
+    /**
+     * This schema as the plain tree a JSON writer or a JavaScript caller consumes.
+     *
+     * @implNote One key order for every object, taken from this class's field order, because the
+     * published file is regenerated and compared as text. Per-object hand-chosen orders cannot
+     * survive a serializer, so pinning one order here is what makes the comparison stable. Absent
+     * values are omitted rather than written as null: a null keyword is not the same as an unstated
+     * one to a JSON Schema validator.
+     */
+    public Map<String, Object> toTree() {
+        Map<String, Object> out = new LinkedHashMap<String, Object>();
+        put(out, "$schema", schemaDraft);
+        put(out, "$id", schemaId);
+        put(out, "title", title);
+        put(out, "description", description);
+        put(out, "type", type);
+        if (properties != null) {
+            Map<String, Object> nested = new LinkedHashMap<String, Object>();
+            for (Map.Entry<String, JsonSchema> property : properties.entrySet()) {
+                nested.put(property.getKey(), property.getValue().toTree());
+            }
+            out.put("properties", nested);
+        }
+        put(out, "required", required);
+        if (items != null) {
+            out.put("items", items.toTree());
+        }
+        if (additionalProperties != null) {
+            out.put("additionalProperties", additionalProperties.toTree());
+        }
+        put(out, "pattern", pattern);
+        put(out, "minimum", minimum);
+        put(out, "enum", enumValues);
+        put(out, "fix", fix);
+        return out;
+    }
+
+    private static void put(Map<String, Object> out, String key, Object value) {
+        if (value != null) {
+            out.put(key, value);
+        }
     }
 }

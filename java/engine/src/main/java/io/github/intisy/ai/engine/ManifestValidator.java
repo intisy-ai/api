@@ -13,7 +13,11 @@ import java.util.Set;
  * @implNote The well-known service ids arrive as a parameter rather than a constant, because this
  * package mints no vocabulary of its own. There is deliberately no overload defaulting them to
  * empty: a caller that does not know the vocabulary would silently report every bare service id as
- * an error, which is worse than being made to say what it knows.
+ * an error, which is worse than being made to say what it knows. The parameter therefore carries
+ * three states rather than two. A populated list is the vocabulary. An EMPTY list is an empty
+ * vocabulary, so every bare id is squatting. NULL means the caller cannot verify the question at
+ * all, and the provided-service check is skipped rather than answered wrongly, which is how a
+ * caller says it does not know instead of lying with an empty list.
  */
 public final class ManifestValidator {
 
@@ -95,7 +99,7 @@ public final class ManifestValidator {
         List<SchemaIssue> issues = new ArrayList<SchemaIssue>();
         String pluginId = stringAt(value, "id");
         List<Object> provides = listAt(mapAt(value, "services"), "provides");
-        if (provides == null) {
+        if (provides == null || wellKnownServices == null) {
             return issues;
         }
         for (int index = 0; index < provides.size(); index++) {
@@ -117,7 +121,7 @@ public final class ManifestValidator {
      * makes squatting structurally impossible rather than socially discouraged.
      */
     private static boolean mayRegister(String pluginId, String serviceId, List<String> wellKnownServices) {
-        if (wellKnownServices != null && wellKnownServices.contains(serviceId)) {
+        if (wellKnownServices.contains(serviceId)) {
             return true;
         }
         int separator = serviceId.indexOf(':');

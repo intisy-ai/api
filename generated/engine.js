@@ -855,7 +855,7 @@ function jur_AbstractSet() {
     a.$next2 = null;
     a.$isSecondPassVisited = 0;
     a.$index3 = null;
-    a.$type = 0;
+    a.$type0 = 0;
 }
 let jur_AbstractSet_counter = 0,
 jur_AbstractSet_$callClinit = () => {
@@ -902,10 +902,10 @@ jur_AbstractSet_findBack = ($this, $stringIndex, $startSearch, $testString, $mat
     return $startSearch;
 },
 jur_AbstractSet_setType = ($this, $type) => {
-    $this.$type = $type;
+    $this.$type0 = $type;
 },
 jur_AbstractSet_getType = $this => {
-    return $this.$type;
+    return $this.$type0;
 },
 jur_AbstractSet_getQualifiedName = $this => {
     let var$1, var$2, var$3;
@@ -2329,7 +2329,7 @@ let ju_AbstractMap__init_ = $this => {
     jl_Object__init_($this);
 },
 ju_AbstractMap_put = ($this, $key, $value) => {
-    $rt_throw(jl_UnsupportedOperationException__init_0());
+    $rt_throw(jl_UnsupportedOperationException__init_());
 },
 ju_AbstractMap_equals = ($this, $obj) => {
     let $other, $it, $entry, $$je;
@@ -4585,6 +4585,18 @@ ju_AbstractCollection_toArray = ($this, $a) => {
         $i = var$4;
     }
     return $a;
+},
+ju_AbstractCollection_remove = ($this, $o) => {
+    let $iter, $e;
+    $iter = $this.$iterator();
+    while ($iter.$hasNext()) {
+        $e = $iter.$next();
+        if (ju_Objects_equals($e, $o)) {
+            $iter.$remove0();
+            return 1;
+        }
+    }
+    return 0;
 },
 ju_AbstractCollection_addAll = ($this, $c) => {
     let $changed, $iter;
@@ -6985,7 +6997,7 @@ jur_CharClass$6_contains = ($this, $ch) => {
 igiaj_JsJson = $rt_classWithoutFields(),
 igiaj_JsJson_toTree = $items => {
     let $out, $index, $kind, $names, $name;
-    if ($items !== null && !(igiaj_JsJson_isNullish$js_body$_4($items) ? 1 : 0)) {
+    if ($items !== null && !(igiaj_JsJson_isNullish$js_body$_5($items) ? 1 : 0)) {
         if (Array.isArray($items) ? 1 : 0) {
             $out = ju_ArrayList__init_();
             $index = 0;
@@ -7014,6 +7026,38 @@ igiaj_JsJson_toTree = $items => {
     }
     return null;
 },
+igiaj_JsJson_fromTree = $tree => {
+    let $out, $entries, var$4, $entry, $items, $index;
+    if ($tree === null)
+        return null;
+    if ($rt_isInstance($tree, ju_Map)) {
+        $out = igiaj_JsJson_emptyObject$js_body$_10();
+        $entries = $tree;
+        var$4 = ($entries.$entrySet()).$iterator();
+        while (var$4.$hasNext()) {
+            $entry = var$4.$next();
+            $out[$rt_ustr(jl_String_valueOf($entry.$getKey()))] = igiaj_JsJson_fromTree($entry.$getValue());
+        }
+        return $out;
+    }
+    if ($rt_isInstance($tree, ju_List)) {
+        $items = $tree;
+        $out = new Array();
+        $index = 0;
+        while ($index < $items.$size()) {
+            $out[$index] = igiaj_JsJson_fromTree($items.$get($index));
+            $index = $index + 1 | 0;
+        }
+        return $out;
+    }
+    if ($tree instanceof jl_Boolean)
+        return !!$tree.$booleanValue();
+    if ($tree instanceof jl_Integer)
+        return $tree.$intValue();
+    if (!($tree instanceof jl_Double))
+        return $rt_ustr(jl_String_valueOf($tree));
+    return $tree.$doubleValue();
+},
 igiaj_JsJson_fromStrings = $values => {
     let $out, $index, var$4;
     $out = new Array();
@@ -7036,8 +7080,11 @@ igiaj_JsJson_fromStringLists = $values => {
     }
     return $out;
 },
-igiaj_JsJson_isNullish$js_body$_4 = var$1 => {
+igiaj_JsJson_isNullish$js_body$_5 = var$1 => {
     return var$1 === null || var$1 === undefined;
+},
+igiaj_JsJson_emptyObject$js_body$_10 = () => {
+    return {  };
 },
 ju_Iterator = $rt_classWithoutFields(0),
 ju_ListIterator = $rt_classWithoutFields(0),
@@ -7058,8 +7105,18 @@ function ju_AbstractList() {
 let ju_AbstractList__init_ = $this => {
     ju_AbstractCollection__init_($this);
 },
+ju_AbstractList_add = ($this, $e) => {
+    $this.$add1($this.$size(), $e);
+    return 1;
+},
 ju_AbstractList_iterator = $this => {
     return ju_AbstractList$1__init_0($this);
+},
+ju_AbstractList_add0 = ($this, $index, $element) => {
+    $rt_throw(jl_UnsupportedOperationException__init_());
+},
+ju_AbstractList_remove = ($this, $index) => {
+    $rt_throw(jl_UnsupportedOperationException__init_());
 },
 ju_AbstractList_indexOf = ($this, $o) => {
     let $sz, $i;
@@ -7073,6 +7130,16 @@ ju_AbstractList_indexOf = ($this, $o) => {
         $i = $i + 1 | 0;
     }
     return $i;
+},
+ju_AbstractList_hashCode = $this => {
+    let $hashCode, $iter, $elem;
+    $hashCode = 1;
+    $iter = $this.$iterator();
+    while ($iter.$hasNext()) {
+        $elem = $iter.$next();
+        $hashCode = (31 * $hashCode | 0) + ju_Objects_hashCode($elem) | 0;
+    }
+    return $hashCode;
 },
 ju_AbstractList_equals = ($this, $other) => {
     let $list, $i;
@@ -7849,7 +7916,7 @@ ju_TemplateCollections$AbstractImmutableMap__init_ = $this => {
     ju_AbstractMap__init_($this);
 },
 ju_TemplateCollections$AbstractImmutableMap_put = ($this, $key, $value) => {
-    $rt_throw(jl_UnsupportedOperationException__init_0());
+    $rt_throw(jl_UnsupportedOperationException__init_());
 },
 ju_Collections$2 = $rt_classWithoutFields(ju_TemplateCollections$AbstractImmutableMap),
 ju_Collections$2__init_ = $this => {
@@ -8067,9 +8134,9 @@ igiae_ServiceHub$5_cancel = $this => {
     $owned = (igiae_ServiceHub_access$1200($this.$this$03)).$get1($this.$val$pluginId2);
     if ($owned === null)
         return;
-    $owned.$remove0($this.$val$self.data[0]);
+    $owned.$remove1($this.$val$self.data[0]);
     if ($owned.$isEmpty())
-        (igiae_ServiceHub_access$1200($this.$this$03)).$remove1($this.$val$pluginId2);
+        (igiae_ServiceHub_access$1200($this.$this$03)).$remove2($this.$val$pluginId2);
 },
 jl_Runnable = $rt_classWithoutFields(0);
 function igiae_ServiceHub$3() {
@@ -8097,7 +8164,7 @@ igiae_ServiceHub$3_run = $this => {
     let $pending;
     $pending = (igiae_ServiceHub_access$1100($this.$this$013)).$get1($this.$val$id);
     if ($pending !== null)
-        $pending.$remove0($this.$val$waiter);
+        $pending.$remove1($this.$val$waiter);
     igiae_Pending_reject(igiae_ServiceHub$Waiter_access$900($this.$val$waiter), igiae_PluginException__init_0($this.$val$pluginId5, ((((((jl_StringBuilder__init_()).$append3($rt_s(265))).$append9($this.$val$millis)).$append3($rt_s(266))).$append3($this.$val$id)).$append3($rt_s(267))).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(268))).$append3($this.$val$id)).$append3($rt_s(269))).$toString()));
 };
 function igiae_ServiceHub$4() {
@@ -8118,7 +8185,7 @@ igiae_ServiceHub$4__init_0 = (var_0, var_1, var_2) => {
     return var_3;
 },
 igiae_ServiceHub$4_cancel = $this => {
-    $this.$val$installed.$remove0($this.$val$listener);
+    $this.$val$installed.$remove1($this.$val$listener);
 },
 ju_SequencedSet = $rt_classWithoutFields(0),
 jur_AbstractLineTerminator = $rt_classWithoutFields(),
@@ -9167,7 +9234,7 @@ ju_HashSet_iterator = $this => {
     return ($this.$backingMap.$keySet()).$iterator();
 },
 ju_HashSet_remove = ($this, $object) => {
-    return $this.$backingMap.$remove1($object) === null ? 0 : 1;
+    return $this.$backingMap.$remove2($object) === null ? 0 : 1;
 },
 ju_HashSet_size = $this => {
     return $this.$backingMap.$size();
@@ -9183,7 +9250,9 @@ ju_LinkedHashSet__init_ = () => {
 };
 function igiae_JsonSchema() {
     let a = this; jl_Object.call(a);
-    a.$type0 = null;
+    a.$type = null;
+    a.$schemaDraft = null;
+    a.$schemaId = null;
     a.$title = null;
     a.$description = null;
     a.$properties = null;
@@ -9197,7 +9266,7 @@ function igiae_JsonSchema() {
 }
 let igiae_JsonSchema__init_0 = ($this, $type) => {
     jl_Object__init_($this);
-    $this.$type0 = $type;
+    $this.$type = $type;
 },
 igiae_JsonSchema__init_ = var_0 => {
     let var_1 = new igiae_JsonSchema();
@@ -9208,7 +9277,7 @@ igiae_JsonSchema_ofType = $type => {
     return igiae_JsonSchema__init_($type);
 },
 igiae_JsonSchema_getType = $this => {
-    return $this.$type0;
+    return $this.$type;
 },
 igiae_JsonSchema_setTitle = ($this, $value) => {
     $this.$title = $value;
@@ -9258,6 +9327,44 @@ igiae_JsonSchema_getFix = $this => {
 igiae_JsonSchema_setFix = ($this, $value) => {
     $this.$fix0 = $value;
 },
+igiae_JsonSchema_setSchemaDraft = ($this, $value) => {
+    $this.$schemaDraft = $value;
+},
+igiae_JsonSchema_setSchemaId = ($this, $value) => {
+    $this.$schemaId = $value;
+},
+igiae_JsonSchema_toTree = $this => {
+    let $out, $nested, var$3, $property;
+    $out = ju_LinkedHashMap__init_();
+    igiae_JsonSchema_put($out, $rt_s(274), $this.$schemaDraft);
+    igiae_JsonSchema_put($out, $rt_s(275), $this.$schemaId);
+    igiae_JsonSchema_put($out, $rt_s(276), $this.$title);
+    igiae_JsonSchema_put($out, $rt_s(277), $this.$description);
+    igiae_JsonSchema_put($out, $rt_s(278), $this.$type);
+    if ($this.$properties !== null) {
+        $nested = ju_LinkedHashMap__init_();
+        var$3 = ($this.$properties.$entrySet()).$iterator();
+        while (var$3.$hasNext()) {
+            $property = var$3.$next();
+            $nested.$put($property.$getKey(), igiae_JsonSchema_toTree($property.$getValue()));
+        }
+        $out.$put($rt_s(279), $nested);
+    }
+    igiae_JsonSchema_put($out, $rt_s(280), $this.$required);
+    if ($this.$items !== null)
+        $out.$put($rt_s(281), igiae_JsonSchema_toTree($this.$items));
+    if ($this.$additionalProperties !== null)
+        $out.$put($rt_s(282), igiae_JsonSchema_toTree($this.$additionalProperties));
+    igiae_JsonSchema_put($out, $rt_s(283), $this.$pattern2);
+    igiae_JsonSchema_put($out, $rt_s(284), $this.$minimum);
+    igiae_JsonSchema_put($out, $rt_s(285), $this.$enumValues);
+    igiae_JsonSchema_put($out, $rt_s(20), $this.$fix0);
+    return $out;
+},
+igiae_JsonSchema_put = ($out, $key, $value) => {
+    if ($value !== null)
+        $out.$put($key, $value);
+},
 jur_FSet$PossessiveFSet = $rt_classWithoutFields(jur_AbstractSet),
 jur_FSet$PossessiveFSet__init_ = $this => {
     jur_AbstractSet__init_($this);
@@ -9271,7 +9378,7 @@ jur_FSet$PossessiveFSet_matches = ($this, $stringIndex, $testString, $matchResul
     return $stringIndex;
 },
 jur_FSet$PossessiveFSet_getName = $this => {
-    return $rt_s(274);
+    return $rt_s(286);
 },
 jur_FSet$PossessiveFSet_hasConsumed = ($this, $mr) => {
     return 0;
@@ -9398,7 +9505,7 @@ jur_MultiLineEOLSet_hasConsumed = ($this, $matchResult) => {
     return $res;
 },
 jur_MultiLineEOLSet_getName = $this => {
-    return $rt_s(275);
+    return $rt_s(287);
 },
 ju_Queue = $rt_classWithoutFields(0),
 ju_Deque = $rt_classWithoutFields(0);
@@ -9709,14 +9816,14 @@ function jur_PatternSyntaxException() {
     let a = this; jl_IllegalArgumentException.call(a);
     a.$desc = null;
     a.$pattern1 = null;
-    a.$index1 = 0;
+    a.$index2 = 0;
 }
 let jur_PatternSyntaxException__init_0 = ($this, $description, $pattern, $index) => {
     jl_IllegalArgumentException__init_0($this);
-    $this.$index1 = (-1);
+    $this.$index2 = (-1);
     $this.$desc = $description;
     $this.$pattern1 = $pattern;
-    $this.$index1 = $index;
+    $this.$index2 = $index;
 },
 jur_PatternSyntaxException__init_ = (var_0, var_1, var_2) => {
     let var_3 = new jur_PatternSyntaxException();
@@ -9726,14 +9833,14 @@ jur_PatternSyntaxException__init_ = (var_0, var_1, var_2) => {
 jur_PatternSyntaxException_getMessage = $this => {
     let $filler, $temp, var$3, var$4, var$5, var$6;
     $filler = $rt_s(10);
-    if ($this.$index1 >= 1) {
-        $temp = $rt_createCharArray($this.$index1);
+    if ($this.$index2 >= 1) {
+        $temp = $rt_createCharArray($this.$index2);
         ju_Arrays_fill2($temp, 32);
         $filler = jl_String__init_($temp);
     }
     var$3 = $this.$desc;
     if ($this.$pattern1 !== null && jl_String_length($this.$pattern1)) {
-        var$4 = $this.$index1;
+        var$4 = $this.$index2;
         var$5 = $this.$pattern1;
         var$6 = jl_StringBuilder__init_();
         jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append1(var$6, var$4), $rt_s(43)), var$5), $rt_s(43)), $filler);
@@ -9819,7 +9926,7 @@ jur_Pattern_pattern = $this => {
 },
 jur_Pattern_compile0 = ($pattern, $flags) => {
     if ($pattern === null)
-        $rt_throw(jl_NullPointerException__init_($rt_s(276)));
+        $rt_throw(jl_NullPointerException__init_($rt_s(288)));
     if ($flags && ($flags | 255) != 255)
         $rt_throw(jl_IllegalArgumentException__init_2($rt_s(10)));
     jur_AbstractSet_$callClinit();
@@ -10607,17 +10714,17 @@ jur_Pattern_finalizeCompile = $this => {
 },
 jur_Pattern_quote = $s => {
     let $sb, $apos, var$4, $apos_0;
-    $sb = (jl_StringBuilder__init_()).$append3($rt_s(277));
+    $sb = (jl_StringBuilder__init_()).$append3($rt_s(289));
     $apos = 0;
     while (true) {
-        var$4 = jl_String_indexOf0($s, $rt_s(278), $apos);
+        var$4 = jl_String_indexOf0($s, $rt_s(290), $apos);
         if (var$4 < 0)
             break;
         $apos_0 = var$4 + 2 | 0;
-        ($sb.$append3(jl_String_substring($s, $apos, $apos_0))).$append3($rt_s(279));
+        ($sb.$append3(jl_String_substring($s, $apos, $apos_0))).$append3($rt_s(291));
         $apos = $apos_0;
     }
-    return (($sb.$append3(jl_String_substring0($s, $apos))).$append3($rt_s(278))).$toString();
+    return (($sb.$append3(jl_String_substring0($s, $apos))).$append3($rt_s(290))).$toString();
 },
 jur_Pattern_namedGroups = $this => {
     return $this.$namedGroups0;
@@ -10715,10 +10822,10 @@ igiae_PluginStatus_$values = () => {
     return var$1;
 },
 igiae_PluginStatus__clinit_ = () => {
-    igiae_PluginStatus_ACTIVATING = igiae_PluginStatus__init_($rt_s(280), 0);
-    igiae_PluginStatus_ACTIVE = igiae_PluginStatus__init_($rt_s(281), 1);
-    igiae_PluginStatus_BROKEN = igiae_PluginStatus__init_($rt_s(282), 2);
-    igiae_PluginStatus_STOPPED = igiae_PluginStatus__init_($rt_s(283), 3);
+    igiae_PluginStatus_ACTIVATING = igiae_PluginStatus__init_($rt_s(292), 0);
+    igiae_PluginStatus_ACTIVE = igiae_PluginStatus__init_($rt_s(293), 1);
+    igiae_PluginStatus_BROKEN = igiae_PluginStatus__init_($rt_s(294), 2);
+    igiae_PluginStatus_STOPPED = igiae_PluginStatus__init_($rt_s(295), 3);
     igiae_PluginStatus_$VALUES = igiae_PluginStatus_$values();
 };
 function ju_Collections$13() {
@@ -11569,21 +11676,21 @@ igiaj_EngineJs_activationOrder = $manifests => {
         $id = igiaj_EngineJs_text($tree, $rt_s(16));
         if ($id !== null) {
             $ids.$add2($id);
-            $services = igiaj_EngineJs_member($tree, $rt_s(284));
-            $provides.$put($id, igiaj_EngineJs_strings(igiaj_EngineJs_member($services, $rt_s(285))));
-            $consumes.$put($id, igiaj_EngineJs_strings(igiaj_EngineJs_member($services, $rt_s(286))));
+            $services = igiaj_EngineJs_member($tree, $rt_s(296));
+            $provides.$put($id, igiaj_EngineJs_strings(igiaj_EngineJs_member($services, $rt_s(297))));
+            $consumes.$put($id, igiaj_EngineJs_strings(igiaj_EngineJs_member($services, $rt_s(298))));
         }
         $index = $index + 1 | 0;
     }
     $plan = igiae_Activation_order($ids, $provides, $consumes);
-    return igiaj_EngineJs_plan$js_body$_14(igiaj_JsJson_fromStrings(igiae_ActivationPlan_getOrder($plan)), igiaj_JsJson_fromStringLists(igiae_ActivationPlan_getCycles($plan)));
+    return igiaj_EngineJs_plan$js_body$_16(igiaj_JsJson_fromStrings(igiae_ActivationPlan_getOrder($plan)), igiaj_JsJson_fromStringLists(igiae_ActivationPlan_getCycles($plan)));
 },
 igiaj_EngineJs_assertManifest = ($manifest, $wellKnownServices) => {
     let $known, $index, $failure, $$je;
     igiaj_EngineJs_$callClinit();
     a: {
         $known = ju_ArrayList__init_();
-        if ($wellKnownServices !== null && !(igiaj_EngineJs_nullish$js_body$_12($wellKnownServices) ? 1 : 0)) {
+        if ($wellKnownServices !== null && !(igiaj_EngineJs_nullish$js_body$_14($wellKnownServices) ? 1 : 0)) {
             $index = 0;
             while (true) {
                 if ($index >= $wellKnownServices.length)
@@ -11609,6 +11716,36 @@ igiaj_EngineJs_assertManifest = ($manifest, $wellKnownServices) => {
         }
     }
     return $manifest;
+},
+igiaj_EngineJs_validateManifest = ($manifest, $wellKnownServices) => {
+    let $known, $index, $issues, $out, $issue, var$8, var$9, var$10;
+    igiaj_EngineJs_$callClinit();
+    $known = null;
+    if ($wellKnownServices !== null && !(igiaj_EngineJs_nullish$js_body$_14($wellKnownServices) ? 1 : 0)) {
+        $known = ju_ArrayList__init_();
+        $index = 0;
+        while ($index < $wellKnownServices.length) {
+            $known.$add2(jl_String_valueOf(igiaj_JsJson_toTree(otji_JSWrapper_maybeUnwrap($wellKnownServices[$index]))));
+            $index = $index + 1 | 0;
+        }
+    }
+    $issues = igiae_ManifestValidator_validate(igiaj_JsJson_toTree($manifest), $known);
+    $out = new Array();
+    $index = 0;
+    while ($index < $issues.$size()) {
+        $issue = $issues.$get($index);
+        var$8 = igiae_SchemaIssue_getPath($issue);
+        var$9 = igiae_SchemaIssue_getMessage($issue);
+        var$10 = igiae_SchemaIssue_getFix($issue);
+        var$8 = igiaj_EngineJs_validationIssue$js_body$_17($rt_ustr(var$8), $rt_ustr(var$9), $rt_ustr(var$10));
+        $out[$index] = var$8;
+        $index = $index + 1 | 0;
+    }
+    return $out;
+},
+igiaj_EngineJs_manifestSchema = () => {
+    igiaj_EngineJs_$callClinit();
+    return igiaj_JsJson_fromTree(igiae_JsonSchema_toTree(igiae_ManifestSchema_get()));
 },
 igiaj_EngineJs_pluginError = ($pluginId, $detail, $fix) => {
     igiaj_EngineJs_$callClinit();
@@ -11663,15 +11800,18 @@ igiaj_EngineJs_strings = $value => {
 },
 igiaj_EngineJs_booleanOrNull = $value => {
     igiaj_EngineJs_$callClinit();
-    if ($value !== null && !(igiaj_EngineJs_nullish$js_body$_12($value) ? 1 : 0))
+    if ($value !== null && !(igiaj_EngineJs_nullish$js_body$_14($value) ? 1 : 0))
         return jl_Boolean_valueOf(!!$value ? 1 : 0);
     return null;
 },
-igiaj_EngineJs_nullish$js_body$_12 = var$1 => {
+igiaj_EngineJs_nullish$js_body$_14 = var$1 => {
     return var$1 === null || var$1 === undefined;
 },
-igiaj_EngineJs_plan$js_body$_14 = (var$1, var$2) => {
+igiaj_EngineJs_plan$js_body$_16 = (var$1, var$2) => {
     return { order : var$1, cycles : var$2 };
+},
+igiaj_EngineJs_validationIssue$js_body$_17 = (var$1, var$2, var$3) => {
+    return { path : var$1, message : var$2, fix : var$3 };
 },
 igiaj_EngineJs_activationOrder$exported$0 = var$1 => {
     igiaj_EngineJs_$callClinit();
@@ -11681,23 +11821,31 @@ igiaj_EngineJs_assertManifest$exported$1 = (var$1, var$2) => {
     igiaj_EngineJs_$callClinit();
     return igiaj_EngineJs_assertManifest(var$1, var$2);
 },
-igiaj_EngineJs_pluginError$exported$2 = (var$1, var$2, var$3) => {
+igiaj_EngineJs_validateManifest$exported$2 = (var$1, var$2) => {
+    igiaj_EngineJs_$callClinit();
+    return igiaj_EngineJs_validateManifest(var$1, var$2);
+},
+igiaj_EngineJs_manifestSchema$exported$3 = () => {
+    igiaj_EngineJs_$callClinit();
+    return igiaj_EngineJs_manifestSchema();
+},
+igiaj_EngineJs_pluginError$exported$4 = (var$1, var$2, var$3) => {
     igiaj_EngineJs_$callClinit();
     return igiaj_EngineJs_pluginError($rt_str(var$1), $rt_str(var$2), $rt_str(var$3));
 },
-igiaj_EngineJs_isPluginError$exported$3 = var$1 => {
+igiaj_EngineJs_isPluginError$exported$5 = var$1 => {
     igiaj_EngineJs_$callClinit();
     return !!igiaj_EngineJs_isPluginError(var$1);
 },
-igiaj_EngineJs_setStrict$exported$4 = var$1 => {
+igiaj_EngineJs_setStrict$exported$6 = var$1 => {
     igiaj_EngineJs_$callClinit();
     igiaj_EngineJs_setStrict(var$1);
 },
-igiaj_EngineJs_createPluginHost$exported$5 = var$1 => {
+igiaj_EngineJs_createPluginHost$exported$7 = var$1 => {
     igiaj_EngineJs_$callClinit();
     return igiaj_EngineJs_createPluginHost(var$1);
 },
-igiaj_EngineJs_setDiagnosticSink$exported$6 = var$1 => {
+igiaj_EngineJs_setDiagnosticSink$exported$8 = var$1 => {
     igiaj_EngineJs_$callClinit();
     igiaj_EngineJs_setDiagnosticSink(otji_JS_functionAsObject(var$1, "accept"));
 },
@@ -12146,7 +12294,7 @@ jur_UCISequenceSet_getName = $this => {
     let var$1, var$2;
     var$1 = $this.$string1;
     var$2 = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(287)), var$1);
+    jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(299)), var$1);
     return jl_StringBuilder_toString(var$2);
 };
 function jur_CharClass$16() {
@@ -12373,7 +12521,7 @@ jur_CompositeRangeSet_getName = $this => {
     var$1 = jl_String_valueOf($this.$withoutSurrogates);
     var$2 = jl_String_valueOf($this.$withSurrogates);
     var$3 = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(288)), var$1), $rt_s(289)), var$2);
+    jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(300)), var$1), $rt_s(301)), var$2);
     return jl_StringBuilder_toString(var$3);
 },
 jur_CompositeRangeSet_hasConsumed = ($this, $matchResult) => {
@@ -12408,7 +12556,7 @@ jur_FinalSet_matches = ($this, $stringIndex, $testString, $matchResult) => {
     return $stringIndex;
 },
 jur_FinalSet_getName = $this => {
-    return $rt_s(290);
+    return $rt_s(302);
 },
 ju_LinkedHashMapIterator$ValueIterator = $rt_classWithoutFields(ju_LinkedHashMapIterator),
 ju_LinkedHashMapIterator$ValueIterator__init_ = ($this, $map, $reversed) => {
@@ -12485,7 +12633,7 @@ jur_EmptySet_findBack = ($this, $stringIndex, $startSearch, $testString, $matchR
     return $startSearch;
 },
 jur_EmptySet_getName = $this => {
-    return $rt_s(291);
+    return $rt_s(303);
 },
 jur_EmptySet_hasConsumed = ($this, $mr) => {
     return 0;
@@ -12582,7 +12730,7 @@ jur_AbstractCharClass$LazyASCII_computeValue = $this => {
 function igiae_Activation$Tarjan() {
     let a = this; jl_Object.call(a);
     a.$dependencies = null;
-    a.$index0 = null;
+    a.$index1 = null;
     a.$lowLink = null;
     a.$onStack = null;
     a.$stack = null;
@@ -12591,7 +12739,7 @@ function igiae_Activation$Tarjan() {
 }
 let igiae_Activation$Tarjan__init_ = ($this, $dependencies) => {
     jl_Object__init_($this);
-    $this.$index0 = ju_HashMap__init_();
+    $this.$index1 = ju_HashMap__init_();
     $this.$lowLink = ju_HashMap__init_();
     $this.$onStack = ju_HashSet__init_0();
     $this.$stack = ju_ArrayDeque__init_1();
@@ -12607,7 +12755,7 @@ igiae_Activation$Tarjan__init_0 = var_0 => {
 igiae_Activation$Tarjan_visit = ($this, $id) => {
     let $needed, var$3, $dependency, $component, $member;
     a: {
-        $this.$index0.$put($id, jl_Integer_valueOf($this.$counter));
+        $this.$index1.$put($id, jl_Integer_valueOf($this.$counter));
         $this.$lowLink.$put($id, jl_Integer_valueOf($this.$counter));
         $this.$counter = $this.$counter + 1 | 0;
         $this.$stack.$push($id);
@@ -12619,20 +12767,20 @@ igiae_Activation$Tarjan_visit = ($this, $id) => {
                 if (!var$3.$hasNext())
                     break a;
                 $dependency = var$3.$next();
-                if (!$this.$index0.$containsKey($dependency)) {
+                if (!$this.$index1.$containsKey($dependency)) {
                     igiae_Activation$Tarjan_visit($this, $dependency);
                     $this.$lowLink.$put($id, jl_Integer_valueOf(jl_Math_min(($this.$lowLink.$get1($id)).$intValue(), ($this.$lowLink.$get1($dependency)).$intValue())));
                 } else if ($this.$onStack.$contains($dependency))
-                    $this.$lowLink.$put($id, jl_Integer_valueOf(jl_Math_min(($this.$lowLink.$get1($id)).$intValue(), ($this.$index0.$get1($dependency)).$intValue())));
+                    $this.$lowLink.$put($id, jl_Integer_valueOf(jl_Math_min(($this.$lowLink.$get1($id)).$intValue(), ($this.$index1.$get1($dependency)).$intValue())));
             }
         }
     }
-    if (!($this.$lowLink.$get1($id)).$equals($this.$index0.$get1($id)))
+    if (!($this.$lowLink.$get1($id)).$equals($this.$index1.$get1($id)))
         return;
     $component = ju_ArrayList__init_();
     while (true) {
         $member = $this.$stack.$pop();
-        $this.$onStack.$remove0($member);
+        $this.$onStack.$remove1($member);
         $component.$add2($member);
         if (!jl_String_equals($member, $id))
             continue;
@@ -12645,14 +12793,14 @@ igiae_Activation$Tarjan_visit = ($this, $id) => {
     }
 },
 igiae_Activation$Tarjan_access$000 = $x0 => {
-    return $x0.$index0;
+    return $x0.$index1;
 },
 igiae_Activation$Tarjan_access$100 = $x0 => {
     return $x0.$cycles;
 };
 function ju_AbstractList$1() {
     let a = this; jl_Object.call(a);
-    a.$index2 = 0;
+    a.$index0 = 0;
     a.$modCount1 = 0;
     a.$size1 = 0;
     a.$removeIndex = 0;
@@ -12671,16 +12819,27 @@ ju_AbstractList$1__init_0 = var_0 => {
     return var_1;
 },
 ju_AbstractList$1_hasNext = $this => {
-    return $this.$index2 >= $this.$size1 ? 0 : 1;
+    return $this.$index0 >= $this.$size1 ? 0 : 1;
 },
 ju_AbstractList$1_next = $this => {
     let var$1, var$2;
     ju_AbstractList$1_checkConcurrentModification($this);
-    $this.$removeIndex = $this.$index2;
+    $this.$removeIndex = $this.$index0;
     var$1 = $this.$this$00;
-    var$2 = $this.$index2;
-    $this.$index2 = var$2 + 1 | 0;
+    var$2 = $this.$index0;
+    $this.$index0 = var$2 + 1 | 0;
     return var$1.$get(var$2);
+},
+ju_AbstractList$1_remove = $this => {
+    if ($this.$removeIndex < 0)
+        $rt_throw(jl_IllegalStateException__init_());
+    ju_AbstractList$1_checkConcurrentModification($this);
+    $this.$this$00.$remove($this.$removeIndex);
+    $this.$modCount1 = $this.$this$00.$modCount0;
+    if ($this.$removeIndex < $this.$index0)
+        $this.$index0 = $this.$index0 - 1 | 0;
+    $this.$size1 = $this.$size1 - 1 | 0;
+    $this.$removeIndex = (-1);
 },
 ju_AbstractList$1_checkConcurrentModification = $this => {
     if ($this.$modCount1 == $this.$this$00.$modCount0)
@@ -12842,16 +13001,16 @@ igiae_ManifestValidator_validate = ($value, $wellKnownServices) => {
     let $source, $structural, $issues;
     $source = igiae_ManifestValidator_stringAt($value, $rt_s(16));
     if (!($source !== null && !jl_String_isEmpty($source)))
-        $source = $rt_s(292);
-    $structural = igiae_SchemaValidator_validate($value, igiae_ManifestSchema_get(), $rt_s(293), $source);
+        $source = $rt_s(304);
+    $structural = igiae_SchemaValidator_validate($value, igiae_ManifestSchema_get(), $rt_s(305), $source);
     if (!$structural.$isEmpty())
         return $structural;
     $issues = ju_ArrayList__init_();
     $issues.$addAll(igiae_ManifestValidator_entryIssues($value));
     $issues.$addAll(igiae_ManifestValidator_providedServiceIssues($value, $wellKnownServices));
     $issues.$addAll(igiae_ManifestValidator_duplicateIssues($rt_s(17), igiae_ManifestValidator_listAt($value, $rt_s(17))));
-    $issues.$addAll(igiae_ManifestValidator_duplicateIssues($rt_s(294), igiae_ManifestValidator_listAt(igiae_ManifestValidator_mapAt($value, $rt_s(284)), $rt_s(285))));
-    $issues.$addAll(igiae_ManifestValidator_duplicateIssues($rt_s(295), igiae_ManifestValidator_listAt(igiae_ManifestValidator_mapAt($value, $rt_s(284)), $rt_s(286))));
+    $issues.$addAll(igiae_ManifestValidator_duplicateIssues($rt_s(306), igiae_ManifestValidator_listAt(igiae_ManifestValidator_mapAt($value, $rt_s(296)), $rt_s(297))));
+    $issues.$addAll(igiae_ManifestValidator_duplicateIssues($rt_s(307), igiae_ManifestValidator_listAt(igiae_ManifestValidator_mapAt($value, $rt_s(296)), $rt_s(298))));
     $issues.$addAll(igiae_ManifestValidator_duplicateIssues($rt_s(18), igiae_ManifestValidator_listAt($value, $rt_s(18))));
     return $issues;
 },
@@ -12862,34 +13021,34 @@ igiae_ManifestValidator_require = ($value, $wellKnownServices) => {
         return $value;
     $pluginId = igiae_ManifestValidator_stringAt($value, $rt_s(16));
     if (!($pluginId !== null && !jl_String_isEmpty($pluginId)))
-        $pluginId = $rt_s(296);
+        $pluginId = $rt_s(308);
     $first = $issues.$get(0);
-    $rt_throw(igiae_PluginException__init_0($pluginId, (((((jl_StringBuilder__init_()).$append3($rt_s(297))).$append3(igiae_SchemaIssue_getPath($first))).$append3($rt_s(4))).$append3(igiae_SchemaIssue_getMessage($first))).$toString(), igiae_SchemaIssue_getFix($first)));
+    $rt_throw(igiae_PluginException__init_0($pluginId, (((((jl_StringBuilder__init_()).$append3($rt_s(309))).$append3(igiae_SchemaIssue_getPath($first))).$append3($rt_s(4))).$append3(igiae_SchemaIssue_getMessage($first))).$toString(), igiae_SchemaIssue_getFix($first)));
 },
 igiae_ManifestValidator_entryIssues = $value => {
     let $issues, $capabilities, $entry;
     $issues = ju_ArrayList__init_();
     $capabilities = igiae_ManifestValidator_listAt($value, $rt_s(17));
-    $entry = igiae_ManifestValidator_stringAt($value, $rt_s(298));
+    $entry = igiae_ManifestValidator_stringAt($value, $rt_s(310));
     if ($capabilities !== null && !$capabilities.$isEmpty() && !($entry !== null && !jl_String_isEmpty($entry))) {
-        $issues.$add2(igiae_SchemaIssue__init_0($rt_s(298), $rt_s(299), $rt_s(300)));
+        $issues.$add2(igiae_SchemaIssue__init_0($rt_s(310), $rt_s(311), $rt_s(312)));
         return $issues;
     }
     if ($entry !== null && !jl_String_isEmpty($entry) && igiae_ManifestValidator_escapesRepo($entry))
-        $issues.$add2(igiae_SchemaIssue__init_0($rt_s(298), ((((jl_StringBuilder__init_()).$append3($rt_s(301))).$append3($entry)).$append3($rt_s(302))).$toString(), $rt_s(303)));
+        $issues.$add2(igiae_SchemaIssue__init_0($rt_s(310), ((((jl_StringBuilder__init_()).$append3($rt_s(313))).$append3($entry)).$append3($rt_s(314))).$toString(), $rt_s(315)));
     return $issues;
 },
 igiae_ManifestValidator_escapesRepo = $entry => {
     let var$2, var$3, var$4, $segment;
-    if (!jl_String_startsWith($entry, $rt_s(304)) && !jl_String_startsWith($entry, $rt_s(305))) {
+    if (!jl_String_startsWith($entry, $rt_s(316)) && !jl_String_startsWith($entry, $rt_s(317))) {
         if (jl_String_length($entry) >= 2 && jl_String_charAt($entry, 1) == 58 && jl_Character_isLetter0(jl_String_charAt($entry, 0)))
             return 1;
-        var$2 = (jl_String_split($entry, $rt_s(306))).data;
+        var$2 = (jl_String_split($entry, $rt_s(318))).data;
         var$3 = var$2.length;
         var$4 = 0;
         while (var$4 < var$3) {
             $segment = var$2[var$4];
-            if (jl_String_equals($rt_s(307), $segment))
+            if (jl_String_equals($rt_s(319), $segment))
                 return 1;
             var$4 = var$4 + 1 | 0;
         }
@@ -12901,28 +13060,29 @@ igiae_ManifestValidator_providedServiceIssues = ($value, $wellKnownServices) => 
     let $issues, $pluginId, $provides, $index, $serviceId, $tail, var$9, var$10, var$11, var$12;
     $issues = ju_ArrayList__init_();
     $pluginId = igiae_ManifestValidator_stringAt($value, $rt_s(16));
-    $provides = igiae_ManifestValidator_listAt(igiae_ManifestValidator_mapAt($value, $rt_s(284)), $rt_s(285));
-    if ($provides === null)
-        return $issues;
-    $index = 0;
-    while ($index < $provides.$size()) {
-        $serviceId = jl_String_valueOf($provides.$get($index));
-        if (!igiae_ManifestValidator_mayRegister($pluginId, $serviceId, $wellKnownServices)) {
-            $tail = !jl_String_contains($serviceId, $rt_s(308)) ? $serviceId : jl_String_substring0($serviceId, jl_String_lastIndexOf0($serviceId, 58) + 1 | 0);
-            var$9 = new igiae_SchemaIssue;
-            var$10 = ((((jl_StringBuilder__init_()).$append3($rt_s(309))).$append2($index)).$append3($rt_s(310))).$toString();
-            var$11 = ((((jl_StringBuilder__init_()).$append3($rt_s(301))).$append3($serviceId)).$append3($rt_s(311))).$toString();
-            var$12 = (((((jl_StringBuilder__init_()).$append3($rt_s(312))).$append3($pluginId)).$append3($rt_s(308))).$append3($tail)).$append3($rt_s(313));
-            igiae_SchemaIssue__init_(var$9, var$10, var$11, (var$12.$append3(igiae_ManifestValidator_join($wellKnownServices))).$toString());
-            $issues.$add2(var$9);
+    $provides = igiae_ManifestValidator_listAt(igiae_ManifestValidator_mapAt($value, $rt_s(296)), $rt_s(297));
+    if ($provides !== null && $wellKnownServices !== null) {
+        $index = 0;
+        while ($index < $provides.$size()) {
+            $serviceId = jl_String_valueOf($provides.$get($index));
+            if (!igiae_ManifestValidator_mayRegister($pluginId, $serviceId, $wellKnownServices)) {
+                $tail = !jl_String_contains($serviceId, $rt_s(320)) ? $serviceId : jl_String_substring0($serviceId, jl_String_lastIndexOf0($serviceId, 58) + 1 | 0);
+                var$9 = new igiae_SchemaIssue;
+                var$10 = ((((jl_StringBuilder__init_()).$append3($rt_s(321))).$append2($index)).$append3($rt_s(322))).$toString();
+                var$11 = ((((jl_StringBuilder__init_()).$append3($rt_s(313))).$append3($serviceId)).$append3($rt_s(323))).$toString();
+                var$12 = (((((jl_StringBuilder__init_()).$append3($rt_s(324))).$append3($pluginId)).$append3($rt_s(320))).$append3($tail)).$append3($rt_s(325));
+                igiae_SchemaIssue__init_(var$9, var$10, var$11, (var$12.$append3(igiae_ManifestValidator_join($wellKnownServices))).$toString());
+                $issues.$add2(var$9);
+            }
+            $index = $index + 1 | 0;
         }
-        $index = $index + 1 | 0;
+        return $issues;
     }
     return $issues;
 },
 igiae_ManifestValidator_mayRegister = ($pluginId, $serviceId, $wellKnownServices) => {
     let $separator;
-    if ($wellKnownServices !== null && $wellKnownServices.$contains($serviceId))
+    if ($wellKnownServices.$contains($serviceId))
         return 1;
     $separator = jl_String_indexOf1($serviceId, 58);
     if ($separator > 0 && $separator != (jl_String_length($serviceId) - 1 | 0))
@@ -12939,7 +13099,7 @@ igiae_ManifestValidator_duplicateIssues = ($path, $values) => {
     while ($index < $values.$size()) {
         $value = jl_String_valueOf($values.$get($index));
         if (!$seen.$add2($value))
-            $issues.$add2(igiae_SchemaIssue__init_0((((((jl_StringBuilder__init_()).$append3($path)).$append3($rt_s(245))).$append2($index)).$append3($rt_s(310))).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(301))).$append3($value)).$append3($rt_s(314))).$toString(), $rt_s(315)));
+            $issues.$add2(igiae_SchemaIssue__init_0((((((jl_StringBuilder__init_()).$append3($path)).$append3($rt_s(245))).$append2($index)).$append3($rt_s(322))).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(313))).$append3($value)).$append3($rt_s(326))).$toString(), $rt_s(327)));
         $index = $index + 1 | 0;
     }
     return $issues;
@@ -13002,7 +13162,7 @@ jur_EOISet_hasConsumed = ($this, $matchResult) => {
     return 0;
 },
 jur_EOISet_getName = $this => {
-    return $rt_s(316);
+    return $rt_s(328);
 },
 jur_AbstractCharClass$LazyUpper = $rt_classWithoutFields(jur_AbstractCharClass$LazyCharClass),
 jur_AbstractCharClass$LazyUpper__init_ = $this => {
@@ -13079,7 +13239,7 @@ otji_JSWrapper_wrap = $o => {
     if ($o === null)
         return null;
     $type = $rt_str(typeof $o);
-    $isObject = !jl_String_equals($type, $rt_s(317)) && !jl_String_equals($type, $rt_s(318)) ? 0 : 1;
+    $isObject = !jl_String_equals($type, $rt_s(329)) && !jl_String_equals($type, $rt_s(330)) ? 0 : 1;
     otji_JSWrapper$Helper_$callClinit();
     $wrappers = otji_JSWrapper$Helper_wrappers;
     if ($wrappers !== null) {
@@ -13120,7 +13280,7 @@ otji_JSWrapper_wrap = $o => {
             $numberFinalizationRegistry.register($wrapperAsJs, $jsNumber);
             return $wrapper;
         }
-        if (jl_String_equals($type, $rt_s(319))) {
+        if (jl_String_equals($type, $rt_s(331))) {
             $existingRef = otji_JSWrapper$Helper_undefinedWrapper;
             $existing = $existingRef === null ? void 0 : $existingRef.deref();
             if (!(typeof $existing == 'undefined' ? 1 : 0))
@@ -13285,7 +13445,7 @@ jur_MultiLineSOLSet_hasConsumed = ($this, $matchResult) => {
     return 0;
 },
 jur_MultiLineSOLSet_getName = $this => {
-    return $rt_s(320);
+    return $rt_s(332);
 };
 function igiae_ServiceHub() {
     let a = this; jl_Object.call(a);
@@ -13344,7 +13504,7 @@ igiae_ServiceHub_releasePlugin = ($this, $pluginId) => {
             }
         }
     }
-    $this.$watching.$remove1($pluginId);
+    $this.$watching.$remove2($pluginId);
     var$3 = (ju_ArrayList__init_0($this.$entries0.$entrySet())).$iterator();
     while (var$3.$hasNext()) {
         $registered = var$3.$next();
@@ -13359,13 +13519,13 @@ igiae_ServiceHub_releasePlugin = ($this, $pluginId) => {
             $waiter = var$3.$next();
             if (!jl_String_equals(igiae_ServiceHub$Waiter_access$700($waiter), $pluginId))
                 continue;
-            ($waiting.$getValue()).$remove0($waiter);
+            ($waiting.$getValue()).$remove1($waiter);
             if (igiae_ServiceHub$Waiter_access$800($waiter) !== null)
                 (igiae_ServiceHub$Waiter_access$800($waiter)).$cancel();
             igiae_Pending_reject(igiae_ServiceHub$Waiter_access$900($waiter), igiae_ServiceHub_stoppedWaiting($pluginId, $waiting.$getKey()));
         }
         if (($waiting.$getValue()).$isEmpty())
-            $pending.$remove2();
+            $pending.$remove0();
     }
 },
 igiae_ServiceHub_addService = ($this, $pluginId, $id, $service) => {
@@ -13374,14 +13534,14 @@ igiae_ServiceHub_addService = ($this, $pluginId, $id, $service) => {
         $existing = $this.$entries0.$get1($id);
         if ($existing !== null) {
             var$5 = new igiae_PluginException;
-            var$6 = (((jl_StringBuilder__init_()).$append3($rt_s(321))).$append3($id)).$append3($rt_s(322));
-            igiae_PluginException__init_(var$5, $pluginId, (var$6.$append3(igiae_ServiceHub$Entry_access$600($existing))).$toString(), $rt_s(323));
+            var$6 = (((jl_StringBuilder__init_()).$append3($rt_s(333))).$append3($id)).$append3($rt_s(334));
+            igiae_PluginException__init_(var$5, $pluginId, (var$6.$append3(igiae_ServiceHub$Entry_access$600($existing))).$toString(), $rt_s(335));
             $rt_throw(var$5);
         }
         a: {
             $this.$entries0.$put($id, igiae_ServiceHub$Entry__init_0($pluginId, $service));
             igiae_ServiceHub_provided($this, $pluginId, $id);
-            $pending = $this.$waiters.$remove1($id);
+            $pending = $this.$waiters.$remove2($id);
             if ($pending !== null) {
                 var$6 = $pending.$iterator();
                 while (true) {
@@ -13397,10 +13557,10 @@ igiae_ServiceHub_addService = ($this, $pluginId, $id, $service) => {
         igiae_ServiceHub_notifyWatchers($this, $id, $service, 1);
         return igiae_ServiceHub$2__init_0($this, $pluginId, $id);
     }
-    $name = !jl_String_contains($id, $rt_s(308)) ? $id : jl_String_substring0($id, jl_String_lastIndexOf0($id, 58) + 1 | 0);
+    $name = !jl_String_contains($id, $rt_s(320)) ? $id : jl_String_substring0($id, jl_String_lastIndexOf0($id, 58) + 1 | 0);
     var$6 = new igiae_PluginException;
-    var$10 = ((((jl_StringBuilder__init_()).$append3($rt_s(324))).$append3($id)).$append3($rt_s(325))).$toString();
-    var$5 = (((((jl_StringBuilder__init_()).$append3($rt_s(326))).$append3($pluginId)).$append3($rt_s(308))).$append3($name)).$append3($rt_s(327));
+    var$10 = ((((jl_StringBuilder__init_()).$append3($rt_s(336))).$append3($id)).$append3($rt_s(337))).$toString();
+    var$5 = (((((jl_StringBuilder__init_()).$append3($rt_s(338))).$append3($pluginId)).$append3($rt_s(320))).$append3($name)).$append3($rt_s(339));
     var$11 = $this.$wellKnown0;
     igiae_PluginException__init_(var$6, $pluginId, var$10, (var$5.$append3(igiae_ServiceHub_join(var$11))).$toString());
     $rt_throw(var$6);
@@ -13409,7 +13569,7 @@ igiae_ServiceHub_unregister = ($this, $pluginId, $id) => {
     let $entry;
     $entry = $this.$entries0.$get1($id);
     if ($entry !== null && jl_String_equals(igiae_ServiceHub$Entry_access$600($entry), $pluginId)) {
-        $this.$entries0.$remove1($id);
+        $this.$entries0.$remove2($id);
         igiae_ServiceHub_notifyWatchers($this, $id, null, 0);
         return;
     }
@@ -13477,7 +13637,7 @@ igiae_ServiceHub_notifyWatchers = ($this, $id, $service, $registered) => {
                 $$je = $rt_wrapException($$e);
                 if ($$je instanceof jl_RuntimeException) {
                     $failure = $$je;
-                    var$7 = (((jl_StringBuilder__init_()).$append3($rt_s(328))).$append3($id)).$append3($rt_s(329));
+                    var$7 = (((jl_StringBuilder__init_()).$append3($rt_s(340))).$append3($id)).$append3($rt_s(341));
                     var$7 = (((var$7.$append3(!$registered ? $rt_s(25) : $rt_s(26))).$append3($rt_s(4))).$append($failure)).$toString();
                     igiae_Diagnostics_report(var$7);
                     break a;
@@ -13498,7 +13658,7 @@ igiae_ServiceHub_mayRegister = ($this, $pluginId, $serviceId) => {
     return 0;
 },
 igiae_ServiceHub_stoppedWaiting = ($pluginId, $id) => {
-    return igiae_PluginException__init_0($pluginId, ((((jl_StringBuilder__init_()).$append3($rt_s(330))).$append3($id)).$append3($rt_s(301))).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(331))).$append3($id)).$append3($rt_s(332))).$toString());
+    return igiae_PluginException__init_0($pluginId, ((((jl_StringBuilder__init_()).$append3($rt_s(342))).$append3($id)).$append3($rt_s(313))).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(343))).$append3($id)).$append3($rt_s(344))).$toString());
 },
 igiae_ServiceHub_provided = ($this, $pluginId, $serviceId) => {
     if ($this.$recorder !== null)
@@ -13604,7 +13764,7 @@ jur_PreviousMatch_hasConsumed = ($this, $matchResult) => {
     return 0;
 },
 jur_PreviousMatch_getName = $this => {
-    return $rt_s(333);
+    return $rt_s(345);
 },
 jur_NonCapFSet = $rt_classWithoutFields(jur_FSet),
 jur_NonCapFSet__init_ = ($this, $groupIndex) => {
@@ -13622,7 +13782,7 @@ jur_NonCapFSet_matches = ($this, $stringIndex, $testString, $matchResult) => {
     return $this.$next2.$matches($stringIndex, $testString, $matchResult);
 };
 let jur_NonCapFSet_getName = $this => {
-    return $rt_s(334);
+    return $rt_s(346);
 },
 jur_NonCapFSet_hasConsumed = ($this, $mr) => {
     return 0;
@@ -13712,7 +13872,7 @@ jl_System_arraycopy = ($src, $srcPos, $dest, $destPos, $length) => {
         }
         $rt_throw(jl_IndexOutOfBoundsException__init_());
     }
-    $rt_throw(jl_NullPointerException__init_($rt_s(335)));
+    $rt_throw(jl_NullPointerException__init_($rt_s(347)));
 },
 jl_System_fastArraycopy = ($src, $srcPos, $dest, $destPos, $length) => {
     let var$6;
@@ -13790,7 +13950,7 @@ igiaj_JsPluginContext_timeoutOf = $options => {
     if ($options === null)
         return null;
     $tree = igiaj_JsJson_toTree($options);
-    $value = !$rt_isInstance($tree, ju_Map) ? null : $tree.$get1($rt_s(336));
+    $value = !$rt_isInstance($tree, ju_Map) ? null : $tree.$get1($rt_s(348));
     return !($value instanceof jl_Number) ? null : jl_Long_valueOf($value.$longValue());
 },
 igiaj_JsPluginContext_servicesObject$js_body$_4 = (var$1, var$2, var$3, var$4, var$5) => {
@@ -13852,12 +14012,12 @@ igiae_PluginHost_wellKnownServices = ($this, $ids) => {
 igiae_PluginHost_supports = ($this, $pluginId, $pluginApi) => {
     if ($pluginApi <= $this.$api)
         return null;
-    return igiae_PluginException__init_0($pluginId, (((((jl_StringBuilder__init_()).$append3($rt_s(337))).$append2($pluginApi)).$append3($rt_s(338))).$append2($this.$api)).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(339))).$append2($pluginApi)).$append3($rt_s(340))).$toString());
+    return igiae_PluginException__init_0($pluginId, (((((jl_StringBuilder__init_()).$append3($rt_s(349))).$append2($pluginApi)).$append3($rt_s(350))).$append2($this.$api)).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(351))).$append2($pluginApi)).$append3($rt_s(352))).$toString());
 },
 igiae_PluginHost_sessionFor = ($this, $facts, $bus) => {
     let $pluginId;
     $pluginId = igiae_ManifestFacts_getId($facts);
-    $this.$revoked.$remove0($pluginId);
+    $this.$revoked.$remove1($pluginId);
     igiae_PluginLedger_recordDeclared($this.$ledger, $pluginId, igiae_ManifestFacts_getCapabilities($facts), igiae_ManifestFacts_getPermissions($facts));
     return igiae_PluginSession__init_0($this, $facts, igiae_PluginHost_fenced($this, $pluginId, igiae_ServiceHub_forPlugin($this.$hub, $pluginId)), igiae_PluginHost_recording($this, $pluginId, $bus));
 },
@@ -13870,10 +14030,10 @@ igiae_PluginHost_verifyActivation = ($this, $facts) => {
     $missing = igiae_PluginHost_missingFrom($declared, $provided);
     if (!$missing.$isEmpty()) {
         var$7 = new igiae_PluginException;
-        var$8 = (jl_StringBuilder__init_()).$append3($rt_s(341));
+        var$8 = (jl_StringBuilder__init_()).$append3($rt_s(353));
         var$9 = (var$8.$append3(igiae_PluginHost_join($missing))).$toString();
-        var$8 = (jl_StringBuilder__init_()).$append3($rt_s(342));
-        igiae_PluginException__init_(var$7, $pluginId, var$9, ((var$8.$append3($missing.$get(0))).$append3($rt_s(343))).$toString());
+        var$8 = (jl_StringBuilder__init_()).$append3($rt_s(354));
+        igiae_PluginException__init_(var$7, $pluginId, var$9, ((var$8.$append3($missing.$get(0))).$append3($rt_s(355))).$toString());
         return var$7;
     }
     $extra = igiae_PluginHost_missingFrom($provided, $declared);
@@ -13884,10 +14044,10 @@ igiae_PluginHost_verifyActivation = ($this, $facts) => {
         return null;
     }
     var$7 = new igiae_PluginException;
-    var$8 = (jl_StringBuilder__init_()).$append3($rt_s(344));
+    var$8 = (jl_StringBuilder__init_()).$append3($rt_s(356));
     var$8 = (var$8.$append3(igiae_PluginHost_join($extra))).$toString();
-    var$9 = (jl_StringBuilder__init_()).$append3($rt_s(345));
-    igiae_PluginException__init_(var$7, $pluginId, var$8, ((var$9.$append3($extra.$get(0))).$append3($rt_s(346))).$toString());
+    var$9 = (jl_StringBuilder__init_()).$append3($rt_s(357));
+    igiae_PluginException__init_(var$7, $pluginId, var$8, ((var$9.$append3($extra.$get(0))).$append3($rt_s(358))).$toString());
     return var$7;
 },
 igiae_PluginHost_capability = ($this, $id) => {
@@ -13914,10 +14074,10 @@ igiae_PluginHost_release = ($this, $pluginId) => {
 },
 igiae_PluginHost_provide = ($this, $pluginId, $id, $implementation) => {
     let $records, var$5, $record;
-    if (igiae_PluginHost_refuseLate($this, $pluginId, $rt_s(347), $id))
+    if (igiae_PluginHost_refuseLate($this, $pluginId, $rt_s(359), $id))
         return;
     if (!$this.$known.$isEmpty() && !$this.$known.$contains($id))
-        igiae_Diagnostics_ignoreUnknown($rt_s(348), $id, $pluginId);
+        igiae_Diagnostics_ignoreUnknown($rt_s(360), $id, $pluginId);
     $records = $this.$capabilities.$get1($id);
     if ($records === null) {
         $records = ju_ArrayList__init_();
@@ -13927,7 +14087,7 @@ igiae_PluginHost_provide = ($this, $pluginId, $id, $implementation) => {
     while (var$5.$hasNext()) {
         $record = var$5.$next();
         if (jl_String_equals(igiae_CapabilityRecord_getPluginId($record), $pluginId))
-            $rt_throw(igiae_PluginException__init_0($pluginId, ((((jl_StringBuilder__init_()).$append3($rt_s(349))).$append3($id)).$append3($rt_s(350))).$toString(), $rt_s(351)));
+            $rt_throw(igiae_PluginException__init_0($pluginId, ((((jl_StringBuilder__init_()).$append3($rt_s(361))).$append3($id)).$append3($rt_s(362))).$toString(), $rt_s(363)));
     }
     $records.$add2(igiae_CapabilityRecord__init_0($pluginId, $implementation));
     igiae_PluginLedger_recordCapabilityProvided($this.$ledger, $pluginId, $id);
@@ -13941,7 +14101,7 @@ igiae_PluginHost_strip = ($this, $pluginId) => {
 igiae_PluginHost_refuseLate = ($this, $pluginId, $what, $id) => {
     if (!$this.$revoked.$contains($pluginId))
         return 0;
-    igiae_Diagnostics_report(((((((((jl_StringBuilder__init_()).$append3($rt_s(352))).$append3($what)).$append3($rt_s(35))).$append3($id)).$append3($rt_s(36))).$append3($pluginId)).$append3($rt_s(353))).$toString());
+    igiae_Diagnostics_report(((((((((jl_StringBuilder__init_()).$append3($rt_s(364))).$append3($what)).$append3($rt_s(35))).$append3($id)).$append3($rt_s(36))).$append3($pluginId)).$append3($rt_s(365))).$toString());
     return 1;
 },
 igiae_PluginHost_fenced = ($this, $pluginId, $registry) => {
@@ -13978,7 +14138,7 @@ igiae_PluginHost_detach = ($this, $pluginId) => {
             }
         }
     }
-    $this.$disposers.$remove1($pluginId);
+    $this.$disposers.$remove2($pluginId);
 },
 igiae_PluginHost_dropCapabilities = ($this, $pluginId) => {
     let $emptied, var$3, $held, $kept, var$6, $record, var$8, $id;
@@ -14001,7 +14161,7 @@ igiae_PluginHost_dropCapabilities = ($this, $pluginId) => {
     var$8 = $emptied.$iterator();
     while (var$8.$hasNext()) {
         $id = var$8.$next();
-        $this.$capabilities.$remove1($id);
+        $this.$capabilities.$remove2($id);
     }
 },
 igiae_PluginHost_refuseWant = ($pluginId, $id) => {
@@ -14075,7 +14235,7 @@ igiae_PluginHost$3_publish = ($this, $topic, $payload) => {
     $this.$val$bus.$publish($topic, $payload);
 },
 igiae_PluginHost$3_subscribe = ($this, $topic, $listener) => {
-    if (igiae_PluginHost_access$100($this.$this$02, $this.$val$pluginId1, $rt_s(354), $topic))
+    if (igiae_PluginHost_access$100($this.$this$02, $this.$val$pluginId1, $rt_s(366), $topic))
         return igiae_PluginHost_access$300();
     igiae_PluginLedger_recordTopic(igiae_PluginHost_access$000($this.$this$02), $this.$val$pluginId1, $topic);
     return igiae_PluginHost_access$400($this.$this$02, $this.$val$pluginId1, $this.$val$bus.$subscribe($topic, $listener));
@@ -14101,16 +14261,16 @@ igiae_PluginHost$2_get = ($this, $id) => {
     return $this.$val$registry.$get0($id);
 },
 igiae_PluginHost$2_want0 = ($this, $id) => {
-    return !igiae_PluginHost_access$100($this.$this$01, $this.$val$pluginId, $rt_s(355), $id) ? $this.$val$registry.$want($id) : igiae_PluginHost_access$200($this.$val$pluginId, $id);
+    return !igiae_PluginHost_access$100($this.$this$01, $this.$val$pluginId, $rt_s(367), $id) ? $this.$val$registry.$want($id) : igiae_PluginHost_access$200($this.$val$pluginId, $id);
 },
 igiae_PluginHost$2_want = ($this, $id, $timeoutMillis) => {
-    return !igiae_PluginHost_access$100($this.$this$01, $this.$val$pluginId, $rt_s(355), $id) ? $this.$val$registry.$want0($id, $timeoutMillis) : igiae_PluginHost_access$200($this.$val$pluginId, $id);
+    return !igiae_PluginHost_access$100($this.$this$01, $this.$val$pluginId, $rt_s(367), $id) ? $this.$val$registry.$want0($id, $timeoutMillis) : igiae_PluginHost_access$200($this.$val$pluginId, $id);
 },
 igiae_PluginHost$2_watch = ($this, $id, $listener) => {
-    return igiae_PluginHost_access$100($this.$this$01, $this.$val$pluginId, $rt_s(356), $id) ? igiae_PluginHost_access$300() : $this.$val$registry.$watch($id, $listener);
+    return igiae_PluginHost_access$100($this.$this$01, $this.$val$pluginId, $rt_s(368), $id) ? igiae_PluginHost_access$300() : $this.$val$registry.$watch($id, $listener);
 },
 igiae_PluginHost$2_register = ($this, $id, $service) => {
-    return igiae_PluginHost_access$100($this.$this$01, $this.$val$pluginId, $rt_s(357), $id) ? igiae_PluginHost_access$300() : $this.$val$registry.$register($id, $service);
+    return igiae_PluginHost_access$100($this.$this$01, $this.$val$pluginId, $rt_s(369), $id) ? igiae_PluginHost_access$300() : $this.$val$registry.$register($id, $service);
 },
 igiae_PluginHost$2_ids = $this => {
     return $this.$val$registry.$ids();
@@ -14189,9 +14349,9 @@ igiae_PluginHost$4_cancel = $this => {
     $owned = (igiae_PluginHost_access$500($this.$this$07)).$get1($this.$val$pluginId3);
     if ($owned === null)
         return;
-    $owned.$remove0($this.$val$self0.data[0]);
+    $owned.$remove1($this.$val$self0.data[0]);
     if ($owned.$isEmpty())
-        (igiae_PluginHost_access$500($this.$this$07)).$remove1($this.$val$pluginId3);
+        (igiae_PluginHost_access$500($this.$this$07)).$remove2($this.$val$pluginId3);
 };
 function jur_Matcher() {
     let a = this; jl_Object.call(a);
@@ -14309,7 +14469,7 @@ jur_DotAllSet_matches = ($this, $stringIndex, $testString, $matchResult) => {
     return $this.$next2.$matches(var$5, $testString, $matchResult);
 },
 jur_DotAllSet_getName = $this => {
-    return $rt_s(358);
+    return $rt_s(370);
 },
 jur_DotAllSet_setNext = ($this, $next) => {
     $this.$next2 = $next;
@@ -14399,7 +14559,7 @@ jur_HangulDecomposedCharSet_getName = $this => {
     let var$1, var$2;
     var$1 = jur_HangulDecomposedCharSet_getDecomposedChar($this);
     var$2 = jl_StringBuilder__init_();
-    jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(359)), var$1);
+    jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(371)), var$1);
     return jl_StringBuilder_toString(var$2);
 },
 jur_HangulDecomposedCharSet_matches = ($this, $strIndex, $testString, $matchResult) => {
@@ -14512,7 +14672,7 @@ igiae_SchemaIssue_getFix = $this => {
     return $this.$fix;
 },
 igiae_SchemaIssue_toString = $this => {
-    return (((((((jl_StringBuilder__init_()).$append3($this.$path)).$append3($rt_s(4))).$append3($this.$message)).$append3($rt_s(360))).$append3($this.$fix)).$append3($rt_s(361))).$toString();
+    return (((((((jl_StringBuilder__init_()).$append3($this.$path)).$append3($rt_s(4))).$append3($this.$message)).$append3($rt_s(372))).$append3($this.$fix)).$append3($rt_s(373))).$toString();
 },
 otjc_JSBoolean = $rt_classWithoutFields(),
 otjc_JSBoolean_booleanValue$static = $this => {
@@ -14586,7 +14746,7 @@ jur_WordBoundary_hasConsumed = ($this, $matchResult) => {
     return 0;
 },
 jur_WordBoundary_getName = $this => {
-    return $rt_s(362);
+    return $rt_s(374);
 },
 jur_WordBoundary_isSpace = ($this, $ch, $index, $leftBound, $testString) => {
     let var$5;
@@ -14625,20 +14785,20 @@ igiae_SchemaValidator_validate = ($value, $schema, $path, $source) => {
     let $issues;
     $issues = ju_ArrayList__init_();
     if ($path === null)
-        $path = $rt_s(293);
+        $path = $rt_s(305);
     igiae_SchemaValidator_check($value, $schema, $path, $issues, $source);
     return $issues;
 },
 igiae_SchemaValidator_check = ($value, $schema, $path, $issues, $source) => {
     let $type;
     $type = igiae_JsonSchema_getType($schema);
-    if (jl_String_equals($rt_s(317), $type))
+    if (jl_String_equals($rt_s(329), $type))
         igiae_SchemaValidator_checkObject($value, $schema, $path, $issues, $source);
-    else if (jl_String_equals($rt_s(363), $type))
+    else if (jl_String_equals($rt_s(375), $type))
         igiae_SchemaValidator_checkArray($value, $schema, $path, $issues, $source);
     else if (jl_String_equals($rt_s(260), $type))
         igiae_SchemaValidator_checkString($value, $schema, $path, $issues);
-    else if (!(!jl_String_equals($rt_s(364), $type) && !jl_String_equals($rt_s(261), $type)))
+    else if (!(!jl_String_equals($rt_s(376), $type) && !jl_String_equals($rt_s(261), $type)))
         igiae_SchemaValidator_checkNumber($value, $schema, $path, $issues);
     else if (jl_String_equals($rt_s(262), $type) && !($value instanceof jl_Boolean))
         $issues.$add2(igiae_SchemaValidator_typeIssue($value, $schema, $path));
@@ -14663,8 +14823,8 @@ igiae_SchemaValidator_checkObject = ($value, $schema, $path, $issues, $source) =
                 $child = igiae_SchemaValidator_property($schema, $key);
                 var$11 = new igiae_SchemaIssue;
                 var$12 = igiae_SchemaValidator_childPath($path, $key);
-                var$13 = ((((jl_StringBuilder__init_()).$append3($rt_s(365))).$append3($key)).$append3($rt_s(366))).$toString();
-                igiae_SchemaIssue__init_(var$11, var$12, var$13, $child !== null && igiae_JsonSchema_getFix($child) !== null ? igiae_JsonSchema_getFix($child) : (((((jl_StringBuilder__init_()).$append3($rt_s(345))).$append3($key)).$append3($rt_s(367))).$append3($path)).$toString());
+                var$13 = ((((jl_StringBuilder__init_()).$append3($rt_s(377))).$append3($key)).$append3($rt_s(378))).$toString();
+                igiae_SchemaIssue__init_(var$11, var$12, var$13, $child !== null && igiae_JsonSchema_getFix($child) !== null ? igiae_JsonSchema_getFix($child) : (((((jl_StringBuilder__init_()).$append3($rt_s(357))).$append3($key)).$append3($rt_s(379))).$append3($path)).$toString());
                 $issues.$add2(var$11);
             }
         }
@@ -14684,7 +14844,7 @@ igiae_SchemaValidator_checkObject = ($value, $schema, $path, $issues, $source) =
         }
         if ($source === null)
             continue;
-        igiae_Diagnostics_ignoreUnknown($rt_s(368), igiae_SchemaValidator_childPath($path, $key), $source);
+        igiae_Diagnostics_ignoreUnknown($rt_s(380), igiae_SchemaValidator_childPath($path, $key), $source);
     }
 },
 igiae_SchemaValidator_property = ($schema, $key) => {
@@ -14704,7 +14864,7 @@ igiae_SchemaValidator_checkArray = ($value, $schema, $path, $issues, $source) =>
     $values = $value;
     $index = 0;
     while ($index < $values.$size()) {
-        igiae_SchemaValidator_check($values.$get($index), $items, (((((jl_StringBuilder__init_()).$append3($path)).$append3($rt_s(245))).$append2($index)).$append3($rt_s(310))).$toString(), $issues, $source);
+        igiae_SchemaValidator_check($values.$get($index), $items, (((((jl_StringBuilder__init_()).$append3($path)).$append3($rt_s(245))).$append2($index)).$append3($rt_s(322))).$toString(), $issues, $source);
         $index = $index + 1 | 0;
     }
 },
@@ -14718,16 +14878,16 @@ igiae_SchemaValidator_checkString = ($value, $schema, $path, $issues) => {
     $pattern = igiae_JsonSchema_getPattern($schema);
     if ($pattern !== null && !jur_Matcher_find0(jur_Pattern_matcher(jur_Pattern_compile($pattern), $text))) {
         var$7 = new igiae_SchemaIssue;
-        var$8 = (((((jl_StringBuilder__init_()).$append3($rt_s(301))).$append3($text)).$append3($rt_s(369))).$append3($pattern)).$toString();
-        igiae_SchemaIssue__init_(var$7, $path, var$8, igiae_JsonSchema_getFix($schema) !== null ? igiae_JsonSchema_getFix($schema) : (((((jl_StringBuilder__init_()).$append3($rt_s(370))).$append3($path)).$append3($rt_s(371))).$append3($pattern)).$toString());
+        var$8 = (((((jl_StringBuilder__init_()).$append3($rt_s(313))).$append3($text)).$append3($rt_s(381))).$append3($pattern)).$toString();
+        igiae_SchemaIssue__init_(var$7, $path, var$8, igiae_JsonSchema_getFix($schema) !== null ? igiae_JsonSchema_getFix($schema) : (((((jl_StringBuilder__init_()).$append3($rt_s(382))).$append3($path)).$append3($rt_s(383))).$append3($pattern)).$toString());
         $issues.$add2(var$7);
     }
     $allowed = igiae_JsonSchema_getEnumValues($schema);
     if ($allowed !== null && !$allowed.$contains($text)) {
         $joined = igiae_SchemaValidator_join($allowed);
         var$11 = new igiae_SchemaIssue;
-        var$7 = (((((jl_StringBuilder__init_()).$append3($rt_s(301))).$append3($text)).$append3($rt_s(372))).$append3($joined)).$toString();
-        igiae_SchemaIssue__init_(var$11, $path, var$7, igiae_JsonSchema_getFix($schema) !== null ? igiae_JsonSchema_getFix($schema) : (((((jl_StringBuilder__init_()).$append3($rt_s(373))).$append3($path)).$append3($rt_s(374))).$append3($joined)).$toString());
+        var$7 = (((((jl_StringBuilder__init_()).$append3($rt_s(313))).$append3($text)).$append3($rt_s(384))).$append3($joined)).$toString();
+        igiae_SchemaIssue__init_(var$11, $path, var$7, igiae_JsonSchema_getFix($schema) !== null ? igiae_JsonSchema_getFix($schema) : (((((jl_StringBuilder__init_()).$append3($rt_s(385))).$append3($path)).$append3($rt_s(386))).$append3($joined)).$toString());
         $issues.$add2(var$11);
     }
 },
@@ -14737,7 +14897,7 @@ igiae_SchemaValidator_checkNumber = ($value, $schema, $path, $issues) => {
         if ($value instanceof jl_Number) {
             var$5 = $value;
             if (!igiae_SchemaValidator_isNotANumber(var$5)) {
-                if (!jl_String_equals($rt_s(364), igiae_JsonSchema_getType($schema)))
+                if (!jl_String_equals($rt_s(376), igiae_JsonSchema_getType($schema)))
                     break a;
                 if (igiae_SchemaValidator_isIntegral(var$5))
                     break a;
@@ -14749,9 +14909,9 @@ igiae_SchemaValidator_checkNumber = ($value, $schema, $path, $issues) => {
     $minimum = igiae_JsonSchema_getMinimum($schema);
     if ($minimum !== null && var$5.$doubleValue() < $minimum.$doubleValue()) {
         var$7 = new igiae_SchemaIssue;
-        var$8 = (((jl_StringBuilder__init_()).$append3($rt_s(375))).$append($minimum)).$append3($rt_s(376));
+        var$8 = (((jl_StringBuilder__init_()).$append3($rt_s(387))).$append($minimum)).$append3($rt_s(388));
         var$8 = (var$8.$append3(igiae_SchemaValidator_describeNumber(var$5))).$toString();
-        igiae_SchemaIssue__init_(var$7, $path, var$8, igiae_JsonSchema_getFix($schema) !== null ? igiae_JsonSchema_getFix($schema) : (((((jl_StringBuilder__init_()).$append3($rt_s(373))).$append3($path)).$append3($rt_s(377))).$append($minimum)).$toString());
+        igiae_SchemaIssue__init_(var$7, $path, var$8, igiae_JsonSchema_getFix($schema) !== null ? igiae_JsonSchema_getFix($schema) : (((((jl_StringBuilder__init_()).$append3($rt_s(385))).$append3($path)).$append3($rt_s(389))).$append($minimum)).$toString());
         $issues.$add2(var$7);
     }
 },
@@ -14773,21 +14933,21 @@ igiae_SchemaValidator_describeNumber = $value => {
 igiae_SchemaValidator_typeIssue = ($value, $schema, $path) => {
     let var$4, var$5;
     var$4 = new igiae_SchemaIssue;
-    var$5 = (((((jl_StringBuilder__init_()).$append3($rt_s(378))).$append3(igiae_JsonSchema_getType($schema))).$append3($rt_s(376))).$append3(igiae_SchemaValidator_describe($value))).$toString();
-    igiae_SchemaIssue__init_(var$4, $path, var$5, igiae_JsonSchema_getFix($schema) !== null ? igiae_JsonSchema_getFix($schema) : (((((jl_StringBuilder__init_()).$append3($rt_s(373))).$append3($path)).$append3($rt_s(379))).$append3(igiae_JsonSchema_getType($schema))).$toString());
+    var$5 = (((((jl_StringBuilder__init_()).$append3($rt_s(390))).$append3(igiae_JsonSchema_getType($schema))).$append3($rt_s(388))).$append3(igiae_SchemaValidator_describe($value))).$toString();
+    igiae_SchemaIssue__init_(var$4, $path, var$5, igiae_JsonSchema_getFix($schema) !== null ? igiae_JsonSchema_getFix($schema) : (((((jl_StringBuilder__init_()).$append3($rt_s(385))).$append3($path)).$append3($rt_s(391))).$append3(igiae_JsonSchema_getType($schema))).$toString());
     return var$4;
 },
 igiae_SchemaValidator_describe = $value => {
     if ($value === null)
         return $rt_s(44);
     if ($rt_isInstance($value, ju_List))
-        return $rt_s(363);
+        return $rt_s(375);
     if ($value instanceof jl_String)
         return $rt_s(260);
     if ($value instanceof jl_Boolean)
         return $rt_s(262);
     if (!($value instanceof jl_Number))
-        return $rt_s(317);
+        return $rt_s(329);
     return $rt_s(261);
 },
 igiae_SchemaValidator_join = $values => {
@@ -14803,7 +14963,7 @@ igiae_SchemaValidator_join = $values => {
     return $out.$toString();
 },
 igiae_SchemaValidator_childPath = ($path, $key) => {
-    if (!jl_String_equals($rt_s(293), $path))
+    if (!jl_String_equals($rt_s(305), $path))
         $key = ((((jl_StringBuilder__init_()).$append3($path)).$append3($rt_s(263))).$append3($key)).$toString();
     return $key;
 };
@@ -15047,12 +15207,12 @@ jur_AbstractCharClass$LazyJavaWhitespace_computeValue = $this => {
     return jur_AbstractCharClass$LazyJavaWhitespace$1__init_0($this);
 },
 jl_UnsupportedOperationException = $rt_classWithoutFields(jl_RuntimeException),
-jl_UnsupportedOperationException__init_ = $this => {
+jl_UnsupportedOperationException__init_0 = $this => {
     jl_RuntimeException__init_($this);
 },
-jl_UnsupportedOperationException__init_0 = () => {
+jl_UnsupportedOperationException__init_ = () => {
     let var_0 = new jl_UnsupportedOperationException();
-    jl_UnsupportedOperationException__init_(var_0);
+    jl_UnsupportedOperationException__init_0(var_0);
     return var_0;
 },
 jl_NumberFormatException = $rt_classWithoutFields(jl_IllegalArgumentException),
@@ -15281,7 +15441,7 @@ jur_SOLSet_hasConsumed = ($this, $matchResult) => {
     return 0;
 },
 jur_SOLSet_getName = $this => {
-    return $rt_s(380);
+    return $rt_s(392);
 };
 function igiaj_JsPluginContext$7$1() {
     let a = this; jl_Object.call(a);
@@ -15407,7 +15567,7 @@ jur_UMultiLineEOLSet_hasConsumed = ($this, $matchResult) => {
     return $res;
 },
 jur_UMultiLineEOLSet_getName = $this => {
-    return $rt_s(381);
+    return $rt_s(393);
 },
 ju_LinkedHashMapIterator$KeyIterator = $rt_classWithoutFields(ju_LinkedHashMapIterator),
 ju_LinkedHashMapIterator$KeyIterator__init_ = ($this, $map, $reversed) => {
@@ -16092,7 +16252,7 @@ jur_Lexer_movePointer = $this => {
                                         if ($nonCap > 57)
                                             break a;
                                         if ($nameBuilder === null) {
-                                            var$8 = jur_PatternSyntaxException__init_($rt_s(382), $this.$toString(), $this.$index);
+                                            var$8 = jur_PatternSyntaxException__init_($rt_s(394), $this.$toString(), $this.$index);
                                             $rt_throw(var$8);
                                         }
                                         $nameBuilder.$append0($nonCap);
@@ -16183,7 +16343,7 @@ jur_Lexer_parseCharClassName = $this => {
         if ($this.$pattern0.data[$this.$index] != 123) {
             var$2 = jl_String__init_1($this.$pattern0, jur_Lexer_nextIndex($this), 1);
             var$3 = jl_StringBuilder__init_();
-            jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(383)), var$2);
+            jl_StringBuilder_append(jl_StringBuilder_append(var$3, $rt_s(395)), var$2);
             return jl_StringBuilder_toString(var$3);
         }
         jur_Lexer_nextIndex($this);
@@ -16204,15 +16364,15 @@ jur_Lexer_parseCharClassName = $this => {
     $res = $sb.$toString();
     if (jl_String_length($res) == 1) {
         var$2 = jl_StringBuilder__init_();
-        jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(383)), $res);
+        jl_StringBuilder_append(jl_StringBuilder_append(var$2, $rt_s(395)), $res);
         return jl_StringBuilder_toString(var$2);
     }
     b: {
         c: {
             if (jl_String_length($res) > 3) {
-                if (jl_String_startsWith($res, $rt_s(383)))
+                if (jl_String_startsWith($res, $rt_s(395)))
                     break c;
-                if (jl_String_startsWith($res, $rt_s(384)))
+                if (jl_String_startsWith($res, $rt_s(396)))
                     break c;
             }
             break b;
@@ -16536,33 +16696,35 @@ igiae_ManifestSchema = $rt_classWithoutFields(),
 igiae_ManifestSchema_get = () => {
     let $properties, $id, $api, $entry, $capabilities, $permissions, $root;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(385), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(386)));
-    $id = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(387));
-    igiae_JsonSchema_setPattern($id, $rt_s(388));
-    igiae_JsonSchema_setFix($id, $rt_s(389));
+    $properties.$put($rt_s(274), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(397)));
+    $id = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(398));
+    igiae_JsonSchema_setPattern($id, $rt_s(399));
+    igiae_JsonSchema_setFix($id, $rt_s(400));
     $properties.$put($rt_s(16), $id);
-    $api = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(364)), $rt_s(390));
+    $api = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(376)), $rt_s(401));
     igiae_JsonSchema_setMinimum($api, jl_Integer_valueOf(1));
-    igiae_JsonSchema_setFix($api, $rt_s(391));
+    igiae_JsonSchema_setFix($api, $rt_s(402));
     $properties.$put($rt_s(12), $api);
-    $entry = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(392));
-    igiae_JsonSchema_setFix($entry, $rt_s(393));
-    $properties.$put($rt_s(298), $entry);
-    $properties.$put($rt_s(394), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(395)));
-    $properties.$put($rt_s(396), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(397)));
-    $capabilities = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(363)), $rt_s(398));
+    $entry = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(403));
+    igiae_JsonSchema_setFix($entry, $rt_s(404));
+    $properties.$put($rt_s(310), $entry);
+    $properties.$put($rt_s(405), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(406)));
+    $properties.$put($rt_s(407), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(408)));
+    $capabilities = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(409));
     igiae_JsonSchema_setItems($capabilities, igiae_JsonSchema_ofType($rt_s(260)));
-    igiae_JsonSchema_setFix($capabilities, $rt_s(399));
+    igiae_JsonSchema_setFix($capabilities, $rt_s(410));
     $properties.$put($rt_s(17), $capabilities);
-    $properties.$put($rt_s(284), igiae_ManifestSchema_services());
-    $permissions = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(363)), $rt_s(400));
+    $properties.$put($rt_s(296), igiae_ManifestSchema_services());
+    $permissions = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(411));
     igiae_JsonSchema_setItems($permissions, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(18), $permissions);
-    $properties.$put($rt_s(401), igiae_ManifestSchema_lifecycle());
-    $properties.$put($rt_s(402), igiae_ManifestSchema_publish());
-    $properties.$put($rt_s(403), igiae_ManifestSchema_repo());
-    $root = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(317)), $rt_s(404));
-    igiae_JsonSchema_setTitle($root, $rt_s(405));
+    $properties.$put($rt_s(412), igiae_ManifestSchema_lifecycle());
+    $properties.$put($rt_s(413), igiae_ManifestSchema_publish());
+    $properties.$put($rt_s(414), igiae_ManifestSchema_repo());
+    $root = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(415));
+    igiae_JsonSchema_setSchemaDraft($root, $rt_s(416));
+    igiae_JsonSchema_setSchemaId($root, $rt_s(417));
+    igiae_JsonSchema_setTitle($root, $rt_s(418));
     igiae_JsonSchema_setRequired($root, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(16), $rt_s(12)])));
     igiae_JsonSchema_setProperties($root, $properties);
     return $root;
@@ -16570,44 +16732,44 @@ igiae_ManifestSchema_get = () => {
 let igiae_ManifestSchema_services = () => {
     let $properties, $provides, $consumes, $services;
     $properties = ju_LinkedHashMap__init_();
-    $provides = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(363)), $rt_s(406));
+    $provides = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(419));
     igiae_JsonSchema_setItems($provides, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(285), $provides);
-    $consumes = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(363)), $rt_s(407));
+    $properties.$put($rt_s(297), $provides);
+    $consumes = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(420));
     igiae_JsonSchema_setItems($consumes, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(286), $consumes);
-    $services = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(317)), $rt_s(408));
+    $properties.$put($rt_s(298), $consumes);
+    $services = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(421));
     igiae_JsonSchema_setProperties($services, $properties);
     return $services;
 },
 igiae_ManifestSchema_lifecycle = () => {
     let $properties, $lifecycle;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(409), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(410)));
-    $properties.$put($rt_s(411), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(412)));
-    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(317)), $rt_s(413));
+    $properties.$put($rt_s(422), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(423)));
+    $properties.$put($rt_s(424), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(425)));
+    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(426));
     igiae_JsonSchema_setProperties($lifecycle, $properties);
     return $lifecycle;
 },
 igiae_ManifestSchema_publish = () => {
     let $properties, $publish;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(414), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(415)));
-    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(317)), $rt_s(416));
+    $properties.$put($rt_s(427), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(428)));
+    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(429));
     igiae_JsonSchema_setProperties($publish, $properties);
     return $publish;
 },
 igiae_ManifestSchema_repo = () => {
     let $properties, $domains, $repo;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(417), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(418)));
-    $properties.$put($rt_s(419), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(420)));
-    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(363)), $rt_s(421));
+    $properties.$put($rt_s(430), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(431)));
+    $properties.$put($rt_s(432), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(433)));
+    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(434));
     igiae_JsonSchema_setItems($domains, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(422), $domains);
-    $properties.$put($rt_s(423), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(424)));
-    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(317)), $rt_s(425));
-    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(417), $rt_s(419), $rt_s(423)])));
+    $properties.$put($rt_s(435), $domains);
+    $properties.$put($rt_s(436), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(437)));
+    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(438));
+    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(430), $rt_s(432), $rt_s(436)])));
     igiae_JsonSchema_setProperties($repo, $properties);
     return $repo;
 },
@@ -16833,9 +16995,9 @@ igiae_Scheduler$1$1, 0, jl_Object, [igiae_Scheduler$Cancellable], 0, 0, 0, ["$_i
 ju_AbstractMap, 0, jl_Object, [ju_Map], 1025, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractMap__init_), "$put", $rt_wrapFunction2(ju_AbstractMap_put), "$equals", $rt_wrapFunction1(ju_AbstractMap_equals), "$hashCode0", $rt_wrapFunction0(ju_AbstractMap_hashCode), "$toString", $rt_wrapFunction0(ju_AbstractMap_toString)],
 jl_Cloneable, 0, jl_Object, [], 1537, 0, 0, 0,
 ju_HashMap, 0, ju_AbstractMap, [jl_Cloneable, ji_Serializable], 1, 0, 0, ["$newElementArray", $rt_wrapFunction1(ju_HashMap_newElementArray), "$_init_", $rt_wrapFunction0(ju_HashMap__init_1), "$_init_0", $rt_wrapFunction1(ju_HashMap__init_0), "$_init_18", $rt_wrapFunction2(ju_HashMap__init_2), "$containsKey", $rt_wrapFunction1(ju_HashMap_containsKey), "$get1", $rt_wrapFunction1(ju_HashMap_get), "$entryByKey", $rt_wrapFunction1(ju_HashMap_entryByKey), "$findNonNullKeyEntry", $rt_wrapFunction3(ju_HashMap_findNonNullKeyEntry),
-"$findNullKeyEntry", $rt_wrapFunction0(ju_HashMap_findNullKeyEntry), "$isEmpty", $rt_wrapFunction0(ju_HashMap_isEmpty), "$keySet", $rt_wrapFunction0(ju_HashMap_keySet), "$put", $rt_wrapFunction2(ju_HashMap_put), "$rehash0", $rt_wrapFunction1(ju_HashMap_rehash0), "$rehash", $rt_wrapFunction0(ju_HashMap_rehash), "$remove1", $rt_wrapFunction1(ju_HashMap_remove), "$removeEntry", $rt_wrapFunction1(ju_HashMap_removeEntry), "$removeByKey", $rt_wrapFunction1(ju_HashMap_removeByKey), "$size", $rt_wrapFunction0(ju_HashMap_size)],
+"$findNullKeyEntry", $rt_wrapFunction0(ju_HashMap_findNullKeyEntry), "$isEmpty", $rt_wrapFunction0(ju_HashMap_isEmpty), "$keySet", $rt_wrapFunction0(ju_HashMap_keySet), "$put", $rt_wrapFunction2(ju_HashMap_put), "$rehash0", $rt_wrapFunction1(ju_HashMap_rehash0), "$rehash", $rt_wrapFunction0(ju_HashMap_rehash), "$remove2", $rt_wrapFunction1(ju_HashMap_remove), "$removeEntry", $rt_wrapFunction1(ju_HashMap_removeEntry), "$removeByKey", $rt_wrapFunction1(ju_HashMap_removeByKey), "$size", $rt_wrapFunction0(ju_HashMap_size)],
 ju_LinkedHashMap, "LinkedHashMap", 1, ju_HashMap, [ju_SequencedMap], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_LinkedHashMap__init_0), "$newElementArray", $rt_wrapFunction1(ju_LinkedHashMap_newElementArray), "$getOrDefault", $rt_wrapFunction2(ju_LinkedHashMap_getOrDefault), "$get1", $rt_wrapFunction1(ju_LinkedHashMap_get), "$put", $rt_wrapFunction2(ju_LinkedHashMap_put), "$putImpl0", $rt_wrapFunction4(ju_LinkedHashMap_putImpl), "$entrySet", $rt_wrapFunction0(ju_LinkedHashMap_entrySet), "$keySet", $rt_wrapFunction0(ju_LinkedHashMap_keySet),
-"$sequencedKeySet", $rt_wrapFunction0(ju_LinkedHashMap_sequencedKeySet), "$values", $rt_wrapFunction0(ju_LinkedHashMap_values), "$sequencedValues", $rt_wrapFunction0(ju_LinkedHashMap_sequencedValues), "$remove1", $rt_wrapFunction1(ju_LinkedHashMap_remove), "$removeLinkedEntry", $rt_wrapFunction1(ju_LinkedHashMap_removeLinkedEntry), "$removeEldestEntry", $rt_wrapFunction1(ju_LinkedHashMap_removeEldestEntry)],
+"$sequencedKeySet", $rt_wrapFunction0(ju_LinkedHashMap_sequencedKeySet), "$values", $rt_wrapFunction0(ju_LinkedHashMap_values), "$sequencedValues", $rt_wrapFunction0(ju_LinkedHashMap_sequencedValues), "$remove2", $rt_wrapFunction1(ju_LinkedHashMap_remove), "$removeLinkedEntry", $rt_wrapFunction1(ju_LinkedHashMap_removeLinkedEntry), "$removeEldestEntry", $rt_wrapFunction1(ju_LinkedHashMap_removeEldestEntry)],
 jur_PosPlusGroupQuantifierSet, "PosPlusGroupQuantifierSet", 2, jur_GroupQuantifierSet, [], 0, 0, 0, ["$_init_17", $rt_wrapFunction3(jur_PosPlusGroupQuantifierSet__init_), "$matches", $rt_wrapFunction3(jur_PosPlusGroupQuantifierSet_matches)],
 jl_AbstractStringBuilder, 0, jl_Object, [ji_Serializable, jl_CharSequence], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jl_AbstractStringBuilder__init_0), "$_init_0", $rt_wrapFunction1(jl_AbstractStringBuilder__init_), "$append13", $rt_wrapFunction1(jl_AbstractStringBuilder_append6), "$append14", $rt_wrapFunction1(jl_AbstractStringBuilder_append2), "$insert0", $rt_wrapFunction2(jl_AbstractStringBuilder_insert2), "$append15", $rt_wrapFunction1(jl_AbstractStringBuilder_append3), "$append1", $rt_wrapFunction2(jl_AbstractStringBuilder_append7),
 "$insert1", $rt_wrapFunction3(jl_AbstractStringBuilder_insert6), "$append16", $rt_wrapFunction1(jl_AbstractStringBuilder_append5), "$insert2", $rt_wrapFunction2(jl_AbstractStringBuilder_insert4), "$insert3", $rt_wrapFunction3(jl_AbstractStringBuilder_insert5), "$append17", $rt_wrapFunction1(jl_AbstractStringBuilder_append4), "$insert4", $rt_wrapFunction2(jl_AbstractStringBuilder_insert1), "$append5", $rt_wrapFunction1(jl_AbstractStringBuilder_append1), "$insert5", $rt_wrapFunction2(jl_AbstractStringBuilder_insert0),
@@ -16851,7 +17013,7 @@ jur_AbstractCharClass$LazyJavaUnicodeIdentifierPart$1, "AbstractCharClass$LazyJa
 jur_AbstractCharClass$PredefinedCharacterClasses, 0, jl_Object, [], 16, 0, () => jur_AbstractCharClass$PredefinedCharacterClasses_$callClinit(), ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$PredefinedCharacterClasses__init_), "$getObject", $rt_wrapFunction1(jur_AbstractCharClass$PredefinedCharacterClasses_getObject)],
 jl_Iterable, 0, jl_Object, [], 1537, 0, 0, 0,
 ju_Collection, 0, jl_Object, [jl_Iterable], 1537, 0, 0, 0,
-ju_AbstractCollection, 0, jl_Object, [ju_Collection], 1025, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractCollection__init_), "$isEmpty", $rt_wrapFunction0(ju_AbstractCollection_isEmpty), "$contains", $rt_wrapFunction1(ju_AbstractCollection_contains), "$toArray", $rt_wrapFunction1(ju_AbstractCollection_toArray), "$addAll", $rt_wrapFunction1(ju_AbstractCollection_addAll), "$toString", $rt_wrapFunction0(ju_AbstractCollection_toString)],
+ju_AbstractCollection, 0, jl_Object, [ju_Collection], 1025, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractCollection__init_), "$isEmpty", $rt_wrapFunction0(ju_AbstractCollection_isEmpty), "$contains", $rt_wrapFunction1(ju_AbstractCollection_contains), "$toArray", $rt_wrapFunction1(ju_AbstractCollection_toArray), "$remove1", $rt_wrapFunction1(ju_AbstractCollection_remove), "$addAll", $rt_wrapFunction1(ju_AbstractCollection_addAll), "$toString", $rt_wrapFunction0(ju_AbstractCollection_toString)],
 ju_SequencedCollection, 0, jl_Object, [ju_Collection], 1537, 0, 0, 0,
 ju_LinkedHashMapValues, 0, ju_AbstractCollection, [ju_SequencedCollection], 0, 0, 0, ["$_init_21", $rt_wrapFunction2(ju_LinkedHashMapValues__init_), "$iterator", $rt_wrapFunction0(ju_LinkedHashMapValues_iterator)],
 jur_AbstractCharClass$LazyDigit, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyDigit__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyDigit_computeValue)],
@@ -16945,7 +17107,7 @@ ju_Iterator, 0, jl_Object, [], 1537, 0, 0, 0,
 ju_ListIterator, 0, jl_Object, [ju_Iterator], 1537, 0, 0, 0,
 ju_Collections$5, 0, jl_Object, [ju_ListIterator], 0, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$5__init_)],
 ju_List, 0, jl_Object, [ju_SequencedCollection], 1537, 0, 0, 0,
-ju_AbstractList, 0, ju_AbstractCollection, [ju_List], 1025, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractList__init_), "$iterator", $rt_wrapFunction0(ju_AbstractList_iterator), "$indexOf2", $rt_wrapFunction1(ju_AbstractList_indexOf), "$equals", $rt_wrapFunction1(ju_AbstractList_equals)],
+ju_AbstractList, 0, ju_AbstractCollection, [ju_List], 1025, 0, 0, ["$_init_", $rt_wrapFunction0(ju_AbstractList__init_), "$add2", $rt_wrapFunction1(ju_AbstractList_add), "$iterator", $rt_wrapFunction0(ju_AbstractList_iterator), "$add1", $rt_wrapFunction2(ju_AbstractList_add0), "$remove", $rt_wrapFunction1(ju_AbstractList_remove), "$indexOf2", $rt_wrapFunction1(ju_AbstractList_indexOf), "$hashCode0", $rt_wrapFunction0(ju_AbstractList_hashCode), "$equals", $rt_wrapFunction1(ju_AbstractList_equals)],
 ju_RandomAccess, 0, jl_Object, [], 1537, 0, 0, 0,
 ju_TemplateCollections$AbstractImmutableList, 0, ju_AbstractList, [ju_RandomAccess], 1024, 0, 0, ["$_init_", $rt_wrapFunction0(ju_TemplateCollections$AbstractImmutableList__init_)],
 ju_Collections$3, 0, ju_TemplateCollections$AbstractImmutableList, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$3__init_)],
@@ -16975,7 +17137,7 @@ jur_AbstractLineTerminator, 0, jl_Object, [], 1024, 0, 0, ["$_init_", $rt_wrapFu
 jur_AbstractCharClass$LazyJavaTitleCase$1, "AbstractCharClass$LazyJavaTitleCase$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_88", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaTitleCase$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaTitleCase$1_contains)],
 ju_Collections$_clinit_$lambda$_59_0, 0, jl_Object, [ju_Comparator], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$_clinit_$lambda$_59_0__init_)],
 jur_AbstractCharClass$LazyJavaMirrored$1, "AbstractCharClass$LazyJavaMirrored$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_102", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaMirrored$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaMirrored$1_contains)],
-ju_LinkedHashMapIterator, 0, jl_Object, [], 0, 0, 0, ["$_init_21", $rt_wrapFunction2(ju_LinkedHashMapIterator__init_), "$hasNext", $rt_wrapFunction0(ju_LinkedHashMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_LinkedHashMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_LinkedHashMapIterator_makeNext), "$remove2", $rt_wrapFunction0(ju_LinkedHashMapIterator_remove)]]);
+ju_LinkedHashMapIterator, 0, jl_Object, [], 0, 0, 0, ["$_init_21", $rt_wrapFunction2(ju_LinkedHashMapIterator__init_), "$hasNext", $rt_wrapFunction0(ju_LinkedHashMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_LinkedHashMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_LinkedHashMapIterator_makeNext), "$remove0", $rt_wrapFunction0(ju_LinkedHashMapIterator_remove)]]);
 $rt_metadata([jur_AbstractCharClass$LazyJavaISOControl$1, "AbstractCharClass$LazyJavaISOControl$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_103", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaISOControl$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaISOControl$1_contains)],
 jur_UEOLSet, "UEOLSet", 2, jur_AbstractSet, [], 16, 0, 0, ["$_init_0", $rt_wrapFunction1(jur_UEOLSet__init_), "$matches", $rt_wrapFunction3(jur_UEOLSet_matches), "$hasConsumed", $rt_wrapFunction1(jur_UEOLSet_hasConsumed), "$getName", $rt_wrapFunction0(jur_UEOLSet_getName)],
 jur_UCICharSet, "UCICharSet", 2, jur_LeafSet, [], 0, 0, 0, ["$_init_56", $rt_wrapFunction1(jur_UCICharSet__init_), "$accepts", $rt_wrapFunction2(jur_UCICharSet_accepts), "$getName", $rt_wrapFunction0(jur_UCICharSet_getName)],
@@ -16985,7 +17147,7 @@ jur_LowSurrogateCharSet, "LowSurrogateCharSet", 2, jur_JointSet, [], 0, 0, 0, ["
 jur_CompositeGroupQuantifierSet, "CompositeGroupQuantifierSet", 2, jur_GroupQuantifierSet, [], 0, 0, 0, ["$_init_46", function(var_1, var_2, var_3, var_4, var_5) { jur_CompositeGroupQuantifierSet__init_(this, var_1, var_2, var_3, var_4, var_5); }, "$matches", $rt_wrapFunction3(jur_CompositeGroupQuantifierSet_matches), "$getName", $rt_wrapFunction0(jur_CompositeGroupQuantifierSet_getName)],
 jur_RelCompositeGroupQuantifierSet, "RelCompositeGroupQuantifierSet", 2, jur_CompositeGroupQuantifierSet, [], 0, 0, 0, ["$_init_46", function(var_1, var_2, var_3, var_4, var_5) { jur_RelCompositeGroupQuantifierSet__init_(this, var_1, var_2, var_3, var_4, var_5); }, "$matches", $rt_wrapFunction3(jur_RelCompositeGroupQuantifierSet_matches)],
 ju_ArrayList, "ArrayList", 1, ju_AbstractList, [jl_Cloneable, ji_Serializable, ju_RandomAccess], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_ArrayList__init_3), "$_init_0", $rt_wrapFunction1(ju_ArrayList__init_1), "$_init_80", $rt_wrapFunction1(ju_ArrayList__init_2), "$ensureCapacity", $rt_wrapFunction1(ju_ArrayList_ensureCapacity), "$get", $rt_wrapFunction1(ju_ArrayList_get), "$size", $rt_wrapFunction0(ju_ArrayList_size), "$set1", $rt_wrapFunction2(ju_ArrayList_set), "$add2", $rt_wrapFunction1(ju_ArrayList_add),
-"$add1", $rt_wrapFunction2(ju_ArrayList_add0), "$remove", $rt_wrapFunction1(ju_ArrayList_remove), "$remove0", $rt_wrapFunction1(ju_ArrayList_remove0), "$clear1", $rt_wrapFunction0(ju_ArrayList_clear), "$toString", $rt_wrapFunction0(ju_ArrayList_toString), "$hashCode0", $rt_wrapFunction0(ju_ArrayList_hashCode)],
+"$add1", $rt_wrapFunction2(ju_ArrayList_add0), "$remove", $rt_wrapFunction1(ju_ArrayList_remove), "$remove1", $rt_wrapFunction1(ju_ArrayList_remove0), "$clear1", $rt_wrapFunction0(ju_ArrayList_clear), "$toString", $rt_wrapFunction0(ju_ArrayList_toString), "$hashCode0", $rt_wrapFunction0(ju_ArrayList_hashCode)],
 igiaj_JsScheduler$1, 0, jl_Object, [igiaj_JsScheduler$Task], 0, 0, 0, ["$_init_78", $rt_wrapFunction2(igiaj_JsScheduler$1__init_), "$run", $rt_wrapFunction0(igiaj_JsScheduler$1_run)],
 igiaj_JsScheduler$2, 0, jl_Object, [igiae_Scheduler$Cancellable], 0, 0, 0, ["$_init_79", $rt_wrapFunction2(igiaj_JsScheduler$2__init_), "$cancel", $rt_wrapFunction0(igiaj_JsScheduler$2_cancel)],
 ju_LinkedHashMapIterator$EntryIterator, 0, ju_LinkedHashMapIterator, [ju_Iterator], 0, 0, 0, ["$_init_21", $rt_wrapFunction2(ju_LinkedHashMapIterator$EntryIterator__init_), "$next0", $rt_wrapFunction0(ju_LinkedHashMapIterator$EntryIterator_next), "$next", $rt_wrapFunction0(ju_LinkedHashMapIterator$EntryIterator_next0)],
@@ -16995,11 +17157,11 @@ jur_RelAltGroupQuantifierSet, "RelAltGroupQuantifierSet", 2, jur_AltGroupQuantif
 jl_String, "String", 3, jl_Object, [ji_Serializable, jl_Comparable, jl_CharSequence], 17, 0, () => jl_String_$callClinit(), ["$_init_", $rt_wrapFunction0(jl_String__init_2), "$_init_31", $rt_wrapFunction1(jl_String__init_0), "$_init_47", $rt_wrapFunction1(jl_String__init_4), "$_init_22", $rt_wrapFunction3(jl_String__init_5), "$charAt", $rt_wrapFunction1(jl_String_charAt), "$length", $rt_wrapFunction0(jl_String_length), "$isEmpty", $rt_wrapFunction0(jl_String_isEmpty), "$startsWith0", $rt_wrapFunction2(jl_String_startsWith0),
 "$startsWith1", $rt_wrapFunction1(jl_String_startsWith), "$indexOf1", $rt_wrapFunction2(jl_String_indexOf), "$indexOf3", $rt_wrapFunction1(jl_String_indexOf1), "$lastIndexOf1", $rt_wrapFunction2(jl_String_lastIndexOf), "$lastIndexOf2", $rt_wrapFunction1(jl_String_lastIndexOf0), "$indexOf0", $rt_wrapFunction2(jl_String_indexOf0), "$lastIndexOf0", $rt_wrapFunction2(jl_String_lastIndexOf1), "$substring", $rt_wrapFunction2(jl_String_substring), "$substring0", $rt_wrapFunction1(jl_String_substring0), "$subSequence",
 $rt_wrapFunction2(jl_String_subSequence), "$contains1", $rt_wrapFunction1(jl_String_contains), "$toString", $rt_wrapFunction0(jl_String_toString), "$toCharArray", $rt_wrapFunction0(jl_String_toCharArray), "$equals", $rt_wrapFunction1(jl_String_equals), "$hashCode0", $rt_wrapFunction0(jl_String_hashCode), "$split1", $rt_wrapFunction1(jl_String_split)],
-ju_HashSet, "HashSet", 1, ju_AbstractSet, [jl_Cloneable, ji_Serializable], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_HashSet__init_1), "$_init_19", $rt_wrapFunction1(ju_HashSet__init_), "$add2", $rt_wrapFunction1(ju_HashSet_add), "$contains", $rt_wrapFunction1(ju_HashSet_contains), "$isEmpty", $rt_wrapFunction0(ju_HashSet_isEmpty), "$iterator", $rt_wrapFunction0(ju_HashSet_iterator), "$remove0", $rt_wrapFunction1(ju_HashSet_remove), "$size", $rt_wrapFunction0(ju_HashSet_size)],
+ju_HashSet, "HashSet", 1, ju_AbstractSet, [jl_Cloneable, ji_Serializable], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_HashSet__init_1), "$_init_19", $rt_wrapFunction1(ju_HashSet__init_), "$add2", $rt_wrapFunction1(ju_HashSet_add), "$contains", $rt_wrapFunction1(ju_HashSet_contains), "$isEmpty", $rt_wrapFunction0(ju_HashSet_isEmpty), "$iterator", $rt_wrapFunction0(ju_HashSet_iterator), "$remove1", $rt_wrapFunction1(ju_HashSet_remove), "$size", $rt_wrapFunction0(ju_HashSet_size)],
 ju_LinkedHashSet, "LinkedHashSet", 1, ju_HashSet, [ju_SequencedSet, jl_Cloneable, ji_Serializable], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_LinkedHashSet__init_0)],
 igiae_JsonSchema, "JsonSchema", 13, jl_Object, [], 17, 0, 0, ["$getType2", $rt_wrapFunction0(igiae_JsonSchema_getType), "$setTitle", $rt_wrapFunction1(igiae_JsonSchema_setTitle), "$setDescription", $rt_wrapFunction1(igiae_JsonSchema_setDescription), "$getProperties", $rt_wrapFunction0(igiae_JsonSchema_getProperties), "$setProperties", $rt_wrapFunction1(igiae_JsonSchema_setProperties), "$getRequired", $rt_wrapFunction0(igiae_JsonSchema_getRequired), "$setRequired", $rt_wrapFunction1(igiae_JsonSchema_setRequired),
 "$getItems", $rt_wrapFunction0(igiae_JsonSchema_getItems), "$setItems", $rt_wrapFunction1(igiae_JsonSchema_setItems), "$getAdditionalProperties", $rt_wrapFunction0(igiae_JsonSchema_getAdditionalProperties), "$getPattern", $rt_wrapFunction0(igiae_JsonSchema_getPattern), "$setPattern", $rt_wrapFunction1(igiae_JsonSchema_setPattern), "$getMinimum", $rt_wrapFunction0(igiae_JsonSchema_getMinimum), "$setMinimum", $rt_wrapFunction1(igiae_JsonSchema_setMinimum), "$getEnumValues", $rt_wrapFunction0(igiae_JsonSchema_getEnumValues),
-"$getFix", $rt_wrapFunction0(igiae_JsonSchema_getFix), "$setFix", $rt_wrapFunction1(igiae_JsonSchema_setFix)],
+"$getFix", $rt_wrapFunction0(igiae_JsonSchema_getFix), "$setFix", $rt_wrapFunction1(igiae_JsonSchema_setFix), "$setSchemaDraft", $rt_wrapFunction1(igiae_JsonSchema_setSchemaDraft), "$setSchemaId", $rt_wrapFunction1(igiae_JsonSchema_setSchemaId), "$toTree0", $rt_wrapFunction0(igiae_JsonSchema_toTree)],
 jur_FSet$PossessiveFSet, "FSet$PossessiveFSet", 2, jur_AbstractSet, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_FSet$PossessiveFSet__init_), "$matches", $rt_wrapFunction3(jur_FSet$PossessiveFSet_matches), "$getName", $rt_wrapFunction0(jur_FSet$PossessiveFSet_getName), "$hasConsumed", $rt_wrapFunction1(jur_FSet$PossessiveFSet_hasConsumed)],
 igiaj_JsRuntime$Listener, 0, jl_Object, [otj_JSObject], 1537, 0, 0, 0,
 igiaj_JsPluginHost$12$1, 0, jl_Object, [igiaj_JsRuntime$Listener], 0, 0, 0, ["$_init_41", $rt_wrapFunction2(igiaj_JsPluginHost$12$1__init_), "$received0", $rt_wrapFunction1(igiaj_JsPluginHost$12$1_received)],
@@ -17097,7 +17259,7 @@ ju_HashMap$HashEntry, 0, ju_MapEntry, [], 0, 0, 0, ["$_init_20", $rt_wrapFunctio
 ju_LinkedHashMap$LinkedHashMapEntry, "LinkedHashMap$LinkedHashMapEntry", 1, ju_HashMap$HashEntry, [], 16, 0, 0, ["$_init_20", $rt_wrapFunction2(ju_LinkedHashMap$LinkedHashMapEntry__init_)],
 jur_AbstractCharClass$LazyASCII, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyASCII__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyASCII_computeValue)],
 igiae_Activation$Tarjan, 0, jl_Object, [], 16, 0, 0, ["$_init_15", $rt_wrapFunction1(igiae_Activation$Tarjan__init_), "$visit", $rt_wrapFunction1(igiae_Activation$Tarjan_visit)],
-ju_AbstractList$1, 0, jl_Object, [ju_Iterator], 0, 0, 0, ["$_init_45", $rt_wrapFunction1(ju_AbstractList$1__init_), "$hasNext", $rt_wrapFunction0(ju_AbstractList$1_hasNext), "$next", $rt_wrapFunction0(ju_AbstractList$1_next)],
+ju_AbstractList$1, 0, jl_Object, [ju_Iterator], 0, 0, 0, ["$_init_45", $rt_wrapFunction1(ju_AbstractList$1__init_), "$hasNext", $rt_wrapFunction0(ju_AbstractList$1_hasNext), "$next", $rt_wrapFunction0(ju_AbstractList$1_next), "$remove0", $rt_wrapFunction0(ju_AbstractList$1_remove)],
 jur_Quantifier, "Quantifier", 2, jur_SpecialToken, [jl_Cloneable], 0, 0, 0, ["$_init_16", $rt_wrapFunction2(jur_Quantifier__init_), "$min0", $rt_wrapFunction0(jur_Quantifier_min), "$max0", $rt_wrapFunction0(jur_Quantifier_max), "$toString", $rt_wrapFunction0(jur_Quantifier_toString)],
 jur_AbstractCharClass$LazyJavaUpperCase$1, "AbstractCharClass$LazyJavaUpperCase$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_99", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaUpperCase$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaUpperCase$1_contains)],
 otpp_ResourceAccessor, 0, jl_Object, [], 16, 0, 0, 0,
@@ -17164,7 +17326,7 @@ $rt_wrapFunction1(igiae_LedgerEntry_addCapabilityDeclared), "$addCapabilityProvi
 jur_ReluctantAltQuantifierSet, "ReluctantAltQuantifierSet", 2, jur_AltQuantifierSet, [], 0, 0, 0, ["$_init_32", $rt_wrapFunction3(jur_ReluctantAltQuantifierSet__init_), "$matches", $rt_wrapFunction3(jur_ReluctantAltQuantifierSet_matches)],
 jl_NegativeArraySizeException, "NegativeArraySizeException", 3, jl_RuntimeException, [], 1, 0, 0, ["$_init_", $rt_wrapFunction0(jl_NegativeArraySizeException__init_)],
 jur_AbstractCharClass$LazyJavaWhitespace, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaWhitespace__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaWhitespace_computeValue)],
-jl_UnsupportedOperationException, "UnsupportedOperationException", 3, jl_RuntimeException, [], 1, 0, 0, ["$_init_", $rt_wrapFunction0(jl_UnsupportedOperationException__init_)],
+jl_UnsupportedOperationException, "UnsupportedOperationException", 3, jl_RuntimeException, [], 1, 0, 0, ["$_init_", $rt_wrapFunction0(jl_UnsupportedOperationException__init_0)],
 jl_NumberFormatException, "NumberFormatException", 3, jl_IllegalArgumentException, [], 1, 0, 0, ["$_init_", $rt_wrapFunction0(jl_NumberFormatException__init_1), "$_init_1", $rt_wrapFunction1(jl_NumberFormatException__init_)],
 jur_IntArrHash, 0, jl_Object, [], 0, 0, 0, 0,
 jur_AbstractCharClass$LazyJavaMirrored, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaMirrored__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaMirrored_computeValue)],
@@ -17191,7 +17353,7 @@ igiae_ManifestSchema, 0, jl_Object, [], 17, 0, 0, 0,
 igiae_ManifestFacts, 0, jl_Object, [], 17, 0, 0, ["$_init_11", function(var_1, var_2, var_3, var_4, var_5) { igiae_ManifestFacts__init_(this, var_1, var_2, var_3, var_4, var_5); }, "$getId", $rt_wrapFunction0(igiae_ManifestFacts_getId), "$getApi", $rt_wrapFunction0(igiae_ManifestFacts_getApi), "$getCapabilities", $rt_wrapFunction0(igiae_ManifestFacts_getCapabilities), "$getPermissions", $rt_wrapFunction0(igiae_ManifestFacts_getPermissions), "$getPayload", $rt_wrapFunction0(igiae_ManifestFacts_getPayload)],
 otji_JSWrapper$Helper$_clinit_$lambda$_3_1, 0, jl_Object, [otji_JSWrapper$Helper$FinalizationRegistryConsumer], 1, 0, 0, ["$_init_", $rt_wrapFunction0(otji_JSWrapper$Helper$_clinit_$lambda$_3_1__init_), "$accept0", $rt_wrapFunction1(otji_JSWrapper$Helper$_clinit_$lambda$_3_1_accept)],
 otji_JSWrapper$Helper$_clinit_$lambda$_3_0, 0, jl_Object, [otji_JSWrapper$Helper$FinalizationRegistryConsumer], 1, 0, 0, ["$_init_", $rt_wrapFunction0(otji_JSWrapper$Helper$_clinit_$lambda$_3_0__init_), "$accept0", $rt_wrapFunction1(otji_JSWrapper$Helper$_clinit_$lambda$_3_0_accept)],
-ju_Arrays$ArrayAsList, 0, ju_AbstractList, [ju_RandomAccess, ji_Serializable], 0, 0, 0, ["$_init_44", $rt_wrapFunction1(ju_Arrays$ArrayAsList__init_), "$get", $rt_wrapFunction1(ju_Arrays$ArrayAsList_get), "$size", $rt_wrapFunction0(ju_Arrays$ArrayAsList_size)]]);
+ju_Arrays$ArrayAsList, "Arrays$ArrayAsList", 1, ju_AbstractList, [ju_RandomAccess, ji_Serializable], 0, 0, 0, ["$_init_44", $rt_wrapFunction1(ju_Arrays$ArrayAsList__init_), "$get", $rt_wrapFunction1(ju_Arrays$ArrayAsList_get), "$size", $rt_wrapFunction0(ju_Arrays$ArrayAsList_size)]]);
 $rt_metadata([ju_Collections, 0, jl_Object, [], 17, 0, () => ju_Collections_$callClinit(), 0]);
 let $rt_booleanArrayCls = $rt_arraycls($rt_booleancls),
 $rt_charArrayCls = $rt_arraycls($rt_charcls),
@@ -17207,15 +17369,15 @@ $rt_stringPool(["String is null", "String is empty", "String contains invalid di
 "SupplementalPunctuation", "CJKRadicalsSupplement", "KangxiRadicals", "IdeographicDescriptionCharacters", "CJKSymbolsandPunctuation", "Hiragana", "Katakana", "Bopomofo", "HangulCompatibilityJamo", "Kanbun", "BopomofoExtended", "CJKStrokes", "KatakanaPhoneticExtensions", "EnclosedCJKLettersandMonths", "CJKCompatibility", "CJKUnifiedIdeographsExtensionA", "YijingHexagramSymbols", "CJKUnifiedIdeographs", "YiSyllables", "YiRadicals", "ModifierToneLetters", "SylotiNagri", "HangulSyllables", "HighSurrogates", "HighPrivateUseSurrogates",
 "LowSurrogates", "PrivateUseArea", "CJKCompatibilityIdeographs", "AlphabeticPresentationForms", "ArabicPresentationForms-A", "VariationSelectors", "VerticalForms", "CombiningHalfMarks", "CJKCompatibilityForms", "SmallFormVariants", "ArabicPresentationForms-B", "HalfwidthandFullwidthForms", "all", "Specials", "Cn", "IsL", "Lu", "Ll", "Lt", "Lm", "Lo", "IsM", "Mn", "Me", "Mc", "N", "Nd", "Nl", "No", "IsZ", "Zs", "Zl", "Zp", "IsC", "Cc", "Cf", "Co", "Cs", "IsP", "Pd", "Ps", "Pe", "Pc", "Po", "IsS", "Sm", "Sc",
 "Sk", "So", "Pi", "Pf", "(this Collection)", "decomposed char:", "AheadFSet", "NonCapJointSet", "PosLookaheadJointSet", "NegLookaheadJointSet", "[", "] ", "\n  fix: ", "0", "<Quant>", "PosBehindJointSet", "sequence: ", "UCI range:", "\n", "false", "true", "NegBehindJointSet", "back reference: ", "<DotQuant>", "[L", "string", "number", "boolean", ".", "CI ", "waited ", "ms for service \"", "\" and nothing registered it", "install a plugin that provides \"", "\", or use get() and carry on without it", "<EOL>",
-"UCI ", "AtomicFSet", "[]", "posFSet", "<MultiLine $>", "Patter is null", "\\Q", "\\E", "\\\\E\\Q", "ACTIVATING", "ACTIVE", "BROKEN", "STOPPED", "services", "provides", "consumes", "UCI sequence: ", "CompositeRangeSet:  <nonsurrogate> ", " <surrogate> ", "FinalSet", "<Empty set>", "the manifest", "(root)", "services.provides", "services.consumes", "(unknown plugin)", "plugin.json ", "entry", "capabilities are declared but no entry names the module that provides them", "add \"entry\": \"dist/index.js\"", "\"",
-"\" is not a path inside the repo", "use a repo-relative path with no leading slash and no ..", "/", "\\", "[\\\\/]", "..", ":", "services.provides[", "]", "\" is neither namespaced by this plugin nor a well-known service id", "rename it to \"", "\", or use one of: ", "\" is listed twice", "remove the duplicate entry", "EOI", "object", "function", "undefined", "^", "service \"", "\" is already registered by ", "disable one of the two plugins, or have each register its own namespaced id so consumers can ask for the one they want",
-"cannot register service \"", "\", which belongs to another plugin", "namespace it as \"", "\", or register one of the well-known ids: ", "a watcher of \"", "\" threw while handling ", "stopped while waiting for service \"", "provide \"", "\" before this plugin is stopped, or use get() and carry on without it", "PreviousMatch", "NonCapFSet", "Either src or dest is null", "timeoutMs", "needs api ", ", this host has api ", "update the app to a version that implements api ", " or later", "capabilities declared but never provided: ",
-"call ctx.provide(\"", "\", ...) in activate, or remove it from \"capabilities\" in plugin.json", "capabilities provided but never declared: ", "add \"", "\" to \"capabilities\" in plugin.json", "a late provision of capability", "capability", "provided capability \"", "\" twice", "call ctx.provide once per capability in activate", "ignored ", ", which is no longer running", "a late subscription to topic", "a late want of service", "a late watch of service", "a late registration of service", "DotAll", "decomposed Hangul syllable:",
-" (fix: ", ")", "WordBoundary", "array", "integer", "required field \"", "\" is missing", "\" to ", "field", "\" does not match ", "make ", " match ", "\" is not one of ", "set ", " to one of ", "expected a value >= ", ", got ", " to a value >= ", "expected ", " to a ", "<SOL>", "<Unix MultiLine $>", "Name capturing group should start with letter", "Is", "In", "$schema", "Pointer at the published manifest schema, for an editor\'s completion and validation.", "The plugin\'s permanent identity, matching its repository name.",
-"^[a-z0-9]+(-[a-z0-9]+)*$", "use lowercase words joined by single hyphens, for example \"config-ledger\"", "The lowest API major version this plugin needs. A floor, not a build tag.", "set \"api\" to the lowest API major version this plugin needs, for example 1", "The built module a host imports. Required once capabilities are declared.", "point \"entry\" at the built module a host imports, for example \"dist/index.js\"", "displayName", "The name a surface shows instead of the id.", "icon", "Path to a square-viewBox SVG mark, relative to the repo root.",
-"Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "The single machine-readable description of a repo in the intisy-ai ecosystem.", "intisy-ai plugin manifest", "Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.",
-"install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.", "How the repo is published to npm.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.",
-"Domain topics, for example claude or gemini.", "domains", "tech", "The primary tech topic, typescript or java.", "Repository metadata: the GitHub description and topic set are derived from it."]);
+"UCI ", "AtomicFSet", "[]", "$schema", "$id", "title", "description", "type", "properties", "required", "items", "additionalProperties", "pattern", "minimum", "enum", "posFSet", "<MultiLine $>", "Patter is null", "\\Q", "\\E", "\\\\E\\Q", "ACTIVATING", "ACTIVE", "BROKEN", "STOPPED", "services", "provides", "consumes", "UCI sequence: ", "CompositeRangeSet:  <nonsurrogate> ", " <surrogate> ", "FinalSet", "<Empty set>", "the manifest", "(root)", "services.provides", "services.consumes", "(unknown plugin)", "plugin.json ",
+"entry", "capabilities are declared but no entry names the module that provides them", "add \"entry\": \"dist/index.js\"", "\"", "\" is not a path inside the repo", "use a repo-relative path with no leading slash and no ..", "/", "\\", "[\\\\/]", "..", ":", "services.provides[", "]", "\" is neither namespaced by this plugin nor a well-known service id", "rename it to \"", "\", or use one of: ", "\" is listed twice", "remove the duplicate entry", "EOI", "object", "function", "undefined", "^", "service \"", "\" is already registered by ",
+"disable one of the two plugins, or have each register its own namespaced id so consumers can ask for the one they want", "cannot register service \"", "\", which belongs to another plugin", "namespace it as \"", "\", or register one of the well-known ids: ", "a watcher of \"", "\" threw while handling ", "stopped while waiting for service \"", "provide \"", "\" before this plugin is stopped, or use get() and carry on without it", "PreviousMatch", "NonCapFSet", "Either src or dest is null", "timeoutMs", "needs api ",
+", this host has api ", "update the app to a version that implements api ", " or later", "capabilities declared but never provided: ", "call ctx.provide(\"", "\", ...) in activate, or remove it from \"capabilities\" in plugin.json", "capabilities provided but never declared: ", "add \"", "\" to \"capabilities\" in plugin.json", "a late provision of capability", "capability", "provided capability \"", "\" twice", "call ctx.provide once per capability in activate", "ignored ", ", which is no longer running", "a late subscription to topic",
+"a late want of service", "a late watch of service", "a late registration of service", "DotAll", "decomposed Hangul syllable:", " (fix: ", ")", "WordBoundary", "array", "integer", "required field \"", "\" is missing", "\" to ", "field", "\" does not match ", "make ", " match ", "\" is not one of ", "set ", " to one of ", "expected a value >= ", ", got ", " to a value >= ", "expected ", " to a ", "<SOL>", "<Unix MultiLine $>", "Name capturing group should start with letter", "Is", "In", "Pointer at the published manifest schema, for an editor\'s completion and validation.",
+"The plugin\'s permanent identity, matching its repository name.", "^[a-z0-9]+(-[a-z0-9]+)*$", "use lowercase words joined by single hyphens, for example \"config-ledger\"", "The lowest API major version this plugin needs. A floor, not a build tag.", "set \"api\" to the lowest API major version this plugin needs, for example 1", "The built module a host imports. Required once capabilities are declared.", "point \"entry\" at the built module a host imports, for example \"dist/index.js\"", "displayName", "The name a surface shows instead of the id.",
+"icon", "Path to a square-viewBox SVG mark, relative to the repo root.", "Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "The single machine-readable description of a repo in the intisy-ai ecosystem.", "http://json-schema.org/draft-07/schema#", "https://intisy-ai.github.io/api/schema/plugin.schema.json", "intisy-ai plugin manifest",
+"Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.", "install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.",
+"How the repo is published to npm.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.", "Domain topics, for example claude or gemini.", "domains", "tech", "The primary tech topic, typescript or java.", "Repository metadata: the GitHub description and topic set are derived from it."]);
 jl_String.prototype.toString = function() {
     return $rt_ustr(this);
 };
@@ -17278,4 +17440,5 @@ let $rt_jso_marker = Symbol('jsoClass');
     c = otji_JSWrapper$Helper$_clinit_$lambda$_3_0.prototype;
     c.accept = $rt_callWithReceiver(otji_JSWrapper$Helper$_clinit_$lambda$_3_0_accept$exported$0);
 })();
-export { igiaj_EngineJs_activationOrder$exported$0 as activationOrder, igiaj_EngineJs_assertManifest$exported$1 as assertManifest, igiaj_EngineJs_pluginError$exported$2 as pluginError, igiaj_EngineJs_isPluginError$exported$3 as isPluginError, igiaj_EngineJs_setStrict$exported$4 as setStrict, igiaj_EngineJs_createPluginHost$exported$5 as createPluginHost, igiaj_EngineJs_setDiagnosticSink$exported$6 as setDiagnosticSink };
+export { igiaj_EngineJs_activationOrder$exported$0 as activationOrder, igiaj_EngineJs_assertManifest$exported$1 as assertManifest, igiaj_EngineJs_validateManifest$exported$2 as validateManifest, igiaj_EngineJs_manifestSchema$exported$3 as manifestSchema, igiaj_EngineJs_pluginError$exported$4 as pluginError, igiaj_EngineJs_isPluginError$exported$5 as isPluginError, igiaj_EngineJs_setStrict$exported$6 as setStrict, igiaj_EngineJs_createPluginHost$exported$7 as createPluginHost, igiaj_EngineJs_setDiagnosticSink$exported$8 as setDiagnosticSink
+};

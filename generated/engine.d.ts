@@ -5,9 +5,12 @@ export declare function assertManifest(manifest: unknown): unknown;
 export declare function assertManifest(manifest: unknown, wellKnownServices: string[]): unknown;
 export declare function createPluginHost(options: PluginHostOptionsShape): HostSurface;
 export declare function isPluginError(value: unknown): boolean;
+export declare function manifestSchema(): unknown;
 export declare function pluginError(pluginId: string, detail: string, fix: string): PluginErrorShape;
 export declare function setDiagnosticSink(sink: ((value: string) => void) | null): void;
 export declare function setStrict(enabled: boolean | null): void;
+export declare function validateManifest(manifest: unknown): ValidationIssueShape[];
+export declare function validateManifest(manifest: unknown, wellKnownServices: string[]): ValidationIssueShape[];
 
 export interface ActivationPlanShape {
   cycles: string[][];
@@ -114,6 +117,12 @@ export interface ServiceRegistryShape {
   want(id: string): Promise<unknown>;
   want(id: string, options: WantOptionsShape): Promise<unknown>;
   watch(id: string, listener: ((a: unknown, b: "register" | "unregister") => void)): () => void;
+}
+
+export interface ValidationIssueShape {
+  fix: string;
+  message: string;
+  path: string;
 }
 
 export interface WantOptionsShape {

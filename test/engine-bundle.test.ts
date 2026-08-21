@@ -4,8 +4,10 @@ import {
   assertManifest,
   createPluginHost,
   isPluginError,
+  manifestSchema,
   pluginError,
   setDiagnosticSink,
+  validateManifest,
 } from "../generated/engine.js";
 
 it("mints an error a separately bundled consumer recognises by its name marker", () => {
@@ -304,4 +306,33 @@ it("assembles the context object with exactly these keys, pinning it against Con
   ]);
   expect(Object.keys(context.services).sort()).toEqual(["get", "ids", "register", "want", "watch"]);
   expect(Object.keys(context.events).sort()).toEqual(["publish", "subscribe"]);
+});
+
+it("reports every issue in a manifest rather than throwing on the first", () => {
+  expect(validateManifest({ id: "demo", api: 2 })).toEqual([]);
+  const issues = validateManifest({ api: 2 });
+  expect(issues.length).toBeGreaterThan(0);
+  expect(issues.map((issue) => issue.path)).toContain("id");
+  expect(issues[0].fix.length).toBeGreaterThan(0);
+});
+
+it("leaves a bare service id alone when no vocabulary is named and refuses it when one is", () => {
+  const manifest = { id: "demo", api: 2, services: { provides: ["accounts"] } };
+  expect(validateManifest(manifest)).toEqual([]);
+  const issues = validateManifest(manifest, ["routing"]);
+  expect(issues.length).toBe(1);
+  expect(issues[0].path).toBe("services.provides[0]");
+});
+
+it("serves the published manifest schema the generator writes", () => {
+  const schema = manifestSchema() as {
+    $schema: string;
+    $id: string;
+    required: string[];
+    properties: Record<string, unknown>;
+  };
+  expect(schema.$id).toBe("https://intisy-ai.github.io/api/schema/plugin.schema.json");
+  expect(schema.$schema).toBe("http://json-schema.org/draft-07/schema#");
+  expect(schema.required).toEqual(["id", "api"]);
+  expect(Object.keys(schema.properties)).toContain("capabilities");
 });

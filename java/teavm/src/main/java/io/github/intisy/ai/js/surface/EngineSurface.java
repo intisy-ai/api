@@ -10,7 +10,9 @@ import java.util.function.Consumer;
  *
  * @implNote Declares the shape {@code EngineJs} actually exports; it is never implemented, only
  * emitted, and {@link TsModule} renders its members as free functions rather than an interface a
- * caller would otherwise have to cast a module namespace through. pluginError returns
+ * caller would otherwise have to cast a module namespace through. manifestSchema returns
+ * {@code Object} because a JSON Schema is a recursive blob its callers stringify rather than read
+ * field by field, and declaring that recursion would buy no caller anything. pluginError returns
  * {@link PluginErrorShape} rather than a raw {@code Error}, because that is the real shape
  * {@code JsErrors.mint} attaches and a caller can read it with no cast. setDiagnosticSink's sink is a
  * {@link Consumer}, which this processor maps to a function type, so no raw escape remains anywhere
@@ -24,6 +26,12 @@ public interface EngineSurface {
     Object assertManifest(Object manifest);
 
     Object assertManifest(Object manifest, List<String> wellKnownServices);
+
+    List<ValidationIssueShape> validateManifest(Object manifest);
+
+    List<ValidationIssueShape> validateManifest(Object manifest, List<String> wellKnownServices);
+
+    Object manifestSchema();
 
     HostSurface createPluginHost(PluginHostOptionsShape options);
 

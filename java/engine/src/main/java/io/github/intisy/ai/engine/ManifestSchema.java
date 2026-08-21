@@ -17,6 +17,9 @@ public final class ManifestSchema {
     /** Canonical URL a manifest points $schema at, served by the docs site. */
     public static final String SCHEMA_ID = "https://intisy-ai.github.io/api/schema/plugin.schema.json";
 
+    /** Draft the published schema declares, which no validator in this package reads. */
+    public static final String DRAFT = "http://json-schema.org/draft-07/schema#";
+
     private ManifestSchema() {
     }
 
@@ -58,6 +61,8 @@ public final class ManifestSchema {
         properties.put("repo", repo());
 
         JsonSchema root = described(JsonSchema.ofType("object"), "The single machine-readable description of a repo in the intisy-ai ecosystem.");
+        root.setSchemaDraft(DRAFT);
+        root.setSchemaId(SCHEMA_ID);
         root.setTitle("intisy-ai plugin manifest");
         root.setRequired(Arrays.asList("id", "api"));
         root.setProperties(properties);

@@ -55,6 +55,43 @@ final class JsJson {
         return out;
     }
 
+    /**
+     * @implNote Integer and Double are both handled because the engine's schema carries whole
+     * numbers as Integer while a tree that came from JavaScript carries them as Double, and this
+     * direction is reached from both.
+     */
+    static JSObject fromTree(Object tree) {
+        if (tree == null) {
+            return null;
+        }
+        if (tree instanceof Map) {
+            JSObject out = emptyObject();
+            Map<?, ?> entries = (Map<?, ?>) tree;
+            for (Map.Entry<?, ?> entry : entries.entrySet()) {
+                write(out, String.valueOf(entry.getKey()), fromTree(entry.getValue()));
+            }
+            return out;
+        }
+        if (tree instanceof List) {
+            List<?> items = (List<?>) tree;
+            JSArray<JSObject> out = JSArray.create();
+            for (int index = 0; index < items.size(); index++) {
+                out.set(index, fromTree(items.get(index)));
+            }
+            return out;
+        }
+        if (tree instanceof Boolean) {
+            return JSBoolean.valueOf(((Boolean) tree).booleanValue());
+        }
+        if (tree instanceof Integer) {
+            return JSNumber.valueOf(((Integer) tree).intValue());
+        }
+        if (tree instanceof Double) {
+            return JSNumber.valueOf(((Double) tree).doubleValue());
+        }
+        return JSString.valueOf(String.valueOf(tree));
+    }
+
     static JSObject fromStrings(List<String> values) {
         JSArray<JSString> out = JSArray.create();
         for (int index = 0; index < values.size(); index++) {
@@ -85,4 +122,10 @@ final class JsJson {
 
     @JSBody(params = {"value", "name"}, script = "return value[name];")
     private static native JSObject read(JSObject value, String name);
+
+    @JSBody(script = "return {};")
+    private static native JSObject emptyObject();
+
+    @JSBody(params = {"target", "name", "value"}, script = "target[name] = value;")
+    private static native void write(JSObject target, String name, JSObject value);
 }
