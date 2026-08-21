@@ -90,6 +90,14 @@ it("hands a plugin a context carrying its own manifest object and the host descr
   expect(() => context.services.register("plugin-updater:catalog", {})).toThrow(/belongs to another plugin/);
 });
 
+it("reads the id off a typed key, so the contract's provide reaches the engine", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const screens = { screens: () => [] };
+  host.contextFor(SCREENS, runtime()).provide({ id: "screens" }, screens);
+  expect(host.capability("screens")).toEqual([{ pluginId: "config-ledger", implementation: screens }]);
+  expect(host.verifyActivation(SCREENS)).toBeNull();
+});
+
 it("collects a provided capability and reports the ledger status in lower case", () => {
   const host = createPluginHost({ app: "claude", api: 1 });
   const screens = { screens: () => [] };

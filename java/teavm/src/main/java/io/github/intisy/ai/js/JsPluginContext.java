@@ -74,7 +74,7 @@ final class JsPluginContext implements JSObject {
 
     @JSFunctor
     interface ProvideFn extends JSObject {
-        void call(String id, JSObject implementation);
+        void call(JSObject key, JSObject implementation);
     }
 
     /** Builds the context one plugin's activate receives, from the session {@link JsPluginHost} opened. */
@@ -151,9 +151,9 @@ final class JsPluginContext implements JSObject {
 
         ProvideFn provide = new ProvideFn() {
             @Override
-            public void call(String id, JSObject implementation) {
+            public void call(JSObject key, JSObject implementation) {
                 try {
-                    session.provide(id, implementation);
+                    session.provide(capabilityId(key), implementation);
                 } catch (PluginException failure) {
                     JsErrors.raise(JsErrors.of(failure));
                 }
@@ -163,6 +163,14 @@ final class JsPluginContext implements JSObject {
         return assemble(manifest, hostDescriptor, runtime.getConfig(), runtime.getLog(), runtime.getPaths(),
                 servicesObj, eventsObj, provide);
     }
+
+    /**
+     * The capability id behind whatever {@code provide} was handed: a typed key's {@code id}, or the
+     * value itself when a host passed a bare id.
+     */
+    @JSBody(params = "key", script =
+            "return key !== null && typeof key === 'object' ? String(key.id) : String(key);")
+    private static native String capabilityId(JSObject key);
 
     private static JsRuntime.Disposer disposerOf(final Scheduler.Cancellable cancellable) {
         return new JsRuntime.Disposer() {

@@ -27,5 +27,11 @@ public interface ContextSurface {
     @TsProperty(readOnly = true)
     EventBusShape events();
 
-    void provide(String id, Object implementation);
+    /**
+     * @implNote The key is untyped rather than a String because the contract's {@code provide} hands
+     * over a typed key object and a host hands over a bare id, and this one function serves both. The
+     * engine still works in ids: the id is read off the key here, at the boundary, which is where
+     * every other shape difference is resolved.
+     */
+    void provide(Object key, Object implementation);
 }

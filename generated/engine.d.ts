@@ -29,7 +29,7 @@ export interface ContextSurface {
   readonly log: unknown;
   readonly manifest: unknown;
   readonly paths: PluginPathsShape;
-  provide(id: string, implementation: unknown): void;
+  provide(key: unknown, implementation: unknown): void;
   readonly services: ServiceRegistryShape;
 }
 
