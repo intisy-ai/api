@@ -22,16 +22,18 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-tasks.named("compileJava") {
+tasks.matching { it.name == "compileJava" || it.name == "compileTestJava" }.configureEach {
     options.release = 17
+}
+
+tasks.named("compileJava") {
     options.compilerArgs << "-Atsemit.name=engine"
 }
 
-// Deliberately unoptimized. Turning on obfuscation and aggressive optimization shrinks this bundle
-// considerably, but TeaVM 0.15.0's obfuscator reorders declarations between runs: four clean builds
-// produced three distinct outputs. A later task adds a gate that will compare this bundle byte for
-// byte against a fresh emission, and a gate that flaps teaches people to ignore it. Size is cheap
-// here because the engine is consumed by hosts only, never bundled into a plugin.
+// Deliberately unoptimized. obfuscated=true plus AGGRESSIVE gets this from 774 KB to 298 KB, but
+// TeaVM 0.15.0's obfuscator reorders declarations between runs, and the committed bundle is compared
+// byte for byte against a fresh emission, so a gate that flaps teaches people to ignore it. Size is
+// cheap here because the engine is consumed by hosts only, never bundled into a plugin.
 teavm.js {
     mainClass = "io.github.intisy.ai.js.EngineJs"
     moduleType = JSModuleType.ES2015
