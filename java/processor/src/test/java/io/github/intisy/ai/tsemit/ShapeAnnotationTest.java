@@ -129,4 +129,40 @@ class ShapeAnnotationTest {
                 "}"));
         assertTrue(emitted.contains("  kind: string;\n  [prop: string]: unknown;\n}"), emitted);
     }
+
+    @Test
+    void enumEmitsANamedAliasAndIsReferencedByThatName() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsEnum;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "@TsInterface",
+                "interface Field {",
+                "  FieldType type();",
+                "}",
+                "@TsEnum",
+                "enum FieldType {",
+                "  secret,",
+                "  select",
+                "}"));
+        assertTrue(emitted.contains("export type FieldType = \"secret\" | \"select\";"), emitted);
+        assertTrue(emitted.contains("type(): FieldType;"), emitted);
+    }
+
+    @Test
+    void anUnannotatedEnumIsStillInlinedAtItsUseSite() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "@TsInterface",
+                "interface Watcher {",
+                "  void on(ServiceEvent event);",
+                "}",
+                "enum ServiceEvent {",
+                "  register,",
+                "  unregister",
+                "}"));
+        assertTrue(emitted.contains("on(event: \"register\" | \"unregister\"): void;"), emitted);
+        assertEquals(-1, emitted.indexOf("export type ServiceEvent"), emitted);
+    }
 }

@@ -28,7 +28,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.StandardLocation;
 
-@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant"})
+@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant", "io.github.intisy.ai.tsemit.TsEnum"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedOptions({"tsemit.name", "tsemit.ext", "tsemit.keys", "tsemit.imports"})
 public class TsEmitProcessor extends AbstractProcessor {
@@ -51,6 +51,16 @@ public class TsEmitProcessor extends AbstractProcessor {
             }
             emittedTypes.add(element.getSimpleName().toString());
             chunks.add(emit((TypeElement) element));
+        }
+        for (Element element : round.getElementsAnnotatedWith(TsEnum.class)) {
+            if (element.getKind() != ElementKind.ENUM) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsEnum applies only to enums", element);
+                continue;
+            }
+            TypeElement type = (TypeElement) element;
+            emittedTypes.add(type.getSimpleName().toString());
+            chunks.add("export type " + type.getSimpleName() + " = " + enumUnion(type) + ";\n");
         }
         for (Element element : round.getElementsAnnotatedWith(TsModule.class)) {
             if (element.getKind() != ElementKind.INTERFACE) {
@@ -301,6 +311,13 @@ public class TsEmitProcessor extends AbstractProcessor {
      * {@code "register" | "unregister"} rather than a class name TypeScript cannot resolve.
      */
     private String enumLiteral(TypeElement element) {
+        if (element.getAnnotation(TsEnum.class) != null) {
+            return element.getSimpleName().toString();
+        }
+        return enumUnion(element);
+    }
+
+    private String enumUnion(TypeElement element) {
         StringBuilder union = new StringBuilder();
         for (Element member : element.getEnclosedElements()) {
             if (member.getKind() != ElementKind.ENUM_CONSTANT) {
