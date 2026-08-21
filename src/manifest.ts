@@ -6,8 +6,12 @@
  * whose declared floor exceeds the version the host implements, and loads everything else.
  * The number rises only when a host gains abilities a plugin can require; additions to this
  * package alone never change it.
+ *
+ * Kept equal to the generated `generated/api.keys.ts`, which the Java `Api.API_VERSION` emits, by
+ * an assertion in this file's test. It is not imported from there: `generated/` sits outside the
+ * emitting tsconfig's inferred rootDir, so importing it would move the whole `dist` layout.
  */
-export const API_VERSION = 1;
+export const API_VERSION = 2;
 
 /** What a plugin offers other plugins, and what it asks of them. */
 export interface ManifestServices {
