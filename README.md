@@ -5,10 +5,11 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/intisy-ai/api/publish.yml)](https://github.com/intisy-ai/api/actions)
 
 The plugin contract for the intisy-ai ecosystem, published as `@intisy-ai/api`. It holds the
-`plugin.json` manifest schema, the capability interfaces a host consumes, the service registry
-plugins talk to each other through, the plugin context and lifecycle, and the `validate` and
-`doctor` commands. It has no dependencies and imports nothing from node outside its CLI, so a
-host, a plugin, and a dashboard renderer can all import the same package.
+`plugin.json` manifest schema, the plugin context and lifecycle, the typed keys a capability or a
+service is reached by, the declaration engine a host runs, and the `validate` command. The contract
+is written in Java and the TypeScript surface is generated from it. It has no dependencies and
+imports nothing from node outside its CLI, so a host, a plugin, and a dashboard renderer can all
+import the same package.
 
 ## Under-the-Hood Architecture
 
@@ -36,7 +37,6 @@ flowchart TD
     CHECK -->|yes| ACTIVE[capability id is the only dispatch key a host has]
 
     SVC --> ORDER[activationOrder: providers before consumers, cycles named]
-    LEDGER --> DOCTOR[analyzePlugins: doctor report]
 ```
 
 ## The permanence rules
@@ -59,17 +59,18 @@ they are enforced in review:
 
 ## Structure
 
-- `src/` (TypeScript source)
-  - `manifest.ts`, `manifest-schema.ts`, `schema.ts`, `validate.ts`: the manifest and its validator
-  - `capabilities.ts`, `capability-types.ts`, `ir.ts`: what a host consumes
-  - `services.ts`, `events.ts`: what plugins consume from each other
-  - `context.ts`, `plugin.ts`, `runtime.ts`: what a plugin receives and exports
-  - `host.ts`, `ledger.ts`, `graph.ts`, `doctor.ts`: the host side
-  - `cli/`: the only directory that imports node
-- `dist/` (compiled output, not committed)
-  - `index.js`: the importable surface, free of node imports
-  - `cli/main.js`: the `intisy-plugin` command
-- `schema/plugin.schema.json`: the manifest schema, emitted from `src/manifest-schema.ts`
+- `java/` (the contract and the engine, the source of truth)
+  - `annotations/`, `processor/`: the emission annotations and the emitter that renders TypeScript
+  - `contract/`: the manifest, the plugin, the context, and the typed keys
+  - `engine/`: validation, activation order, the service hub, the ledger and the diagnostics channel
+  - `teavm/`: the engine's JavaScript module surface, compiled to an ES2015 module
+- `generated/` (emitted from the Java, committed)
+  - `api.keys.js` and `api.keys.d.ts`: the package root, types and constants
+  - `api.d.ts`: the contract declarations, also served as `./contract`
+  - `engine.js` and `engine.d.ts`: the engine, served as `./engine`
+- `src/cli/`: the `intisy-plugin` command, the only TypeScript here and the only node importer
+- `dist/cli/main.js` (compiled output, not committed)
+- `schema/plugin.schema.json`: the manifest schema, emitted from the Java `ManifestSchema`
 
 ## Installation
 
@@ -91,7 +92,7 @@ This package reads no configuration file. Its one environment switch is
 `INTISY_PLUGIN_STRICT=1`, which makes every ignored unknown id loud instead of quiet:
 
 ```bash
-INTISY_PLUGIN_STRICT=1 npx intisy-plugin doctor --home ~/.claude
+INTISY_PLUGIN_STRICT=1 npx intisy-plugin validate
 ```
 
 A host can route the same diagnostics into its own logger with `setDiagnosticSink`, and force
