@@ -30,7 +30,7 @@ import javax.tools.StandardLocation;
 
 @SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant", "io.github.intisy.ai.tsemit.TsEnum"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
-@SupportedOptions({"tsemit.name", "tsemit.ext", "tsemit.keys", "tsemit.imports"})
+@SupportedOptions({"tsemit.name", "tsemit.ext", "tsemit.keys", "tsemit.imports", "tsemit.reexport"})
 public class TsEmitProcessor extends AbstractProcessor {
 
     private static final List<String> KEY_TYPES =
@@ -359,7 +359,8 @@ public class TsEmitProcessor extends AbstractProcessor {
     }
 
     private void writeConstants() throws IOException {
-        if (constants.isEmpty()) {
+        String reexport = reexportsSurface() ? "export type * from \"./" + basename() + ".js\";" : null;
+        if (constants.isEmpty() && reexport == null) {
             return;
         }
         StringBuilder body = new StringBuilder();
@@ -367,14 +368,21 @@ public class TsEmitProcessor extends AbstractProcessor {
         for (String constant : constants) {
             body.append(constant).append("\n");
         }
-        writeResource(basename() + ".keys.ts", banner(body.toString(), "./" + basename() + ".js"));
+        writeResource(basename() + ".keys.ts", banner(body.toString(), "./" + basename() + ".js", reexport));
     }
 
     private String banner(String body, String localSpecifier) {
+        return banner(body, localSpecifier, null);
+    }
+
+    private String banner(String body, String localSpecifier, String reexport) {
         StringBuilder out = new StringBuilder("// Generated from Java sources. Do not edit.\n\n");
         String imports = importLines(body, localSpecifier);
         if (!imports.isEmpty()) {
             out.append(imports).append("\n");
+        }
+        if (reexport != null) {
+            out.append(reexport).append("\n\n");
         }
         return out.append(body).toString();
     }
@@ -401,6 +409,16 @@ public class TsEmitProcessor extends AbstractProcessor {
      */
     private String surfaceExtension() {
         return option("tsemit.ext", ".d.ts");
+    }
+
+    /**
+     * @implNote Off by default, because a package carrying its own barrel re-exports the surface
+     * there and a second copy in the keys file would give one module two entry points. On is right
+     * where the keys file IS the package root, which is the only way a single generated file can
+     * serve both the types a consumer imports and the constants it calls at run time.
+     */
+    private boolean reexportsSurface() {
+        return "true".equals(option("tsemit.reexport", ""));
     }
 
     private String option(String key, String fallback) {

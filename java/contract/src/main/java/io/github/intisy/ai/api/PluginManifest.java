@@ -13,6 +13,14 @@ import java.util.List;
  */
 @TsInterface(data = true)
 public interface PluginManifest {
+    /**
+     * @implNote Declared although nothing reads it, because every manifest in the ecosystem carries
+     * it and the published schema accepts it: without it an author writing a manifest literal in
+     * TypeScript could not include a field their own plugin.json has.
+     */
+    @TsOptional
+    String $schema();
+
     String id();
 
     int api();

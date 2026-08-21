@@ -1,6 +1,9 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["src/index.ts"],
+  "entryPoints": [
+    "generated/api.keys.ts",
+    "generated/engine.d.ts"
+  ],
   "out": "site",
   "readme": "README.md",
   "name": "@intisy-ai/api",
@@ -18,5 +21,8 @@
     "notDocumented": true
   },
   "sourceLinkTemplate": "https://github.com/intisy-ai/api/blob/{gitRevision}/{path}#L{line}",
-  "ignoredHighlightLanguages": ["mermaid"]
+  "ignoredHighlightLanguages": [
+    "mermaid"
+  ],
+  "tsconfig": "./tsconfig.generated.json"
 }

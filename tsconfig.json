@@ -5,6 +5,9 @@
     "moduleResolution": "NodeNext",
     "strict": true,
     "outDir": "./dist",
+    // Pinned so the CLI keeps emitting to dist/cli/, which the bin entry names. src/ holds nothing
+    // but the CLI now, and an inferred root would flatten it to dist/.
+    "rootDir": "./src",
     "declaration": true,
     "skipLibCheck": true
   },

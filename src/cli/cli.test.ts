@@ -1,9 +1,9 @@
-import { mkdtempSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it } from "vitest";
 import { run } from "./main.js";
-import { readCheckout, readHome } from "./read.js";
+import { readCheckout } from "./read.js";
 
 function tempDir(): string {
   return mkdtempSync(join(tmpdir(), "intisy-api-cli-"));
@@ -41,17 +41,6 @@ it("explains unparsable JSON", () => {
   expect(() => readCheckout(dir)).toThrow(/is not valid JSON/);
 });
 
-it("reads every manifest sidecar in an app home, and none when the directory is absent", () => {
-  const home = tempDir();
-  mkdirSync(join(home, "plugin"));
-  write(join(home, "plugin"), "b.json", { id: "b", api: 1 });
-  write(join(home, "plugin"), "a.json", { id: "a", api: 1 });
-  writeFileSync(join(home, "plugin", "a.js"), "// bundle", "utf8");
-  expect(readHome(home).loaded.map((loaded) => (loaded.value as { id: string }).id)).toEqual(["a", "b"]);
-  expect(readHome(home).failed).toEqual([]);
-  expect(readHome(tempDir())).toEqual({ loaded: [], failed: [] });
-});
-
 it("validates a good manifest and exits 0", () => {
   const dir = tempDir();
   write(dir, "plugin.json", { id: "wakatime-sync", api: 1 });
@@ -72,25 +61,12 @@ it("reports each problem with its fix and exits 1", () => {
   ]);
 });
 
-it("doctors an app home and exits 0 on warnings alone", () => {
-  const home = tempDir();
-  mkdirSync(join(home, "plugin"));
-  write(join(home, "plugin"), "cairn.json", { id: "cairn", api: 1, entry: "dist/index.js", services: { consumes: ["config-ledger:history"] } });
-  const { io, out } = collect();
-  expect(run(["doctor", "--home", home], io)).toBe(0);
-  expect(out).toEqual([
-    "1 plugin checked",
-    '  warning  cairn: consumes "config-ledger:history"; nothing installed provides it',
-    '    fix: install the plugin that provides "config-ledger:history", or let the consumer carry on without it',
-  ]);
-});
-
-it("doctors against a host api floor and exits 1 on an error", () => {
+it("reports an unreadable manifest as a problem rather than a stack trace", () => {
   const dir = tempDir();
-  write(dir, "plugin.json", { id: "future", api: 3 });
+  writeFileSync(join(dir, "plugin.json"), "{ nope", "utf8");
   const { io, err } = collect();
-  expect(run(["doctor", "--dir", dir, "--api", "2"], io)).toBe(1);
-  expect(err).toContain("  error  future: needs api 3, this host has api 2");
+  expect(run(["validate", "--dir", dir], io)).toBe(1);
+  expect(err[0]).toContain("is not valid JSON");
 });
 
 it("prints usage and exits 2 for an unknown command", () => {
@@ -105,47 +81,6 @@ it("prints usage and exits 0 when asked for help", () => {
   expect(out[0]).toBe("usage:");
 });
 
-it("keeps reading a home past a sidecar it cannot parse", () => {
-  const home = tempDir();
-  mkdirSync(join(home, "plugin"));
-  write(join(home, "plugin"), "good.json", { id: "good", api: 1 });
-  writeFileSync(join(home, "plugin", "bad.json"), "{ nope", "utf8");
-  const result = readHome(home);
-  expect(result.loaded.map((loaded) => (loaded.value as { id: string }).id)).toEqual(["good"]);
-  expect(result.failed).toHaveLength(1);
-  expect(result.failed[0].error.detail).toContain("is not valid JSON");
-});
-
-it("reports an unreadable sidecar as a finding and still checks the rest of the home", () => {
-  const home = tempDir();
-  mkdirSync(join(home, "plugin"));
-  write(join(home, "plugin"), "good.json", { id: "good", api: 1 });
-  writeFileSync(join(home, "plugin", "bad.json"), "{ nope", "utf8");
-  const { io, err } = collect();
-  expect(run(["doctor", "--home", home], io)).toBe(1);
-  expect(err[0]).toBe("1 plugin checked");
-  expect(err[1]).toContain("error  (unknown plugin): ");
-  expect(err[1]).toContain("is not valid JSON");
-});
-
-it("does not let an unreadable checkout hide the home it already read", () => {
-  const home = tempDir();
-  mkdirSync(join(home, "plugin"));
-  write(join(home, "plugin"), "cairn.json", { id: "cairn", api: 1, entry: "dist/index.js", services: { consumes: ["config-ledger:history"] } });
-  const { io, err } = collect();
-  expect(run(["doctor", "--home", home, "--dir", tempDir()], io)).toBe(1);
-  expect(err[0]).toBe("1 plugin checked");
-  expect(err.some((line) => line.includes('consumes "config-ledger:history"'))).toBe(true);
-});
-
-it("refuses a non-numeric api floor instead of silently skipping the check", () => {
-  const dir = tempDir();
-  write(dir, "plugin.json", { id: "future", api: 3 });
-  const { io, err } = collect();
-  expect(run(["doctor", "--dir", dir, "--api", "garbage"], io)).toBe(2);
-  expect(err[0]).toBe('--api needs a whole number of 1 or more, got "garbage"');
-});
-
 it("writes an ignored-field diagnostic to the problem channel and still exits 0", () => {
   const dir = tempDir();
   write(dir, "plugin.json", { id: "wakatime-sync", api: 1, futureField: 1 });
@@ -156,10 +91,7 @@ it("writes an ignored-field diagnostic to the problem channel and still exits 0"
 });
 
 it("refuses a flag given no value rather than checking somewhere the user never named", () => {
-  const home = tempDir();
-  mkdirSync(join(home, "plugin"));
-  write(join(home, "plugin"), "wakatime-sync.json", { id: "wakatime-sync", api: 1 });
   const { io, err } = collect();
-  expect(run(["doctor", "--dir", "--home", home], io)).toBe(2);
+  expect(run(["validate", "--dir"], io)).toBe(2);
   expect(err[0]).toBe("--dir needs a value");
 });

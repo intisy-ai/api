@@ -1,7 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    // Widened past the build's src/: this config typechecks the suites under test/ too, and emits
+    // nothing, so the build's narrower root does not apply.
+    "rootDir": "."
   },
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["test/dts-conformance"]

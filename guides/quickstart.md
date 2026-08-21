@@ -32,34 +32,35 @@ the one it was built against: a host loads anything whose floor it meets.
 ## 2. Write the entry
 
 ```ts
-import { definePlugin } from "@intisy-ai/api";
+import type { Plugin, PluginContext } from "@intisy-ai/api";
+import { SETTINGS } from "@intisy-ai/core";
 
-export default definePlugin({
-  async activate(ctx) {
-    ctx.provide("settings", {
+const plugin: Plugin = {
+  async activate(ctx: PluginContext) {
+    ctx.provide(SETTINGS, {
       schema: () => ({ fields: [{ key: "apiKey", type: "secret", label: "API key" }] }),
       run: async (actionId) => ({ ok: actionId === "sync", message: "synced" }),
     });
   },
   async deactivate() {},
-});
+};
+
+export default plugin;
 ```
 
 Everything a plugin may touch arrives on `ctx`: its manifest, its config, its logger, its home
-paths, the host descriptor, the service registry, and the event bus. A class implementing
-`Plugin` and `definePlugin` with an object literal produce the same shape; pick either.
+paths and the host descriptor. `provide` takes a typed key rather than a string, so the
+implementation is checked against the capability it claims to be. The keys are minted by the
+library that owns each category, never by this package, which is why `SETTINGS` is imported from
+`core` rather than from here.
 
 ## 3. Check it before a host does
 
 ```bash
 npx intisy-plugin validate
-npx intisy-plugin doctor --home ~/.claude
 ```
 
-`validate` checks one checkout's manifest. `doctor` checks a whole app home: manifest schema,
-unresolvable consumes, orphaned services, services two plugins both provide, dependency cycles,
-and api floors. Every problem names the field and the fix. A manifest that fails the schema is
-reported on its own, since cross-checking a broken declaration only buries the real error.
+`validate` checks one checkout's manifest, naming the field and the fix for every problem.
 
 The declared-versus-provided check is not here: comparing what a manifest declares against what
 `activate` supplied needs a running host, so it lives in `verifyActivation`, and a host reports it

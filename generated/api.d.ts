@@ -56,6 +56,7 @@ export interface PluginContext {
 }
 
 export interface PluginManifest {
+  $schema?: string;
   api: number;
   capabilities?: string[];
   displayName?: string;

@@ -3,12 +3,12 @@
   "version": "0.3.0",
   "description": "Plugin API contract and service registry for the intisy-ai AI-proxy ecosystem.",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "generated/api.keys.js",
+  "types": "generated/api.keys.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./generated/api.keys.d.ts",
+      "default": "./generated/api.keys.js"
     },
     "./engine": {
       "types": "./generated/engine.d.ts",
@@ -46,7 +46,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "tsc && tsc --noEmit -p tsconfig.test.json && npm run schema",
+    "build": "tsc && tsc -p tsconfig.generated.json && tsc --noEmit -p tsconfig.test.json && npm run schema",
     "typecheck": "tsc --noEmit -p tsconfig.test.json",
     "schema": "node scripts/emit-schema.mjs",
     "docs": "typedoc",

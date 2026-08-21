@@ -15,14 +15,13 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 /**
- * Runs the shared fixture through the Java validator and asserts the same issue paths the live
- * TypeScript produces from the same file.
+ * Runs the shared fixture through the Java validator and asserts the issue paths it names.
  *
- * @implNote Not the parity test the standards forbid. That rule bans asserting the Java matches a
- * DELETED implementation. Here both run side by side until the TypeScript is retired, and a shared
- * frozen fixture is the only thing that catches a port which reads correct and behaves differently.
- * The reader below is deliberately hand-written and test-only: this module has no dependencies, and
- * adding one for a fixture of known shape would trade that away for nothing.
+ * @implNote Not the parity test the standards forbid, which bans asserting the Java matches a
+ * DELETED implementation. This is a frozen fixture, and its other reader is the TeaVM bundle's own
+ * suite: the pair is what catches a compile that reads correct and behaves differently. The reader
+ * below is deliberately hand-written and test-only: this module has no dependencies, and adding one
+ * for a fixture of known shape would trade that away for nothing.
  */
 class ParityTest {
 
