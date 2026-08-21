@@ -1,6 +1,7 @@
 package io.github.intisy.ai.tsemit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
@@ -45,5 +46,87 @@ class ShapeAnnotationTest {
                 "  readonly __phantom?: T;",
                 "  readonly id: string;",
                 "}") + "\n", emitted.substring(emitted.indexOf("export interface")).trim() + "\n");
+    }
+
+    @Test
+    void maybeAsyncWrapsTheDeclaredReturnRatherThanHardcodingVoid() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import io.github.intisy.ai.tsemit.TsMaybeAsync;",
+                "import java.util.List;",
+                "@TsInterface",
+                "interface Screens {",
+                "  @TsMaybeAsync List<String> screens();",
+                "  @TsMaybeAsync void ping();",
+                "}"));
+        assertTrue(emitted.contains("screens(): string[] | Promise<string[]>;"), emitted);
+        assertTrue(emitted.contains("ping(): void | Promise<void>;"), emitted);
+    }
+
+    @Test
+    void unionEmitsTheNamedArmsInsideThePromiseTheJavaDeclares() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import io.github.intisy.ai.tsemit.TsUnion;",
+                "import java.util.concurrent.CompletionStage;",
+                "@TsInterface",
+                "interface Provider {",
+                "  @TsUnion({\"IrResponse\", \"IrEventStream\"}) CompletionStage<Object> handleIr();",
+                "  @TsUnion({\"string\", \"number\"}) Object plain();",
+                "}"));
+        assertTrue(emitted.contains("handleIr(): Promise<IrResponse | IrEventStream>;"), emitted);
+        assertTrue(emitted.contains("plain(): string | number;"), emitted);
+    }
+
+    @Test
+    void literalOverridesAnEnumConstantNameThatJavaCannotSpell() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import io.github.intisy.ai.tsemit.TsLiteral;",
+                "@TsInterface",
+                "interface Field {",
+                "  FieldType type();",
+                "}",
+                "enum FieldType {",
+                "  @TsLiteral(\"boolean\") BOOLEAN,",
+                "  number,",
+                "  secret",
+                "}"));
+        assertTrue(emitted.contains("type(): \"boolean\" | \"number\" | \"secret\";"), emitted);
+    }
+
+    @Test
+    void openAppendsTheEscapeArmToAnEnumUnion() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import io.github.intisy.ai.tsemit.TsOpen;",
+                "@TsInterface",
+                "interface Column {",
+                "  Tone tone();",
+                "}",
+                "@TsOpen",
+                "enum Tone {",
+                "  normal,",
+                "  muted",
+                "}"));
+        assertTrue(emitted.contains("tone(): \"normal\" | \"muted\" | (string & {});"), emitted);
+    }
+
+    @Test
+    void indexSignatureIsEmittedAsTheLastMember() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsIndexSignature;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "@TsInterface(data = true)",
+                "@TsIndexSignature(key = \"prop\", value = \"unknown\")",
+                "interface ScreenNode {",
+                "  String kind();",
+                "}"));
+        assertTrue(emitted.contains("  kind: string;\n  [prop: string]: unknown;\n}"), emitted);
     }
 }

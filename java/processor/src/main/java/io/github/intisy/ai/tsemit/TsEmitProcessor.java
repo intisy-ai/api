@@ -23,6 +23,7 @@ import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.StandardLocation;
@@ -98,6 +99,10 @@ public class TsEmitProcessor extends AbstractProcessor {
                         .append("): ").append(returnType(method)).append(";\n");
             }
         }
+        TsIndexSignature index = type.getAnnotation(TsIndexSignature.class);
+        if (index != null) {
+            out.append("  [").append(index.key()).append(": string]: ").append(index.value()).append(";\n");
+        }
         out.append("}\n");
         return out.toString();
     }
@@ -123,8 +128,20 @@ public class TsEmitProcessor extends AbstractProcessor {
             rawEscapes++;
             return raw.value();
         }
+        TsUnion union = method.getAnnotation(TsUnion.class);
+        if (union != null) {
+            StringBuilder arms = new StringBuilder();
+            for (int i = 0; i < union.value().length; i++) {
+                if (i > 0) {
+                    arms.append(" | ");
+                }
+                arms.append(union.value()[i]);
+            }
+            return isStage(method.getReturnType()) ? "Promise<" + arms + ">" : arms.toString();
+        }
         if (method.getAnnotation(TsMaybeAsync.class) != null) {
-            return "void | Promise<void>";
+            String emitted = tsType(method.getReturnType());
+            return emitted + " | Promise<" + emitted + ">";
         }
         String emitted = tsType(method.getReturnType());
         TsNullable nullable = method.getAnnotation(TsNullable.class);
@@ -132,6 +149,15 @@ public class TsEmitProcessor extends AbstractProcessor {
             return emitted;
         }
         return emitted + (nullable.asNull() ? " | null" : " | undefined");
+    }
+
+    private boolean isStage(TypeMirror mirror) {
+        if (mirror.getKind() != TypeKind.DECLARED) {
+            return false;
+        }
+        String qualified = ((TypeElement) ((DeclaredType) mirror).asElement()).getQualifiedName().toString();
+        return "java.util.concurrent.CompletionStage".equals(qualified)
+                || "java.util.concurrent.CompletableFuture".equals(qualified);
     }
 
     private List<ExecutableElement> sortedMethods(TypeElement type) {
@@ -277,12 +303,18 @@ public class TsEmitProcessor extends AbstractProcessor {
     private String enumLiteral(TypeElement element) {
         StringBuilder union = new StringBuilder();
         for (Element member : element.getEnclosedElements()) {
-            if (member.getKind() == ElementKind.ENUM_CONSTANT) {
-                if (union.length() > 0) {
-                    union.append(" | ");
-                }
-                union.append("\"").append(member.getSimpleName()).append("\"");
+            if (member.getKind() != ElementKind.ENUM_CONSTANT) {
+                continue;
             }
+            if (union.length() > 0) {
+                union.append(" | ");
+            }
+            TsLiteral literal = member.getAnnotation(TsLiteral.class);
+            String name = literal != null ? literal.value() : member.getSimpleName().toString();
+            union.append("\"").append(name).append("\"");
+        }
+        if (element.getAnnotation(TsOpen.class) != null) {
+            union.append(" | (string & {})");
         }
         return union.toString();
     }
