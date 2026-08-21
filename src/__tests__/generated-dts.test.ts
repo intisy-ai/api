@@ -38,10 +38,7 @@ it("keeps the committed engine declarations identical to what the java emits", (
 });
 
 it("keeps the committed engine bundle byte-identical to a fresh teavm emission", () => {
-  // obfuscated=false / OptimizationLevel.NONE in java/teavm/build.gradle was measured byte-stable
-  // across repeated clean rebuilds; turning optimization back on reorders declarations between
-  // runs and makes this assertion flap, so the fix for a flapping bundle is to revert that setting,
-  // not to weaken this comparison.
+  // obfuscated=false/OptimizationLevel.NONE (java/teavm/build.gradle) is measured byte-stable; if that changes, revert the optimization rather than weakening this comparison.
   const scratch = mkdtempSync(join(tmpdir(), "api-dts-"));
   emitDts([
     "--java-dir", join(repo, "java"),
