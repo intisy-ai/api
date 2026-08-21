@@ -7,18 +7,51 @@ import { expect, it } from "vitest";
 
 const repo = fileURLToPath(new URL("../..", import.meta.url));
 
-it("keeps the committed declarations identical to what the java emits", () => {
-  const scratch = mkdtempSync(join(tmpdir(), "api-dts-"));
+function emitDts(args: string[], scratch: string): void {
   execFileSync(process.execPath, [
     join(repo, "scripts", "emit-dts.mjs"),
-    "--java-dir", join(repo, "java"),
-    "--module", ":contract",
+    ...args,
     "--out", scratch,
   ], { cwd: repo, stdio: "inherit" });
+}
+
+it("keeps the committed contract declarations identical to what the java emits", () => {
+  const scratch = mkdtempSync(join(tmpdir(), "api-dts-"));
+  emitDts(["--java-dir", join(repo, "java"), "--module", ":contract"], scratch);
 
   const emitted = readdirSync(scratch).sort();
   expect(emitted).toEqual(["api.d.ts", "api.keys.ts"]);
   for (const name of emitted) {
     expect(readFileSync(join(scratch, name), "utf8")).toBe(readFileSync(join(repo, "generated", name), "utf8"));
   }
+});
+
+it("keeps the committed engine declarations identical to what the java emits", () => {
+  const scratch = mkdtempSync(join(tmpdir(), "api-dts-"));
+  emitDts(["--java-dir", join(repo, "java"), "--module", ":teavm"], scratch);
+
+  const emitted = readdirSync(scratch).sort();
+  expect(emitted).toEqual(["engine.d.ts"]);
+  for (const name of emitted) {
+    expect(readFileSync(join(scratch, name), "utf8")).toBe(readFileSync(join(repo, "generated", name), "utf8"));
+  }
+});
+
+it("keeps the committed engine bundle byte-identical to a fresh teavm emission", () => {
+  // obfuscated=false / OptimizationLevel.NONE in java/teavm/build.gradle was measured byte-stable
+  // across repeated clean rebuilds; turning optimization back on reorders declarations between
+  // runs and makes this assertion flap, so the fix for a flapping bundle is to revert that setting,
+  // not to weaken this comparison.
+  const scratch = mkdtempSync(join(tmpdir(), "api-dts-"));
+  emitDts([
+    "--java-dir", join(repo, "java"),
+    "--module", ":teavm",
+    "--ext", ".js",
+    "--gradle-task", ":teavm:generateJavaScript",
+    "--source-dir", join("teavm", "build", "generated", "teavm", "js"),
+  ], scratch);
+
+  const emitted = readdirSync(scratch).sort();
+  expect(emitted).toEqual(["engine.js"]);
+  expect(readFileSync(join(scratch, "engine.js")).equals(readFileSync(join(repo, "generated", "engine.js")))).toBe(true);
 });

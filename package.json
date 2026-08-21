@@ -5,6 +5,16 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./engine": {
+      "types": "./generated/engine.d.ts",
+      "default": "./generated/engine.js"
+    }
+  },
   "bin": {
     "intisy-plugin": "dist/cli/main.js"
   },
@@ -39,7 +49,9 @@
     "docs": "typedoc",
     "test": "vitest run",
     "prepublishOnly": "npm run build",
-    "emit": "node scripts/emit-dts.mjs --java-dir java --module :contract --out generated"
+    "emit": "npm run emit:contract && npm run emit:teavm",
+    "emit:contract": "node scripts/emit-dts.mjs --java-dir java --module :contract --out generated",
+    "emit:teavm": "node scripts/emit-dts.mjs --java-dir java --module :teavm --out generated && node scripts/emit-dts.mjs --java-dir java --module :teavm --ext .js --gradle-task :teavm:generateJavaScript --source-dir teavm/build/generated/teavm/js --out generated"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
