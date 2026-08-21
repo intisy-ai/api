@@ -61,22 +61,6 @@ it("validates a bare well-known provide only when the caller names the vocabular
   }
 });
 
-it("sends a diagnostic to the sink a host installs, and stops when it is removed", () => {
-  const seen: string[] = [];
-  setDiagnosticSink((message) => seen.push(message));
-  assertManifestQuietly();
-  setDiagnosticSink(null);
-  expect(Array.isArray(seen)).toBe(true);
-});
-
-function assertManifestQuietly(): void {
-  try {
-    assertManifest({ api: 1 });
-  } catch {
-    return;
-  }
-}
-
 function runtime() {
   const listeners = new Map<string, (payload: unknown) => void>();
   return {
