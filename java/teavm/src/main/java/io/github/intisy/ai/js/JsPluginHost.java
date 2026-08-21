@@ -180,7 +180,7 @@ final class JsPluginHost implements JSObject {
      * TeaVM might offer.
      */
     static JSPromise<JSObject> promise(final Pending<Object> pending) {
-        return new JSPromise<JSObject>(new JSPromise.Executor<JSObject>() {
+        return guarded(new JSPromise<JSObject>(new JSPromise.Executor<JSObject>() {
             @Override
             public void onExecute(final JSConsumer<JSObject> resolve, final JSConsumer<Object> reject) {
                 pending.then(new Pending.Settlement<Object>() {
@@ -195,8 +195,15 @@ final class JsPluginHost implements JSObject {
                     }
                 });
             }
-        });
+        }));
     }
+
+    /**
+     * @implNote A dropped {@code want} (nobody awaits or catches it) must not raise an unhandled
+     * rejection and take the whole host down, mirroring {@code services.ts}'s own no-op catch.
+     */
+    @JSBody(params = "promise", script = "promise.catch(function () {}); return promise;")
+    private static native JSPromise<JSObject> guarded(JSPromise<JSObject> promise);
 
     private static ManifestFacts factsOf(JSObject manifestObj) {
         Object tree = JsJson.toTree(manifestObj);

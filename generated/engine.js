@@ -1665,7 +1665,7 @@ igiaj_JsPluginHost_build = $host => {
 igiaj_JsPluginHost_promise = $pending => {
     let var$2;
     var$2 = igiaj_JsPluginHost$11__init_0($pending);
-    return new Promise(otji_JS_function(otji_JSWrapper_unwrap(var$2), "onExecute"));
+    return igiaj_JsPluginHost_guarded$js_body$_4(new Promise(otji_JS_function(otji_JSWrapper_unwrap(var$2), "onExecute")));
 },
 igiaj_JsPluginHost_factsOf = $manifestObj => {
     let $tree, $id, $api, $capabilities, $permissions;
@@ -1741,6 +1741,11 @@ igiaj_JsPluginHost_strings = $value => {
         }
     }
     return $out;
+},
+igiaj_JsPluginHost_guarded$js_body$_4 = var$1 => {
+    var$1.catch(function() {
+    });
+    return var$1;
 },
 igiaj_JsPluginHost_orUndefined$js_body$_10 = var$1 => {
     return var$1 === null ? undefined : var$1;

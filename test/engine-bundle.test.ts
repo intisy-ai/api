@@ -145,6 +145,22 @@ it("fires a want deadline, which is what proves the scheduler is really wired", 
   });
 });
 
+it("does not raise an unhandledRejection when a fenced plugin's dropped want rejects", async () => {
+  const seen: unknown[] = [];
+  const onUnhandledRejection = (reason: unknown) => seen.push(reason);
+  process.on("unhandledRejection", onUnhandledRejection);
+  try {
+    const host = createPluginHost({ app: "claude", api: 1, wellKnownServices: ["accounts"] });
+    const context = host.contextFor(SCREENS, runtime());
+    host.markBroken("config-ledger", pluginError("config-ledger", "boom", "fix it"));
+    context.services.want("accounts");
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(seen).toEqual([]);
+  } finally {
+    process.removeListener("unhandledRejection", onUnhandledRejection);
+  }
+});
+
 it("reports an unknown capability id only when the host declared a vocabulary", () => {
   const seen: string[] = [];
   setDiagnosticSink((message) => seen.push(message));
