@@ -44,8 +44,12 @@ export interface PluginContext {
 }
 
 /**
- * Key/value store of JSON strings (e.g. keys like `accounts.json`, `models.json`,
- * `auth.json`). `update` must be atomic; that is the implementation's concern.
+ * Key/value store of JSON strings, keyed by file-like names. `update` must be atomic; that is
+ * the implementation's concern.
+ *
+ * @remarks
+ * The key examples this once carried named plugin categories, which the contract may not
+ * know, and became visible to that gate the moment this interface started emitting TypeScript.
  */
 export interface Store {
   /** Removes `key`, and does nothing when it holds nothing. */

@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 
 /**
- * Key/value store of JSON strings (e.g. keys like {@code accounts.json}, {@code models.json},
- * {@code auth.json}). {@code update} must be atomic; that is the implementation's concern.
+ * Key/value store of JSON strings, keyed by file-like names. {@code update} must be atomic; that is
+ * the implementation's concern.
+ *
+ * @implNote The key examples this once carried named plugin categories, which the contract may not
+ * know, and became visible to that gate the moment this interface started emitting TypeScript.
  */
 @TsInterface
 public interface Store {
