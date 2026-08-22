@@ -1,6 +1,7 @@
 package io.github.intisy.ai.tsemit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -97,5 +98,20 @@ class EmissionMechanicsTest {
         String surface = emitted.files.get("ir-contracts.d.ts");
         assertTrue(surface.contains("import type { IrRequest } from \"../index.js\";"), surface);
         assertEquals(-1, surface.indexOf("IrResponse"), "an unreferenced name must not be imported");
+    }
+
+    @Test
+    void aModuleEmittingOnlyConstantsWritesNoSurfaceFile() {
+        String source = String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsConstant;",
+                "class Keys {",
+                "  @TsConstant(type = \"CapabilityType<FrontDoorCapability>\", id = \"front-door\")",
+                "  public static final Object FRONT_DOOR = null;",
+                "}");
+        EmitHarness.Result emitted = EmitHarness.compile("fixture.Unit", source,
+                options("-Atsemit.name=ir-contracts"));
+        assertTrue(emitted.files.containsKey("ir-contracts.keys.ts"), emitted.files.keySet().toString());
+        assertFalse(emitted.files.containsKey("ir-contracts.d.ts"), emitted.files.keySet().toString());
     }
 }

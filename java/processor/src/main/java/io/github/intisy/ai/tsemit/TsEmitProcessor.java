@@ -502,6 +502,11 @@ public class TsEmitProcessor extends AbstractProcessor {
      * is the build platform's. A generated file committed on Windows and regenerated on Linux would
      * otherwise differ by line ending alone, and the drift gate would fail on one of the two.
      */
+    /**
+     * @implNote A module emitting only constants writes no surface file, symmetrically with a module
+     * emitting only types writing no keys file, so a package never carries a generated module that
+     * declares nothing.
+     */
     private void write() {
         StringBuilder body = new StringBuilder();
         Collections.sort(chunks);
@@ -509,7 +514,9 @@ public class TsEmitProcessor extends AbstractProcessor {
             body.append(chunk).append("\n");
         }
         try {
-            writeResource(basename() + surfaceExtension(), resolveLinks(banner(body.toString(), null)));
+            if (!chunks.isEmpty()) {
+                writeResource(basename() + surfaceExtension(), resolveLinks(banner(body.toString(), null)));
+            }
             writeConstants();
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE,
                     "tsemit: " + chunks.size() + " interfaces, " + constants.size() + " constants, "
