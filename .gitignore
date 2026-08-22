@@ -7,9 +7,8 @@ docs/
 graphify-out/
 .idea/
 
-# java/ (Gradle + annotation processor)
-java/**/build/
-java/.gradle/
-java/**/.gradle/
-java/.idea/
+# Gradle (each java module lives in its own directory at the repository root)
+**/build/
+.gradle/
+**/.gradle/
 *.iml

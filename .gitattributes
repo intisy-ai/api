@@ -3,7 +3,7 @@
 generated/*.ts text eol=lf
 
 # A CRLF gradlew is not executable on Linux.
-java/gradlew text eol=lf
+gradlew text eol=lf
 
 # The emitted bundle is compared byte for byte against a fresh emission, and TeaVM writes LF.
 generated/*.js text eol=lf

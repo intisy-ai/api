@@ -17,7 +17,7 @@ function emitDts(args: string[], scratch: string): void {
 
 it("keeps the committed contract declarations identical to what the java emits", () => {
   const scratch = mkdtempSync(join(tmpdir(), "api-dts-"));
-  emitDts(["--java-dir", join(repo, "java"), "--module", ":contract"], scratch);
+  emitDts(["--java-dir", repo, "--module", ":contract"], scratch);
 
   const emitted = readdirSync(scratch).sort();
   expect(emitted).toEqual(["api.d.ts", "api.keys.ts"]);
@@ -28,7 +28,7 @@ it("keeps the committed contract declarations identical to what the java emits",
 
 it("keeps the committed engine declarations identical to what the java emits", () => {
   const scratch = mkdtempSync(join(tmpdir(), "api-dts-"));
-  emitDts(["--java-dir", join(repo, "java"), "--module", ":teavm"], scratch);
+  emitDts(["--java-dir", repo, "--module", ":teavm"], scratch);
 
   const emitted = readdirSync(scratch).sort();
   expect(emitted).toEqual(["engine.d.ts"]);
@@ -38,10 +38,10 @@ it("keeps the committed engine declarations identical to what the java emits", (
 });
 
 it("keeps the committed engine bundle byte-identical to a fresh teavm emission", () => {
-  // obfuscated=false/OptimizationLevel.NONE (java/teavm/build.gradle) is measured byte-stable; if that changes, revert the optimization rather than weakening this comparison.
+  // obfuscated=false/OptimizationLevel.NONE (teavm/build.gradle) is measured byte-stable; if that changes, revert the optimization rather than weakening this comparison.
   const scratch = mkdtempSync(join(tmpdir(), "api-dts-"));
   emitDts([
-    "--java-dir", join(repo, "java"),
+    "--java-dir", repo,
     "--module", ":teavm",
     "--ext", ".js",
     "--gradle-task", ":teavm:generateJavaScript",

@@ -8,7 +8,7 @@
 //   3. Fails loudly rather than staging nothing, so a silent no-op cannot look like success.
 //
 // Usage:
-//   node scripts/emit-dts.mjs --java-dir java --module :contract --out generated
+//   node scripts/emit-dts.mjs --java-dir . --module :contract --out generated
 //
 // Optional flags:
 //   --module-dir <dirName>   (default: --module with its leading ':' stripped)

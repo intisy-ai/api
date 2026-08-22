@@ -53,8 +53,8 @@
     "test": "vitest run",
     "prepublishOnly": "npm run build",
     "emit": "npm run emit:contract && npm run emit:teavm",
-    "emit:contract": "node scripts/emit-dts.mjs --java-dir java --module :contract --out generated",
-    "emit:teavm": "node scripts/emit-dts.mjs --java-dir java --module :teavm --out generated && node scripts/emit-dts.mjs --java-dir java --module :teavm --ext .js --gradle-task :teavm:generateJavaScript --source-dir teavm/build/generated/teavm/js --out generated"
+    "emit:contract": "node scripts/emit-dts.mjs --java-dir . --module :contract --out generated",
+    "emit:teavm": "node scripts/emit-dts.mjs --java-dir . --module :teavm --out generated && node scripts/emit-dts.mjs --java-dir . --module :teavm --ext .js --gradle-task :teavm:generateJavaScript --source-dir teavm/build/generated/teavm/js --out generated"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

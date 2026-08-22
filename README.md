@@ -59,7 +59,7 @@ they are enforced in review:
 
 ## Structure
 
-- `java/` (the contract and the engine, the source of truth)
+- one directory per java module (the contract and the engine, the source of truth)
   - `annotations/`, `processor/`: the emission annotations and the emitter that renders TypeScript
   - `contract/`: the manifest, the plugin, the context, and the typed keys
   - `engine/`: validation, activation order, the service hub, the ledger and the diagnostics channel

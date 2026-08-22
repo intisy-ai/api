@@ -29,7 +29,7 @@ class ParityTest {
 
     @TestFactory
     List<DynamicTest> agreesWithTheSharedFixture() throws IOException {
-        File fixture = new File("../../test/parity/manifests.json");
+        File fixture = new File("../test/parity/manifests.json");
         String text = new String(Files.readAllBytes(fixture.toPath()), StandardCharsets.UTF_8);
         List<Object> cases = asList(new Json(text).read());
         List<DynamicTest> tests = new ArrayList<DynamicTest>();
