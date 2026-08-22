@@ -1,8 +1,15 @@
+plugins {
+    id "io.github.intisy.github-gradle" version "1.8.2.1" apply false
+}
+
 subprojects {
     apply plugin: "java-library"
+    apply plugin: "io.github.intisy.github-gradle"
 
     group = "io.github.intisy"
-    version = "0.1.0"
+    // publishGithub requires a concrete version. Derive it from -Partifact_version=<tag> passed by
+    // CI (stripping a leading "v"), falling back to a local dev version, the ecosystem derivation.
+    version = (project.findProperty("artifact_version") ?: "0.0.0-dev").toString().replaceFirst(/^v/, "")
 
     repositories {
         mavenLocal()
@@ -29,5 +36,47 @@ subprojects {
 
     test {
         useJUnitPlatform()
+    }
+
+    github {
+        accessToken = System.getenv("GITHUB_TOKEN") ?: ""
+    }
+
+    // A consumer resolves each module by its own classifier, because they serve different Gradle
+    // configurations: :processor is an annotationProcessor, :annotations and :contract are
+    // compileOnly, :seam and :js-base are implementation. One shaded jar would put the annotation
+    // processor on every consumer's runtime classpath, which the plugin-weight rule forbids.
+    tasks.matching { it.name == "publishGithub" }.configureEach {
+        onlyIf { project.path in PUBLISHED_MODULES.keySet() }
+    }
+}
+
+// The modules a downstream Java repo resolves, mapped to the classifier its coordinate names.
+// :engine and :teavm are absent deliberately: they feed api's npm package, not any Java consumer.
+ext.PUBLISHED_MODULES = [
+    ":annotations": "annotations",
+    ":processor"  : "processor",
+    ":contract"   : "contract",
+    ":seam"       : "seam",
+    ":js-base"    : "js-base",
+]
+
+configure(subprojects.findAll { PUBLISHED_MODULES.containsKey(it.path) }) {
+    jar {
+        archiveVersion = ""
+    }
+
+    publishGithub {
+        // These modules sit inside api's repo with no .git of their own, so the default git-remote
+        // lookup fails; owner/repo also drive the uploaded asset name (api-<classifier>.jar).
+        owner = "intisy-ai"
+        repo = "api"
+        releaseName = "api ${project.findProperty('artifact_version') ?: project.version}"
+        artifacts {
+            artifact {
+                classifier = PUBLISHED_MODULES[project.path]
+                jar = file("build/libs/${project.name}.jar")
+            }
+        }
     }
 }
