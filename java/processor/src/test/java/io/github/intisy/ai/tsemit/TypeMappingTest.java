@@ -34,6 +34,30 @@ class TypeMappingTest {
     }
 
     @Test
+    void mapsTheFunctionalInterfacesAnEmittedSeamNames() throws IOException {
+        String emitted = EmitFixtureTest.emit("fixture.Seam", String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import java.util.function.BiConsumer;",
+                "import java.util.function.Consumer;",
+                "import java.util.function.UnaryOperator;",
+                "@TsInterface",
+                "public interface Seam {",
+                "  void update(String key, UnaryOperator<String> mutator);",
+                "  void watch(Consumer<String> listener);",
+                "  void pair(BiConsumer<String, Object> listener);",
+                "  void run(Runnable task);",
+                "}"));
+        assertEquals(String.join("\n",
+                "export interface Seam {",
+                "  pair(listener: ((a: string, b: unknown) => void)): void;",
+                "  run(task: () => void): void;",
+                "  update(key: string, mutator: ((value: string) => string)): void;",
+                "  watch(listener: ((value: string) => void)): void;",
+                "}") + "\n", emitted.substring(emitted.indexOf("export interface")).trim() + "\n");
+    }
+
+    @Test
     void emitsJavaOverloadsAsTypescriptOverloads() throws IOException {
         String emitted = EmitFixtureTest.emit("fixture.Log", String.join("\n",
                 "package fixture;",

@@ -44,6 +44,28 @@ export interface PluginContext {
 }
 
 /**
+ * Key/value store of JSON strings (e.g. keys like `accounts.json`, `models.json`,
+ * `auth.json`). `update` must be atomic; that is the implementation's concern.
+ */
+export interface Store {
+  /** Removes `key`, and does nothing when it holds nothing. */
+  delete(key: string): void;
+  /** Whether anything is stored under `key`. */
+  exists(key: string): boolean;
+  /** The value stored under `key`, or `null` when nothing is stored there. */
+  get(key: string): string;
+  /** Every key beginning with `prefix`, in the order the store holds them. */
+  listKeys(prefix: string): string[];
+  /** Stores `value` under `key`, replacing whatever was there. */
+  put(key: string, value: string): void;
+  /**
+   * Replaces `key`'s value with what `mutator` returns, reading and writing as one
+   * step, and hands the mutator `null` when the key holds nothing yet.
+   */
+  update(key: string, mutator: ((value: string) => string)): void;
+}
+
+/**
  * The absolute storage directories of the app home a plugin is running in.
  *
  * @remarks

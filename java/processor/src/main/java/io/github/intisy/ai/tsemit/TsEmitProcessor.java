@@ -445,6 +445,9 @@ public class TsEmitProcessor extends AbstractProcessor {
         if ("java.util.function.Consumer".equals(qualified)) {
             return "((value: " + tsType(mapped.get(0)) + ") => void)";
         }
+        if ("java.util.function.UnaryOperator".equals(qualified)) {
+            return "((value: " + tsType(mapped.get(0)) + ") => " + tsType(mapped.get(0)) + ")";
+        }
         if ("java.util.function.BiConsumer".equals(qualified)) {
             return "((a: " + tsType(mapped.get(0)) + ", b: " + tsType(mapped.get(1)) + ") => void)";
         }
