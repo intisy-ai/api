@@ -49,9 +49,9 @@ public class TsEmitProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
         for (Element element : round.getElementsAnnotatedWith(TsInterface.class)) {
-            if (element.getKind() != ElementKind.INTERFACE) {
+            if (!emittable(element)) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
-                        "@TsInterface applies only to interfaces", element);
+                        "@TsInterface applies to an interface, or to a data-carrying class marked data = true", element);
                 continue;
             }
             emittedTypes.add(element.getSimpleName().toString());
@@ -98,24 +98,8 @@ public class TsEmitProcessor extends AbstractProcessor {
             out.append("  /** Never present at run time. It exists so two keys parameterised differently cannot be interchanged. */\n");
             out.append("  readonly __phantom?: ").append(phantom.value()).append(";\n");
         }
-        for (ExecutableElement method : sortedMethods(type)) {
-            TsProperty asProperty = method.getAnnotation(TsProperty.class);
-            boolean property = method.getParameters().isEmpty() && (asProperty != null || spec.data());
-            out.append(docBlock(method, "  "));
-            out.append("  ");
-            if (property && asProperty != null && asProperty.readOnly()) {
-                out.append("readonly ");
-            }
-            out.append(method.getSimpleName());
-            if (method.getAnnotation(TsOptional.class) != null) {
-                out.append("?");
-            }
-            if (property) {
-                out.append(": ").append(returnType(method)).append(";\n");
-            } else {
-                out.append(joinVars(method.getTypeParameters())).append("(").append(params(method))
-                        .append("): ").append(returnType(method)).append(";\n");
-            }
+        for (Member member : sortedMembers(type, spec)) {
+            out.append(member.text);
         }
         TsIndexSignature index = type.getAnnotation(TsIndexSignature.class);
         if (index != null) {
@@ -266,6 +250,84 @@ public class TsEmitProcessor extends AbstractProcessor {
                 || "java.util.concurrent.CompletableFuture".equals(qualified);
     }
 
+    private boolean emittable(Element element) {
+        if (element.getKind() == ElementKind.INTERFACE) {
+            return true;
+        }
+        return element.getKind() == ElementKind.CLASS && element.getAnnotation(TsInterface.class).data();
+    }
+
+    /**
+     * Every member of one emitted type, fields and methods alike, in one name order.
+     *
+     * @implNote A data-carrying class states its shape in public fields, so an emitter that walked
+     * methods alone rendered it as an empty interface. Merging the two into one sorted list rather
+     * than emitting fields as a leading block keeps a mixed type readable, and the comparator is the
+     * one methods already used, so a type with no fields emits exactly the bytes it did before.
+     */
+    private List<Member> sortedMembers(TypeElement type, TsInterface spec) {
+        List<Member> members = new ArrayList<Member>();
+        for (VariableElement field : instanceFields(type)) {
+            members.add(new Member(field.getSimpleName().toString(), "", field(field)));
+        }
+        for (ExecutableElement method : sortedMethods(type)) {
+            members.add(new Member(method.getSimpleName().toString(), method.toString(), method(method, spec)));
+        }
+        Collections.sort(members);
+        return members;
+    }
+
+    private String method(ExecutableElement method, TsInterface spec) {
+        TsProperty asProperty = method.getAnnotation(TsProperty.class);
+        boolean property = method.getParameters().isEmpty() && (asProperty != null || spec.data());
+        StringBuilder out = new StringBuilder(docBlock(method, "  "));
+        out.append("  ");
+        if (property && asProperty != null && asProperty.readOnly()) {
+            out.append("readonly ");
+        }
+        out.append(method.getSimpleName());
+        if (method.getAnnotation(TsOptional.class) != null) {
+            out.append("?");
+        }
+        if (property) {
+            out.append(": ").append(returnType(method)).append(";\n");
+        } else {
+            out.append(joinVars(method.getTypeParameters())).append("(").append(params(method))
+                    .append("): ").append(returnType(method)).append(";\n");
+        }
+        return out.toString();
+    }
+
+    /**
+     * @implNote {@code final} carries the {@code readonly}, so a field needs no annotation to say
+     * what the Java already says, and {@link #valueType} is shared with parameters because both hold
+     * a value that is either present or Java-null, never an omitted argument.
+     */
+    private String field(VariableElement field) {
+        StringBuilder out = new StringBuilder(docBlock(field, "  "));
+        out.append("  ");
+        if (field.getModifiers().contains(Modifier.FINAL)) {
+            out.append("readonly ");
+        }
+        out.append(field.getSimpleName());
+        if (field.getAnnotation(TsOptional.class) != null) {
+            out.append("?");
+        }
+        return out.append(": ").append(valueType(field)).append(";\n").toString();
+    }
+
+    private List<VariableElement> instanceFields(TypeElement type) {
+        List<VariableElement> fields = new ArrayList<VariableElement>();
+        for (Element member : type.getEnclosedElements()) {
+            if (member.getKind() == ElementKind.FIELD
+                    && member.getModifiers().contains(Modifier.PUBLIC)
+                    && !member.getModifiers().contains(Modifier.STATIC)) {
+                fields.add((VariableElement) member);
+            }
+        }
+        return fields;
+    }
+
     private List<ExecutableElement> sortedMethods(TypeElement type) {
         List<ExecutableElement> methods = new ArrayList<ExecutableElement>();
         for (Element member : type.getEnclosedElements()) {
@@ -306,19 +368,19 @@ public class TsEmitProcessor extends AbstractProcessor {
             if (i > 0) {
                 out.append(", ");
             }
-            out.append(parameters.get(i).getSimpleName()).append(": ").append(paramType(parameters.get(i)));
+            out.append(parameters.get(i).getSimpleName()).append(": ").append(valueType(parameters.get(i)));
         }
         return out.toString();
     }
 
-    private String paramType(VariableElement parameter) {
-        TsRaw raw = parameter.getAnnotation(TsRaw.class);
+    private String valueType(VariableElement value) {
+        TsRaw raw = value.getAnnotation(TsRaw.class);
         if (raw != null) {
             rawEscapes++;
             return raw.value();
         }
-        String emitted = tsType(parameter.asType());
-        return parameter.getAnnotation(TsNullable.class) != null ? emitted + " | null" : emitted;
+        String emitted = tsType(value.asType());
+        return value.getAnnotation(TsNullable.class) != null ? emitted + " | null" : emitted;
     }
 
     private String tsType(TypeMirror mirror) {
@@ -592,5 +654,24 @@ public class TsEmitProcessor extends AbstractProcessor {
             at = body.indexOf(name, at + 1);
         }
         return false;
+    }
+
+    /** One rendered member, sorted by name with the signature as the tiebreaker a field leaves empty. */
+    private static final class Member implements Comparable<Member> {
+        private final String name;
+        private final String signature;
+        private final String text;
+
+        Member(String name, String signature, String text) {
+            this.name = name;
+            this.signature = signature;
+            this.text = text;
+        }
+
+        @Override
+        public int compareTo(Member other) {
+            int byName = name.compareTo(other.name);
+            return byName != 0 ? byName : signature.compareTo(other.signature);
+        }
     }
 }

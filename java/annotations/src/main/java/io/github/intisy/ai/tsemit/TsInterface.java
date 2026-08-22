@@ -8,6 +8,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface TsInterface {
-    /** A data interface emits every zero-argument method as a property rather than a method. */
+    /**
+     * Emit every zero-argument method as a property rather than a method, and permit the annotation
+     * on a class, whose public instance fields then emit as properties too.
+     */
     boolean data() default false;
 }

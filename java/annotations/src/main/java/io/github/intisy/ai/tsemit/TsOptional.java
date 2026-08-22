@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 /** Emit the member name followed by a question mark. */
 @Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.FIELD})
 public @interface TsOptional {
 }

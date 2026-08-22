@@ -12,6 +12,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
@@ -36,10 +38,23 @@ final class EmitHarness {
     }
 
     static Result compile(String className, String source, List<String> processorOptions) {
+        Run run = run(className, source, processorOptions);
+        assertTrue(run.compiled, "fixture source must compile");
+        return new Result(run.files);
+    }
+
+    /** The errors reported over a fixture the processor is expected to refuse. */
+    static List<String> errors(String className, String source) {
+        List<String> noOptions = Collections.emptyList();
+        return run(className, source, noOptions).errors;
+    }
+
+    private static Run run(String className, String source, List<String> processorOptions) {
         try {
             File output = Files.createTempDirectory("tsemit").toFile();
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-            StandardJavaFileManager files = compiler.getStandardFileManager(null, null, StandardCharsets.UTF_8);
+            DiagnosticCollector<JavaFileObject> reported = new DiagnosticCollector<JavaFileObject>();
+            StandardJavaFileManager files = compiler.getStandardFileManager(reported, null, StandardCharsets.UTF_8);
             List<JavaFileObject> units = new ArrayList<JavaFileObject>();
             units.add(new StringSource(className, source));
             List<String> options = new ArrayList<String>();
@@ -48,12 +63,30 @@ final class EmitHarness {
             options.add("-classpath");
             options.add(System.getProperty("java.class.path"));
             options.addAll(processorOptions);
-            JavaCompiler.CompilationTask task = compiler.getTask(null, files, null, options, null, units);
+            JavaCompiler.CompilationTask task = compiler.getTask(null, files, reported, options, null, units);
             task.setProcessors(Collections.singletonList(new TsEmitProcessor()));
-            assertTrue(task.call().booleanValue(), "fixture source must compile");
-            return new Result(readEmitted(output));
+            boolean compiled = task.call().booleanValue();
+            List<String> errors = new ArrayList<String>();
+            for (Diagnostic<? extends JavaFileObject> diagnostic : reported.getDiagnostics()) {
+                if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {
+                    errors.add(diagnostic.getMessage(null));
+                }
+            }
+            return new Run(compiled, readEmitted(output), errors);
         } catch (IOException failure) {
             throw new IllegalStateException(failure);
+        }
+    }
+
+    private static final class Run {
+        private final boolean compiled;
+        private final Map<String, String> files;
+        private final List<String> errors;
+
+        Run(boolean compiled, Map<String, String> files, List<String> errors) {
+            this.compiled = compiled;
+            this.files = files;
+            this.errors = errors;
         }
     }
 
