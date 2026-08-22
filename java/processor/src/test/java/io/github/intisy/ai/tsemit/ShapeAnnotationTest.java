@@ -81,6 +81,25 @@ class ShapeAnnotationTest {
         assertTrue(emitted.contains("plain(): string | number;"), emitted);
     }
 
+    // A contract whose Java is deliberately sync so it transpiles, while the JavaScript boundary is a
+    // promise because the TeaVM export shim wraps the sync call in a JSPromise. Without the flag the
+    // only way to get the wrapper is a CompletionStage return, which puts an async type in an SPI
+    // that has no use for one.
+    @Test
+    void unionCanBePromisedWithoutMakingTheJavaReturnAsync() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import io.github.intisy.ai.tsemit.TsUnion;",
+                "@TsInterface",
+                "interface Provider {",
+                "  @TsUnion(value = {\"IrResponse\", \"IrEventStream\"}, async = true) Object handleIr();",
+                "  @TsUnion({\"IrResponse\", \"IrEventStream\"}) Object sync();",
+                "}"));
+        assertTrue(emitted.contains("handleIr(): Promise<IrResponse | IrEventStream>;"), emitted);
+        assertTrue(emitted.contains("sync(): IrResponse | IrEventStream;"), emitted);
+    }
+
     @Test
     void literalOverridesAnEnumConstantNameThatJavaCannotSpell() {
         String emitted = EmitHarness.surface(String.join("\n",

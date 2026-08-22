@@ -17,4 +17,16 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface TsUnion {
     String[] value();
+
+    /**
+     * Wrap the union in a promise even though the Java return is synchronous.
+     *
+     * @implNote For a contract whose Java side is deliberately sync because it must transpile, while
+     * the JavaScript boundary is a promise: a TeaVM {@code @JSExport} shim returns a
+     * {@code JSPromise} around a synchronous call, so the promise belongs to the boundary rather than
+     * to the portable signature. Without this the only way to emit the wrapper would be to make the
+     * Java return a {@code CompletionStage}, which would put an async type in an SPI that has no use
+     * for one.
+     */
+    boolean async() default false;
 }

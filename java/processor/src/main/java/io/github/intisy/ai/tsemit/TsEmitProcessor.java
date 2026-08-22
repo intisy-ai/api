@@ -242,7 +242,8 @@ public class TsEmitProcessor extends AbstractProcessor {
                 }
                 arms.append(union.value()[i]);
             }
-            return isStage(method.getReturnType()) ? "Promise<" + arms + ">" : arms.toString();
+            boolean promised = union.async() || isStage(method.getReturnType());
+            return promised ? "Promise<" + arms + ">" : arms.toString();
         }
         if (method.getAnnotation(TsMaybeAsync.class) != null) {
             String emitted = tsType(method.getReturnType());
