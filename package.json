@@ -16,6 +16,10 @@
     },
     "./contract": {
       "types": "./generated/api.d.ts"
+    },
+    "./host": {
+      "types": "./dist/host/index.d.ts",
+      "default": "./dist/host/index.js"
     }
   },
   "bin": {
@@ -50,7 +54,7 @@
     "typecheck": "tsc --noEmit -p tsconfig.test.json",
     "schema": "node scripts/emit-schema.mjs",
     "docs": "typedoc",
-    "test": "vitest run",
+    "test": "npm run build && vitest run",
     "prepublishOnly": "npm run build",
     "emit": "npm run emit:contract && npm run emit:teavm",
     "emit:contract": "node scripts/emit-dts.mjs --java-dir . --module :contract --out generated",
