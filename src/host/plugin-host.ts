@@ -60,8 +60,8 @@ export interface PluginHostOptions {
    * Builds the per-plugin runtime.
    *
    * @remarks
-   * Injected rather than built here, because this library carries no core submodule: whoever
-   * starts the host passes core's `createPluginRuntime`.
+   * Injected rather than built here, because the api carries no core submodule: whoever starts
+   * the host passes core's `createPluginRuntime`.
    */
   runtimeFor: (manifest: PluginManifest) => PluginRuntimeShape;
   /** Reads the home. Defaults to {@link readDeployedManifests}, and is replaced in tests. */

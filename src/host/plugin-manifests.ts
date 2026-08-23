@@ -11,8 +11,8 @@ const ESM_MARKER_FILE = "package.json";
  * One entry of a declared vocabulary, which is the shape every typed key already has.
  *
  * @remarks
- * Declared structurally rather than imported so this library takes no api runtime value: a caller
- * passes the keys it owns, whether they come from core, core-ir or its own module.
+ * Declared structurally rather than imported so the scanner takes no value from a key-minting
+ * library: a caller passes the keys it owns, whether they come from core, core-ir or its own module.
  */
 export interface VocabularyEntry {
   id: string;

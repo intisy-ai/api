@@ -6,10 +6,10 @@
 
 The plugin contract for the intisy-ai ecosystem, published as `@intisy-ai/api`. It holds the
 `plugin.json` manifest schema, the plugin context and lifecycle, the typed keys a capability or a
-service is reached by, the declaration engine a host runs, and the `validate` command. The contract
-is written in Java and the TypeScript surface is generated from it. It has no dependencies and
-imports nothing from node outside its CLI, so a host, a plugin, and a dashboard renderer can all
-import the same package.
+service is reached by, the declaration engine a host runs, the ESM driver a host starts plugins with,
+and the `validate` command. The contract is written in Java and the TypeScript surface is generated
+from it. It has no dependencies, and only the `./host` subpath and the CLI import node, so a plugin
+and a dashboard renderer can import the same package a host does without carrying either.
 
 ## Under-the-Hood Architecture
 
@@ -68,8 +68,9 @@ they are enforced in review:
   - `api.keys.js` and `api.keys.d.ts`: the package root, types and constants
   - `api.d.ts`: the contract declarations, also served as `./contract`
   - `engine.js` and `engine.d.ts`: the engine, served as `./engine`
-- `src/cli/`: the `intisy-plugin` command, the only TypeScript here and the only node importer
-- `dist/cli/main.js` (compiled output, not committed)
+- `src/host/`: the ESM driver and manifest scanner a host runs plugins with, served as `./host`
+- `src/cli/`: the `intisy-plugin` command
+- `dist/` (compiled output, not committed): `cli/main.js` and `host/index.js`
 - `schema/plugin.schema.json`: the manifest schema, emitted from the Java `ManifestSchema`
 
 ## Installation
