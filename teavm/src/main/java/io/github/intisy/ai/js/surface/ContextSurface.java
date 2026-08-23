@@ -38,6 +38,17 @@ public interface ContextSurface {
      */
     Object capability(String id);
 
+    /**
+     * The typed key for a service id.
+     *
+     * @implNote Same shape and same reason as {@link #capability(String)}: a key is an id at run
+     * time, so the three key kinds differ only in the phantom type the contract attaches.
+     */
+    Object service(String id);
+
+    /** The typed key for an event topic id. */
+    Object topic(String id);
+
     /** The service registry, fenced to this plugin's namespace. */
     @TsProperty(readOnly = true)
     ServiceRegistryShape services();

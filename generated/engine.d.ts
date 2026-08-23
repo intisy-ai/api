@@ -205,8 +205,18 @@ export interface ContextSurface {
    * every other shape difference is resolved.
    */
   provide(key: unknown, implementation: unknown): void;
+  /**
+   * The typed key for a service id.
+   *
+   * @remarks
+   * Same shape and same reason as `capability(String)`: a key is an id at run
+   * time, so the three key kinds differ only in the phantom type the contract attaches.
+   */
+  service(id: string): unknown;
   /** The service registry, fenced to this plugin's namespace. */
   readonly services: ServiceRegistryShape;
+  /** The typed key for an event topic id. */
+  topic(id: string): unknown;
 }
 
 /** The ledger a host exposes on {@link HostSurface}. */
