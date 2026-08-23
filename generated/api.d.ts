@@ -15,6 +15,19 @@ export interface CapabilityType<T> {
 }
 
 /**
+ * A plugin's settings as it ships them.
+ *
+ * @remarks
+ * Values only. What a setting is CALLED and how a surface renders it is the settings
+ * capability's business, which this contract may not know: a manifest that carried labels would be
+ * minting vocabulary, and the api mints none.
+ */
+export interface ManifestConfig {
+  /** Every setting this plugin has, and what it is worth until a home changes it. */
+  defaults: Record<string, unknown>;
+}
+
+/**
  * Everything a plugin may touch, and the only way it touches any of it.
  *
  * @remarks
@@ -119,6 +132,26 @@ export interface Store {
 }
 
 /**
+ * One slash command a plugin contributes, declared rather than registered by running code.
+ *
+ * @remarks
+ * Declared so a host can deploy a plugin's commands without importing it, which is what
+ * lets the command files exist before the plugin has ever activated.
+ */
+export interface ManifestCommand {
+  /** The argument shape a picker hints at, such as "list | get <key>". */
+  argumentHint?: string;
+  /** Markdown the model is shown, after any shell output. */
+  body?: string;
+  /** What a command picker shows beside the name. */
+  description: string;
+  /** The command's name, which is also the file it is written to. */
+  name: string;
+  /** A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}. */
+  shell?: string;
+}
+
+/**
  * The absolute storage directories of the app home a plugin is running in.
  *
  * @remarks
@@ -160,6 +193,10 @@ export interface PluginManifest {
   api: number;
   /** Host-facing abilities this plugin provides at activation, declared statically so a host can answer what it can do without executing it. */
   capabilities?: string[];
+  /** Slash commands this plugin contributes, which a host deploys without importing it. */
+  commands?: ManifestCommand[];
+  /** This plugin's settings as it ships them. */
+  config?: ManifestConfig;
   /** The name a surface shows instead of the id. */
   displayName?: string;
   /** The built module a host imports. Required once `capabilities` is non-empty. */

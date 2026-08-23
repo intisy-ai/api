@@ -62,6 +62,53 @@
         }
       }
     },
+    "commands": {
+      "description": "Slash commands this plugin contributes, which a host deploys without importing it.",
+      "type": "array",
+      "items": {
+        "description": "One slash command this plugin contributes.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The command's name, which is also the file it is written to.",
+            "type": "string"
+          },
+          "description": {
+            "description": "What a command picker shows beside the name.",
+            "type": "string"
+          },
+          "argumentHint": {
+            "description": "The argument shape a picker hints at, such as \"list | get <key>\".",
+            "type": "string"
+          },
+          "body": {
+            "description": "Markdown the model is shown, after any shell output.",
+            "type": "string"
+          },
+          "shell": {
+            "description": "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ]
+      }
+    },
+    "config": {
+      "description": "This plugin's settings as it ships them.",
+      "type": "object",
+      "properties": {
+        "defaults": {
+          "description": "Every setting this plugin has, and what it is worth until a home changes it.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "defaults"
+      ]
+    },
     "permissions": {
       "description": "Declared permissions, surfaced at install and in dashboards.",
       "type": "array",

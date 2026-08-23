@@ -51,6 +51,8 @@ public final class ManifestSchema {
         properties.put("capabilities", capabilities);
 
         properties.put("services", services());
+        properties.put("commands", commands());
+        properties.put("config", config());
 
         JsonSchema permissions = described(JsonSchema.ofType("array"), "Declared permissions, surfaced at install and in dashboards.");
         permissions.setItems(JsonSchema.ofType("string"));
@@ -82,6 +84,34 @@ public final class ManifestSchema {
                 "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.");
         services.setProperties(properties);
         return services;
+    }
+
+    private static JsonSchema commands() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("name", described(JsonSchema.ofType("string"), "The command's name, which is also the file it is written to."));
+        properties.put("description", described(JsonSchema.ofType("string"), "What a command picker shows beside the name."));
+        properties.put("argumentHint", described(JsonSchema.ofType("string"),
+                "The argument shape a picker hints at, such as \"list | get <key>\"."));
+        properties.put("body", described(JsonSchema.ofType("string"), "Markdown the model is shown, after any shell output."));
+        properties.put("shell", described(JsonSchema.ofType("string"),
+                "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}."));
+        JsonSchema command = described(JsonSchema.ofType("object"), "One slash command this plugin contributes.");
+        command.setRequired(Arrays.asList("name", "description"));
+        command.setProperties(properties);
+        JsonSchema commands = described(JsonSchema.ofType("array"),
+                "Slash commands this plugin contributes, which a host deploys without importing it.");
+        commands.setItems(command);
+        return commands;
+    }
+
+    private static JsonSchema config() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("defaults", described(JsonSchema.ofType("object"),
+                "Every setting this plugin has, and what it is worth until a home changes it."));
+        JsonSchema config = described(JsonSchema.ofType("object"), "This plugin's settings as it ships them.");
+        config.setRequired(Arrays.asList("defaults"));
+        config.setProperties(properties);
+        return config;
     }
 
     private static JsonSchema lifecycle() {

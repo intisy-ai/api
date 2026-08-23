@@ -49,6 +49,14 @@ public interface PluginManifest {
     @TsOptional
     ManifestServices services();
 
+    /** Slash commands this plugin contributes, which a host deploys without importing it. */
+    @TsOptional
+    List<ManifestCommand> commands();
+
+    /** This plugin's settings as it ships them. */
+    @TsOptional
+    ManifestConfig config();
+
     /** Declared permissions, surfaced at install and in dashboards. Not sandbox-enforced. */
     @TsOptional
     List<String> permissions();

@@ -16717,16 +16717,18 @@ igiae_ManifestSchema_get = () => {
     igiae_JsonSchema_setFix($capabilities, $rt_s(410));
     $properties.$put($rt_s(17), $capabilities);
     $properties.$put($rt_s(296), igiae_ManifestSchema_services());
-    $permissions = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(411));
+    $properties.$put($rt_s(411), igiae_ManifestSchema_commands());
+    $properties.$put($rt_s(412), igiae_ManifestSchema_config());
+    $permissions = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(413));
     igiae_JsonSchema_setItems($permissions, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(18), $permissions);
-    $properties.$put($rt_s(412), igiae_ManifestSchema_lifecycle());
-    $properties.$put($rt_s(413), igiae_ManifestSchema_publish());
-    $properties.$put($rt_s(414), igiae_ManifestSchema_repo());
-    $root = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(415));
-    igiae_JsonSchema_setSchemaDraft($root, $rt_s(416));
-    igiae_JsonSchema_setSchemaId($root, $rt_s(417));
-    igiae_JsonSchema_setTitle($root, $rt_s(418));
+    $properties.$put($rt_s(414), igiae_ManifestSchema_lifecycle());
+    $properties.$put($rt_s(415), igiae_ManifestSchema_publish());
+    $properties.$put($rt_s(416), igiae_ManifestSchema_repo());
+    $root = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(417));
+    igiae_JsonSchema_setSchemaDraft($root, $rt_s(418));
+    igiae_JsonSchema_setSchemaId($root, $rt_s(419));
+    igiae_JsonSchema_setTitle($root, $rt_s(420));
     igiae_JsonSchema_setRequired($root, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(16), $rt_s(12)])));
     igiae_JsonSchema_setProperties($root, $properties);
     return $root;
@@ -16734,44 +16736,70 @@ igiae_ManifestSchema_get = () => {
 let igiae_ManifestSchema_services = () => {
     let $properties, $provides, $consumes, $services;
     $properties = ju_LinkedHashMap__init_();
-    $provides = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(419));
+    $provides = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(421));
     igiae_JsonSchema_setItems($provides, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(297), $provides);
-    $consumes = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(420));
+    $consumes = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(422));
     igiae_JsonSchema_setItems($consumes, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(298), $consumes);
-    $services = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(421));
+    $services = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(423));
     igiae_JsonSchema_setProperties($services, $properties);
     return $services;
+},
+igiae_ManifestSchema_commands = () => {
+    let $properties, $command, $commands;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(424), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(425)));
+    $properties.$put($rt_s(277), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(426)));
+    $properties.$put($rt_s(427), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(428)));
+    $properties.$put($rt_s(429), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(430)));
+    $properties.$put($rt_s(431), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(432)));
+    $command = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(433));
+    igiae_JsonSchema_setRequired($command, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(424), $rt_s(277)])));
+    igiae_JsonSchema_setProperties($command, $properties);
+    $commands = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(434));
+    igiae_JsonSchema_setItems($commands, $command);
+    return $commands;
+},
+igiae_ManifestSchema_config = () => {
+    let $properties, $config, var$3;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(435), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(436)));
+    $config = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(437));
+    var$3 = $rt_createArray(jl_String, 1);
+    var$3.data[0] = $rt_s(435);
+    igiae_JsonSchema_setRequired($config, ju_Arrays_asList(var$3));
+    igiae_JsonSchema_setProperties($config, $properties);
+    return $config;
 },
 igiae_ManifestSchema_lifecycle = () => {
     let $properties, $lifecycle;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(422), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(423)));
-    $properties.$put($rt_s(424), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(425)));
-    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(426));
+    $properties.$put($rt_s(438), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(439)));
+    $properties.$put($rt_s(440), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(441)));
+    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(442));
     igiae_JsonSchema_setProperties($lifecycle, $properties);
     return $lifecycle;
 },
 igiae_ManifestSchema_publish = () => {
     let $properties, $publish;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(427), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(428)));
-    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(429));
+    $properties.$put($rt_s(443), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(444)));
+    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(445));
     igiae_JsonSchema_setProperties($publish, $properties);
     return $publish;
 },
 igiae_ManifestSchema_repo = () => {
     let $properties, $domains, $repo;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(430), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(431)));
-    $properties.$put($rt_s(432), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(433)));
-    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(434));
+    $properties.$put($rt_s(446), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(447)));
+    $properties.$put($rt_s(448), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(449)));
+    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(450));
     igiae_JsonSchema_setItems($domains, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(435), $domains);
-    $properties.$put($rt_s(436), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(437)));
-    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(438));
-    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(430), $rt_s(432), $rt_s(436)])));
+    $properties.$put($rt_s(451), $domains);
+    $properties.$put($rt_s(452), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(453)));
+    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(454));
+    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(446), $rt_s(448), $rt_s(452)])));
     igiae_JsonSchema_setProperties($repo, $properties);
     return $repo;
 },
@@ -17377,8 +17405,9 @@ $rt_stringPool(["String is null", "String is empty", "String contains invalid di
 ", this host has api ", "update the app to a version that implements api ", " or later", "capabilities declared but never provided: ", "call ctx.provide(\"", "\", ...) in activate, or remove it from \"capabilities\" in plugin.json", "capabilities provided but never declared: ", "add \"", "\" to \"capabilities\" in plugin.json", "a late provision of capability", "capability", "provided capability \"", "\" twice", "call ctx.provide once per capability in activate", "ignored ", ", which is no longer running", "a late subscription to topic",
 "a late want of service", "a late watch of service", "a late registration of service", "DotAll", "decomposed Hangul syllable:", " (fix: ", ")", "WordBoundary", "array", "integer", "required field \"", "\" is missing", "\" to ", "field", "\" does not match ", "make ", " match ", "\" is not one of ", "set ", " to one of ", "expected a value >= ", ", got ", " to a value >= ", "expected ", " to a ", "<SOL>", "<Unix MultiLine $>", "Name capturing group should start with letter", "Is", "In", "Pointer at the published manifest schema, for an editor\'s completion and validation.",
 "The plugin\'s permanent identity, matching its repository name.", "^[a-z0-9]+(-[a-z0-9]+)*$", "use lowercase words joined by single hyphens, for example \"config-ledger\"", "The lowest API major version this plugin needs. A floor, not a build tag.", "set \"api\" to the lowest API major version this plugin needs, for example 1", "The built module a host imports. Required once capabilities are declared.", "point \"entry\" at the built module a host imports, for example \"dist/index.js\"", "displayName", "The name a surface shows instead of the id.",
-"icon", "Path to a square-viewBox SVG mark, relative to the repo root.", "Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "The single machine-readable description of a repo in the intisy-ai ecosystem.", "http://json-schema.org/draft-07/schema#", "https://intisy-ai.github.io/api/schema/plugin.schema.json", "intisy-ai plugin manifest",
-"Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.", "install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.",
+"icon", "Path to a square-viewBox SVG mark, relative to the repo root.", "Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "commands", "config", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "The single machine-readable description of a repo in the intisy-ai ecosystem.", "http://json-schema.org/draft-07/schema#", "https://intisy-ai.github.io/api/schema/plugin.schema.json", "intisy-ai plugin manifest",
+"Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.", "name", "The command\'s name, which is also the file it is written to.", "What a command picker shows beside the name.", "argumentHint", "The argument shape a picker hints at, such as \"list | get <key>\".", "body", "Markdown the model is shown, after any shell output.", "shell", "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.",
+"One slash command this plugin contributes.", "Slash commands this plugin contributes, which a host deploys without importing it.", "defaults", "Every setting this plugin has, and what it is worth until a home changes it.", "This plugin\'s settings as it ships them.", "install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.",
 "How the repo is published to npm.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.", "Domain topics, for example claude or gemini.", "domains", "tech", "The primary tech topic, typescript or java.", "Repository metadata: the GitHub description and topic set are derived from it."]);
 jl_String.prototype.toString = function() {
     return $rt_ustr(this);
