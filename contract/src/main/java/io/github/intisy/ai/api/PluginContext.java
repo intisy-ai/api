@@ -33,6 +33,25 @@ public interface PluginContext {
     <T> CapabilityType<T> capability(String id);
 
     /**
+     * The typed key for a service id, so a plugin can reach another's API, or offer its own, without
+     * linking the library that mints the id.
+     *
+     * @implNote The counterpart of {@link #capability(String)} for the ids a manifest states under
+     * {@code services}. Without it a plugin would have to write the key literal itself, which is the
+     * plugin minting vocabulary rather than naming an id it already declares.
+     */
+    <T> ServiceType<T> service(String id);
+
+    /**
+     * The typed key for an event topic, so a plugin can publish or subscribe without linking the
+     * library that names the topic.
+     *
+     * @implNote Same reason as {@link #service(String)}: a topic is an id, and a plugin that had to
+     * build the key by hand would be minting the vocabulary instead of naming it.
+     */
+    <T> TopicType<T> topic(String id);
+
+    /**
      * Every app home the host knows about, whether or not each exists on disk.
      *
      * @implNote Asked rather than held, because a home can appear, and can be installed, while a

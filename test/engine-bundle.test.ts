@@ -312,10 +312,19 @@ it("assembles the context object with exactly these keys, pinning it against Con
     "manifest",
     "paths",
     "provide",
+    "service",
     "services",
+    "topic",
   ]);
   expect(Object.keys(context.services).sort()).toEqual(["get", "ids", "register", "want", "watch"]);
   expect(Object.keys(context.events).sort()).toEqual(["publish", "subscribe"]);
+});
+
+it("mints a service and a topic key from an id alone, the same shape as a capability key", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const context = host.contextFor(SCREENS, runtime());
+  expect(context.service("plugin-management")).toEqual({ id: "plugin-management" });
+  expect(context.topic("config.changed")).toEqual({ id: "config.changed" });
 });
 
 it("mints a capability key from an id alone, and provide accepts the key it minted", () => {

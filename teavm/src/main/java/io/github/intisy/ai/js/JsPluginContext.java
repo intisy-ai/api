@@ -163,7 +163,19 @@ final class JsPluginContext implements JSObject {
         IdFn capability = new IdFn() {
             @Override
             public JSObject call(String id) {
-                return capabilityKey(id);
+                return typedKey(id);
+            }
+        };
+        IdFn service = new IdFn() {
+            @Override
+            public JSObject call(String id) {
+                return typedKey(id);
+            }
+        };
+        IdFn topic = new IdFn() {
+            @Override
+            public JSObject call(String id) {
+                return typedKey(id);
             }
         };
         final JsRuntime.Homes registry = runtime.getHomes();
@@ -175,17 +187,18 @@ final class JsPluginContext implements JSObject {
         };
 
         return assemble(manifest, hostDescriptor, runtime.getConfig(), runtime.getLog(), runtime.getPaths(),
-                servicesObj, eventsObj, provide, capability, homes);
+                servicesObj, eventsObj, provide, capability, service, topic, homes);
     }
 
     /**
-     * The typed key for a capability id.
+     * The typed key for a capability, service or topic id.
      *
      * @implNote The id alone is the whole key at run time; the phantom type the contract declares
-     * exists only in the type system, so there is nothing else to carry.
+     * exists only in the type system, so there is nothing else to carry, and the three key types are
+     * therefore one shape rather than three.
      */
     @JSBody(params = "id", script = "return { id: String(id) };")
-    private static native JSObject capabilityKey(String id);
+    private static native JSObject typedKey(String id);
 
     /**
      * Every home the host's registry knows, or none where it supplied no registry.
@@ -232,9 +245,11 @@ final class JsPluginContext implements JSObject {
     private static native JSObject eventsObject(PublishFn publish, SubscribeFn subscribe);
 
     @JSBody(params = {"manifest", "host", "config", "log", "paths", "services", "events", "provide", "capability",
-            "homes"}, script =
+            "service", "topic", "homes"}, script =
             "return { manifest: manifest, host: host, config: config, log: log, paths: paths, services: services, "
-            + "events: events, provide: provide, capability: capability, homes: homes };")
+            + "events: events, provide: provide, capability: capability, service: service, topic: topic, "
+            + "homes: homes };")
     private static native JsPluginContext assemble(JSObject manifest, JSObject host, JSObject config, JSObject log,
-            JSObject paths, JSObject services, JSObject events, ProvideFn provide, IdFn capability, IdsFn homes);
+            JSObject paths, JSObject services, JSObject events, ProvideFn provide, IdFn capability, IdFn service,
+            IdFn topic, IdsFn homes);
 }

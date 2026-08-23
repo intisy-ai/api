@@ -83,8 +83,27 @@ export interface PluginContext {
    * payload compile through the string side.
    */
   provide<T>(type: CapabilityType<T>, implementation: T): void;
+  /**
+   * The typed key for a service id, so a plugin can reach another's API, or offer its own, without
+   * linking the library that mints the id.
+   *
+   * @remarks
+   * The counterpart of `capability(String)` for the ids a manifest states under
+   * `services`. Without it a plugin would have to write the key literal itself, which is the
+   * plugin minting vocabulary rather than naming an id it already declares.
+   */
+  service<T>(id: string): ServiceType<T>;
   /** How this plugin reaches another plugin's API, and offers its own. */
   readonly services: Services;
+  /**
+   * The typed key for an event topic, so a plugin can publish or subscribe without linking the
+   * library that names the topic.
+   *
+   * @remarks
+   * Same reason as `service(String)`: a topic is an id, and a plugin that had to
+   * build the key by hand would be minting the vocabulary instead of naming it.
+   */
+  topic<T>(id: string): TopicType<T>;
 }
 
 /**
