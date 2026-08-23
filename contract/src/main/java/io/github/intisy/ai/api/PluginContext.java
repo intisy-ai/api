@@ -40,4 +40,12 @@ public interface PluginContext {
     /** This plugin's own manifest, as the host validated it. */
     @TsProperty(readOnly = true)
     PluginManifest manifest();
+
+    /** How this plugin reaches another plugin's API, and offers its own. */
+    @TsProperty(readOnly = true)
+    Services services();
+
+    /** How this plugin says something happened, and hears that something did. */
+    @TsProperty(readOnly = true)
+    Events events();
 }

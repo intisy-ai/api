@@ -344,3 +344,39 @@ it("serves the published manifest schema the generator writes", () => {
   expect(schema.required).toEqual(["id", "api"]);
   expect(Object.keys(schema.properties)).toContain("capabilities");
 });
+
+// The contract DECLARES services and events on the context; these assert the engine actually
+// builds them in that shape. A type-level check cannot see this drift, and the first attempt at
+// the declaration got both listener shapes wrong (an object where the engine hands a function).
+it("builds a services handle with everything the contract declares on it", async () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const context = host.contextFor(SCREENS, runtime());
+  const store = { open: () => {} };
+
+  expect(context.services.get("config-ledger:store")).toBeUndefined();
+  const stop = context.services.register("config-ledger:store", store);
+  expect(context.services.get("config-ledger:store")).toBe(store);
+  expect(context.services.ids()).toContain("config-ledger:store");
+  await expect(context.services.want("config-ledger:store")).resolves.toBe(store);
+
+  const seen: string[] = [];
+  context.services.watch("config-ledger:store", (_service: unknown, event: string) => seen.push(event));
+  stop();
+  expect(seen).toEqual(["unregister"]);
+  expect(context.services.get("config-ledger:store")).toBeUndefined();
+});
+
+it("builds an events handle whose subscribe hands back a plain unsubscribe function", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const context = host.contextFor(SCREENS, runtime());
+
+  const heard: unknown[] = [];
+  const stop = context.events.subscribe("plugin.installed", (payload: unknown) => heard.push(payload));
+  expect(typeof stop).toBe("function");
+  context.events.publish("plugin.installed", { id: "widget" });
+  expect(heard).toEqual([{ id: "widget" }]);
+
+  stop();
+  context.events.publish("plugin.installed", { id: "second" });
+  expect(heard).toHaveLength(1);
+});

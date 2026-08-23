@@ -25,6 +25,8 @@ export interface CapabilityType<T> {
 export interface PluginContext {
   /** This plugin's resolved configuration. */
   readonly config: PluginConfig;
+  /** How this plugin says something happened, and hears that something did. */
+  readonly events: Events;
   /** What this plugin may know about the host. */
   readonly host: HostDescriptor;
   /** This plugin's logger. */
@@ -41,6 +43,53 @@ export interface PluginContext {
    * payload compile through the string side.
    */
   provide<T>(type: CapabilityType<T>, implementation: T): void;
+  /** How this plugin reaches another plugin's API, and offers its own. */
+  readonly services: Services;
+}
+
+/**
+ * How a plugin reaches another plugin's API, and offers its own.
+ *
+ * @remarks
+ * A typed handle, never an import: the plugin answering is whichever one registered the
+ * id, so no plugin ever names another. This is what makes a plugin terminal, and it is the reason
+ * a host needs no import of anything it drives.
+ */
+export interface Services {
+  /** What is registered under this id right now, or absent when nothing is. */
+  get<T>(type: ServiceType<T>): T | undefined;
+  /** Every service id registered right now. */
+  ids(): string[];
+  /** Offers an implementation under this id, until the returned function is called. */
+  register<T>(type: ServiceType<T>, implementation: T): () => void;
+  /** Waits for the id to be registered, for a host default the implementation chooses. */
+  want<T>(type: ServiceType<T>): Promise<T>;
+  /** Waits for the id to be registered, giving up after the stated time. */
+  want<T>(type: ServiceType<T>, options: WantOptions): Promise<T>;
+  /**
+   * Reports every registration and removal of this id until the returned function is called. The
+   * listener is handed the service and either "register" or "unregister"; on the latter the
+   * service is absent.
+   *
+   * @remarks
+   * Distinct from `want`, which answers once: a service can be replaced while a
+   * consumer is still holding the old one, and only a watcher sees that.
+   */
+  watch<T>(type: ServiceType<T>, listener: ((a: T, b: string) => void)): () => void;
+}
+
+/**
+ * How a plugin says something happened, and hears that something did.
+ *
+ * @remarks
+ * A topic is paired with its payload in the type system, so a publisher and a subscriber
+ * cannot disagree about the shape without the compiler saying so.
+ */
+export interface Events {
+  /** Says a topic carried this payload, to whoever is listening and to nobody in particular. */
+  publish<T>(topic: TopicType<T>, payload: T): void;
+  /** Hears this topic until the returned function is called. */
+  subscribe<T>(topic: TopicType<T>, listener: ((value: T) => void)): () => void;
 }
 
 /**
@@ -199,6 +248,12 @@ export interface TopicType<T> {
   readonly __phantom?: T;
   /** The id itself, which is what crosses the boundary at run time. */
   readonly id: string;
+}
+
+/** How long a plugin is willing to wait for a service that is not registered yet. */
+export interface WantOptions {
+  /** Milliseconds to wait before giving up. Absent takes the host's own default. */
+  timeoutMs?: number;
 }
 
 /** How the repo is published to npm. */

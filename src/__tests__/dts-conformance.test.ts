@@ -33,3 +33,15 @@ it("rejects assigning one capability key to a differently parameterised one", ()
   expect(result.ok).toBe(false);
   expect(result.output).toContain("TS2322");
 });
+
+it("rejects publishing a payload the topic does not carry", () => {
+  const result = check("negative-wrong-payload.ts");
+  expect(result.ok).toBe(false);
+  expect(result.output).toContain("TS2353");
+});
+
+it("rejects registering a service that does not match its id", () => {
+  const result = check("negative-wrong-service.ts");
+  expect(result.ok).toBe(false);
+  expect(result.output).toContain("TS2353");
+});
