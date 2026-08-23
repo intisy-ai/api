@@ -6325,12 +6325,12 @@ jl_Class_getComponentType = $this => {
 };
 function ju_BitSet() {
     let a = this; jl_Object.call(a);
-    a.$data = null;
+    a.$data0 = null;
     a.$length0 = 0;
 }
 let ju_BitSet__init_0 = $this => {
     jl_Object__init_($this);
-    $this.$data = $rt_createIntArray(2);
+    $this.$data0 = $rt_createIntArray(2);
 },
 ju_BitSet__init_1 = () => {
     let var_0 = new ju_BitSet();
@@ -6341,7 +6341,7 @@ ju_BitSet__init_ = ($this, $nbits) => {
     jl_Object__init_($this);
     if ($nbits < 0)
         $rt_throw(jl_NegativeArraySizeException__init_0());
-    $this.$data = $rt_createIntArray((($nbits + 32 | 0) - 1 | 0) / 32 | 0);
+    $this.$data0 = $rt_createIntArray((($nbits + 32 | 0) - 1 | 0) / 32 | 0);
 },
 ju_BitSet__init_2 = var_0 => {
     let var_1 = new ju_BitSet();
@@ -6357,7 +6357,7 @@ ju_BitSet_set = ($this, $bitIndex) => {
         ju_BitSet_ensureCapacity($this, $index + 1 | 0);
         $this.$length0 = $bitIndex + 1 | 0;
     }
-    var$3 = $this.$data.data;
+    var$3 = $this.$data0.data;
     var$3[$index] = var$3[$index] | 1 << ($bitIndex % 32 | 0);
 },
 ju_BitSet_set0 = ($this, $fromIndex, $toIndex) => {
@@ -6374,18 +6374,18 @@ ju_BitSet_set0 = ($this, $fromIndex, $toIndex) => {
                 $this.$length0 = $toIndex;
             }
             if ($fromDataIndex == $toDataIndex) {
-                var$6 = $this.$data.data;
+                var$6 = $this.$data0.data;
                 var$6[$fromDataIndex] = var$6[$fromDataIndex] | ju_BitSet_trailingZeroBits($this, $fromIndex) & ju_BitSet_trailingOneBits($this, $toIndex);
             } else {
-                var$6 = $this.$data.data;
+                var$6 = $this.$data0.data;
                 var$6[$fromDataIndex] = var$6[$fromDataIndex] | ju_BitSet_trailingZeroBits($this, $fromIndex);
                 $i = $fromDataIndex + 1 | 0;
                 while ($i < $toDataIndex) {
-                    $this.$data.data[$i] = (-1);
+                    $this.$data0.data[$i] = (-1);
                     $i = $i + 1 | 0;
                 }
                 if ($toIndex & 31) {
-                    var$6 = $this.$data.data;
+                    var$6 = $this.$data0.data;
                     var$6[$toDataIndex] = var$6[$toDataIndex] | ju_BitSet_trailingOneBits($this, $toIndex);
                 }
             }
@@ -6409,8 +6409,8 @@ ju_BitSet_clear0 = ($this, $bitIndex) => {
     if ($bitIndex < 0)
         $rt_throw(jl_IndexOutOfBoundsException__init_());
     $index = $bitIndex / 32 | 0;
-    if ($index < $this.$data.data.length) {
-        var$3 = $this.$data.data;
+    if ($index < $this.$data0.data.length) {
+        var$3 = $this.$data0.data;
         var$3[$index] = var$3[$index] & jl_Integer_rotateLeft((-2), $bitIndex % 32 | 0);
         if ($bitIndex == ($this.$length0 - 1 | 0))
             ju_BitSet_recalculateLength($this);
@@ -6427,18 +6427,18 @@ ju_BitSet_clear = ($this, $fromIndex, $toIndex) => {
         $fromDataIndex = $fromIndex / 32 | 0;
         $toDataIndex = var$3 / 32 | 0;
         if ($fromDataIndex == $toDataIndex) {
-            var$6 = $this.$data.data;
+            var$6 = $this.$data0.data;
             var$6[$fromDataIndex] = var$6[$fromDataIndex] & (ju_BitSet_trailingOneBits($this, $fromIndex) | ju_BitSet_trailingZeroBits($this, var$3));
         } else {
-            var$6 = $this.$data.data;
+            var$6 = $this.$data0.data;
             var$6[$fromDataIndex] = var$6[$fromDataIndex] & ju_BitSet_trailingOneBits($this, $fromIndex);
             $i = $fromDataIndex + 1 | 0;
             while ($i < $toDataIndex) {
-                $this.$data.data[$i] = 0;
+                $this.$data0.data[$i] = 0;
                 $i = $i + 1 | 0;
             }
             if (var$3 & 31) {
-                var$6 = $this.$data.data;
+                var$6 = $this.$data0.data;
                 var$6[$toDataIndex] = var$6[$toDataIndex] & ju_BitSet_trailingZeroBits($this, var$3);
             }
         }
@@ -6452,7 +6452,7 @@ ju_BitSet_get = ($this, $bitIndex) => {
     if ($bitIndex < 0)
         $rt_throw(jl_IndexOutOfBoundsException__init_());
     $index = $bitIndex / 32 | 0;
-    return $index < $this.$data.data.length && $this.$data.data[$index] & 1 << ($bitIndex % 32 | 0) ? 1 : 0;
+    return $index < $this.$data0.data.length && $this.$data0.data[$index] & 1 << ($bitIndex % 32 | 0) ? 1 : 0;
 },
 ju_BitSet_nextSetBit = ($this, $fromIndex) => {
     let $index, $val, var$4, $top, $i;
@@ -6461,15 +6461,15 @@ ju_BitSet_nextSetBit = ($this, $fromIndex) => {
     if ($fromIndex >= $this.$length0)
         return (-1);
     $index = $fromIndex / 32 | 0;
-    $val = $this.$data.data[$index];
+    $val = $this.$data0.data[$index];
     var$4 = $val >>> ($fromIndex % 32 | 0) | 0;
     if (var$4)
         return jl_Integer_numberOfTrailingZeros(var$4) + $fromIndex | 0;
     $top = ($this.$length0 + 31 | 0) / 32 | 0;
     $i = $index + 1 | 0;
     while ($i < $top) {
-        if ($this.$data.data[$i])
-            return ($i * 32 | 0) + jl_Integer_numberOfTrailingZeros($this.$data.data[$i]) | 0;
+        if ($this.$data0.data[$i])
+            return ($i * 32 | 0) + jl_Integer_numberOfTrailingZeros($this.$data0.data[$i]) | 0;
         $i = $i + 1 | 0;
     }
     return (-1);
@@ -6481,25 +6481,25 @@ ju_BitSet_nextClearBit = ($this, $fromIndex) => {
     if ($fromIndex >= $this.$length0)
         return $fromIndex;
     $index = $fromIndex / 32 | 0;
-    $val = $this.$data.data[$index] ^ (-1);
+    $val = $this.$data0.data[$index] ^ (-1);
     var$4 = $val >>> ($fromIndex % 32 | 0) | 0;
     if (var$4)
         return jl_Integer_numberOfTrailingZeros(var$4) + $fromIndex | 0;
     $top = ($this.$length0 + 31 | 0) / 32 | 0;
     $i = $index + 1 | 0;
     while ($i < $top) {
-        if ($this.$data.data[$i] != (-1))
-            return ($i * 32 | 0) + jl_Integer_numberOfTrailingZeros($this.$data.data[$i] ^ (-1)) | 0;
+        if ($this.$data0.data[$i] != (-1))
+            return ($i * 32 | 0) + jl_Integer_numberOfTrailingZeros($this.$data0.data[$i] ^ (-1)) | 0;
         $i = $i + 1 | 0;
     }
     return $this.$length0;
 },
 ju_BitSet_ensureCapacity = ($this, $capacity) => {
     let $newArrayLength;
-    if ($this.$data.data.length >= $capacity)
+    if ($this.$data0.data.length >= $capacity)
         return;
-    $newArrayLength = jl_Math_max(($capacity * 3 | 0) / 2 | 0, ($this.$data.data.length * 2 | 0) + 1 | 0);
-    $this.$data = ju_Arrays_copyOf2($this.$data, $newArrayLength);
+    $newArrayLength = jl_Math_max(($capacity * 3 | 0) / 2 | 0, ($this.$data0.data.length * 2 | 0) + 1 | 0);
+    $this.$data0 = ju_Arrays_copyOf2($this.$data0, $newArrayLength);
 },
 ju_BitSet_recalculateLength = $this => {
     let $top, $i, $sz;
@@ -6510,7 +6510,7 @@ ju_BitSet_recalculateLength = $this => {
         while (true) {
             if ($i < 0)
                 break a;
-            $sz = jl_Integer_numberOfLeadingZeros($this.$data.data[$i]);
+            $sz = jl_Integer_numberOfLeadingZeros($this.$data0.data[$i]);
             if ($sz < 32)
                 break;
             $i = $i + (-1) | 0;
@@ -6521,10 +6521,10 @@ ju_BitSet_recalculateLength = $this => {
 },
 ju_BitSet_intersects = ($this, $set) => {
     let $sz, $i;
-    $sz = jl_Math_min($this.$data.data.length, $set.$data.data.length);
+    $sz = jl_Math_min($this.$data0.data.length, $set.$data0.data.length);
     $i = 0;
     while ($i < $sz) {
-        if ($this.$data.data[$i] & $set.$data.data[$i])
+        if ($this.$data0.data[$i] & $set.$data0.data[$i])
             return 1;
         $i = $i + 1 | 0;
     }
@@ -6532,15 +6532,15 @@ ju_BitSet_intersects = ($this, $set) => {
 },
 ju_BitSet_and = ($this, $set) => {
     let $i, $i_0, var$4;
-    $i = jl_Math_min($this.$data.data.length, $set.$data.data.length);
+    $i = jl_Math_min($this.$data0.data.length, $set.$data0.data.length);
     $i_0 = 0;
     while ($i_0 < $i) {
-        var$4 = $this.$data.data;
-        var$4[$i_0] = var$4[$i_0] & $set.$data.data[$i_0];
+        var$4 = $this.$data0.data;
+        var$4[$i_0] = var$4[$i_0] & $set.$data0.data[$i_0];
         $i_0 = $i_0 + 1 | 0;
     }
-    while ($i < $this.$data.data.length) {
-        $this.$data.data[$i] = 0;
+    while ($i < $this.$data0.data.length) {
+        $this.$data0.data[$i] = 0;
         $i = $i + 1 | 0;
     }
     $this.$length0 = jl_Math_min($this.$length0, $set.$length0);
@@ -6548,11 +6548,11 @@ ju_BitSet_and = ($this, $set) => {
 },
 ju_BitSet_andNot = ($this, $set) => {
     let $sz, $i, var$4;
-    $sz = jl_Math_min($this.$data.data.length, $set.$data.data.length);
+    $sz = jl_Math_min($this.$data0.data.length, $set.$data0.data.length);
     $i = 0;
     while ($i < $sz) {
-        var$4 = $this.$data.data;
-        var$4[$i] = var$4[$i] & ($set.$data.data[$i] ^ (-1));
+        var$4 = $this.$data0.data;
+        var$4[$i] = var$4[$i] & ($set.$data0.data[$i] ^ (-1));
         $i = $i + 1 | 0;
     }
     ju_BitSet_recalculateLength($this);
@@ -6561,11 +6561,11 @@ ju_BitSet_or = ($this, $set) => {
     let $sz, $i, var$4;
     $this.$length0 = jl_Math_max($this.$length0, $set.$length0);
     ju_BitSet_ensureCapacity($this, ($this.$length0 + 31 | 0) / 32 | 0);
-    $sz = jl_Math_min($this.$data.data.length, $set.$data.data.length);
+    $sz = jl_Math_min($this.$data0.data.length, $set.$data0.data.length);
     $i = 0;
     while ($i < $sz) {
-        var$4 = $this.$data.data;
-        var$4[$i] = var$4[$i] | $set.$data.data[$i];
+        var$4 = $this.$data0.data;
+        var$4[$i] = var$4[$i] | $set.$data0.data[$i];
         $i = $i + 1 | 0;
     }
 },
@@ -6573,11 +6573,11 @@ ju_BitSet_xor = ($this, $set) => {
     let $sz, $i, var$4;
     $this.$length0 = jl_Math_max($this.$length0, $set.$length0);
     ju_BitSet_ensureCapacity($this, ($this.$length0 + 31 | 0) / 32 | 0);
-    $sz = jl_Math_min($this.$data.data.length, $set.$data.data.length);
+    $sz = jl_Math_min($this.$data0.data.length, $set.$data0.data.length);
     $i = 0;
     while ($i < $sz) {
-        var$4 = $this.$data.data;
-        var$4[$i] = var$4[$i] ^ $set.$data.data[$i];
+        var$4 = $this.$data0.data;
+        var$4[$i] = var$4[$i] ^ $set.$data0.data[$i];
         $i = $i + 1 | 0;
     }
     ju_BitSet_recalculateLength($this);
@@ -7573,7 +7573,7 @@ jl_Character_getType = $codePoint => {
             $l = $i + 1 | 0;
         else {
             if ($codePoint >= $range.$start2)
-                return $range.$data0.data[$codePoint - $range.$start2 | 0];
+                return $range.$data1.data[$codePoint - $range.$start2 | 0];
             $u = $i - 1 | 0;
         }
     }
@@ -10895,13 +10895,13 @@ function otciu_UnicodeHelper$Range() {
     let a = this; jl_Object.call(a);
     a.$start2 = 0;
     a.$end1 = 0;
-    a.$data0 = null;
+    a.$data1 = null;
 }
 let otciu_UnicodeHelper$Range__init_ = ($this, $start, $end, $data) => {
     jl_Object__init_($this);
     $this.$start2 = $start;
     $this.$end1 = $end;
-    $this.$data0 = $data;
+    $this.$data1 = $data;
 },
 otciu_UnicodeHelper$Range__init_0 = (var_0, var_1, var_2) => {
     let var_3 = new otciu_UnicodeHelper$Range();
@@ -16763,16 +16763,17 @@ igiae_ManifestSchema_get = () => {
     $properties.$put($rt_s(296), igiae_ManifestSchema_services());
     $properties.$put($rt_s(411), igiae_ManifestSchema_commands());
     $properties.$put($rt_s(412), igiae_ManifestSchema_config());
-    $permissions = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(413));
+    $properties.$put($rt_s(413), igiae_ManifestSchema_data());
+    $permissions = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(414));
     igiae_JsonSchema_setItems($permissions, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(18), $permissions);
-    $properties.$put($rt_s(414), igiae_ManifestSchema_lifecycle());
-    $properties.$put($rt_s(415), igiae_ManifestSchema_publish());
-    $properties.$put($rt_s(416), igiae_ManifestSchema_repo());
-    $root = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(417));
-    igiae_JsonSchema_setSchemaDraft($root, $rt_s(418));
-    igiae_JsonSchema_setSchemaId($root, $rt_s(419));
-    igiae_JsonSchema_setTitle($root, $rt_s(420));
+    $properties.$put($rt_s(415), igiae_ManifestSchema_lifecycle());
+    $properties.$put($rt_s(416), igiae_ManifestSchema_publish());
+    $properties.$put($rt_s(417), igiae_ManifestSchema_repo());
+    $root = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(418));
+    igiae_JsonSchema_setSchemaDraft($root, $rt_s(419));
+    igiae_JsonSchema_setSchemaId($root, $rt_s(420));
+    igiae_JsonSchema_setTitle($root, $rt_s(421));
     igiae_JsonSchema_setRequired($root, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(16), $rt_s(12)])));
     igiae_JsonSchema_setProperties($root, $properties);
     return $root;
@@ -16780,38 +16781,51 @@ igiae_ManifestSchema_get = () => {
 let igiae_ManifestSchema_services = () => {
     let $properties, $provides, $consumes, $services;
     $properties = ju_LinkedHashMap__init_();
-    $provides = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(421));
+    $provides = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(422));
     igiae_JsonSchema_setItems($provides, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(297), $provides);
-    $consumes = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(422));
+    $consumes = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(423));
     igiae_JsonSchema_setItems($consumes, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(298), $consumes);
-    $services = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(423));
+    $services = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(424));
     igiae_JsonSchema_setProperties($services, $properties);
     return $services;
 },
 igiae_ManifestSchema_commands = () => {
     let $properties, $command, $commands;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(424), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(425)));
-    $properties.$put($rt_s(277), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(426)));
-    $properties.$put($rt_s(427), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(428)));
-    $properties.$put($rt_s(429), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(430)));
-    $properties.$put($rt_s(431), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(432)));
-    $command = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(433));
-    igiae_JsonSchema_setRequired($command, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(424), $rt_s(277)])));
+    $properties.$put($rt_s(425), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(426)));
+    $properties.$put($rt_s(277), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(427)));
+    $properties.$put($rt_s(428), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(429)));
+    $properties.$put($rt_s(430), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(431)));
+    $properties.$put($rt_s(432), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(433)));
+    $command = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(434));
+    igiae_JsonSchema_setRequired($command, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(425), $rt_s(277)])));
     igiae_JsonSchema_setProperties($command, $properties);
-    $commands = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(434));
+    $commands = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(435));
     igiae_JsonSchema_setItems($commands, $command);
     return $commands;
+},
+igiae_ManifestSchema_data = () => {
+    let $paths, $properties, $data, var$4;
+    $paths = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(436));
+    igiae_JsonSchema_setItems($paths, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(437), $paths);
+    $data = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(438));
+    var$4 = $rt_createArray(jl_String, 1);
+    var$4.data[0] = $rt_s(437);
+    igiae_JsonSchema_setRequired($data, ju_Arrays_asList(var$4));
+    igiae_JsonSchema_setProperties($data, $properties);
+    return $data;
 },
 igiae_ManifestSchema_config = () => {
     let $properties, $config, var$3;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(435), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(436)));
-    $config = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(437));
+    $properties.$put($rt_s(439), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(440)));
+    $config = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(441));
     var$3 = $rt_createArray(jl_String, 1);
-    var$3.data[0] = $rt_s(435);
+    var$3.data[0] = $rt_s(439);
     igiae_JsonSchema_setRequired($config, ju_Arrays_asList(var$3));
     igiae_JsonSchema_setProperties($config, $properties);
     return $config;
@@ -16819,31 +16833,31 @@ igiae_ManifestSchema_config = () => {
 igiae_ManifestSchema_lifecycle = () => {
     let $properties, $lifecycle;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(438), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(439)));
-    $properties.$put($rt_s(440), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(441)));
-    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(442));
+    $properties.$put($rt_s(442), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(443)));
+    $properties.$put($rt_s(444), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(445)));
+    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(446));
     igiae_JsonSchema_setProperties($lifecycle, $properties);
     return $lifecycle;
 },
 igiae_ManifestSchema_publish = () => {
     let $properties, $publish;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(443), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(444)));
-    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(445));
+    $properties.$put($rt_s(447), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(448)));
+    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(449));
     igiae_JsonSchema_setProperties($publish, $properties);
     return $publish;
 },
 igiae_ManifestSchema_repo = () => {
     let $properties, $domains, $repo;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(446), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(447)));
-    $properties.$put($rt_s(448), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(449)));
-    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(450));
-    igiae_JsonSchema_setItems($domains, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(451), $domains);
+    $properties.$put($rt_s(450), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(451)));
     $properties.$put($rt_s(452), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(453)));
-    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(454));
-    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(446), $rt_s(448), $rt_s(452)])));
+    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(454));
+    igiae_JsonSchema_setItems($domains, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(455), $domains);
+    $properties.$put($rt_s(456), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(457)));
+    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(458));
+    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(450), $rt_s(452), $rt_s(456)])));
     igiae_JsonSchema_setProperties($repo, $properties);
     return $repo;
 },
@@ -17451,10 +17465,11 @@ $rt_stringPool(["String is null", "String is empty", "String contains invalid di
 ", this host has api ", "update the app to a version that implements api ", " or later", "capabilities declared but never provided: ", "call ctx.provide(\"", "\", ...) in activate, or remove it from \"capabilities\" in plugin.json", "capabilities provided but never declared: ", "add \"", "\" to \"capabilities\" in plugin.json", "a late provision of capability", "capability", "provided capability \"", "\" twice", "call ctx.provide once per capability in activate", "ignored ", ", which is no longer running", "a late subscription to topic",
 "a late want of service", "a late watch of service", "a late registration of service", "DotAll", "decomposed Hangul syllable:", " (fix: ", ")", "WordBoundary", "array", "integer", "required field \"", "\" is missing", "\" to ", "field", "\" does not match ", "make ", " match ", "\" is not one of ", "set ", " to one of ", "expected a value >= ", ", got ", " to a value >= ", "expected ", " to a ", "<SOL>", "<Unix MultiLine $>", "Name capturing group should start with letter", "Is", "In", "Pointer at the published manifest schema, for an editor\'s completion and validation.",
 "The plugin\'s permanent identity, matching its repository name.", "^[a-z0-9]+(-[a-z0-9]+)*$", "use lowercase words joined by single hyphens, for example \"config-ledger\"", "The lowest API major version this plugin needs. A floor, not a build tag.", "set \"api\" to the lowest API major version this plugin needs, for example 1", "The built module a host imports. Required once capabilities are declared.", "point \"entry\" at the built module a host imports, for example \"dist/index.js\"", "displayName", "The name a surface shows instead of the id.",
-"icon", "Path to a square-viewBox SVG mark, relative to the repo root.", "Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "commands", "config", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "The single machine-readable description of a repo in the intisy-ai ecosystem.", "http://json-schema.org/draft-07/schema#", "https://intisy-ai.github.io/api/schema/plugin.schema.json", "intisy-ai plugin manifest",
-"Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.", "name", "The command\'s name, which is also the file it is written to.", "What a command picker shows beside the name.", "argumentHint", "The argument shape a picker hints at, such as \"list | get <key>\".", "body", "Markdown the model is shown, after any shell output.", "shell", "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.",
-"One slash command this plugin contributes.", "Slash commands this plugin contributes, which a host deploys without importing it.", "defaults", "Every setting this plugin has, and what it is worth until a home changes it.", "This plugin\'s settings as it ships them.", "install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.",
-"How the repo is published to npm.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.", "Domain topics, for example claude or gemini.", "domains", "tech", "The primary tech topic, typescript or java.", "Repository metadata: the GitHub description and topic set are derived from it."]);
+"icon", "Path to a square-viewBox SVG mark, relative to the repo root.", "Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "commands", "config", "data", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "The single machine-readable description of a repo in the intisy-ai ecosystem.", "http://json-schema.org/draft-07/schema#", "https://intisy-ai.github.io/api/schema/plugin.schema.json",
+"intisy-ai plugin manifest", "Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.", "name", "The command\'s name, which is also the file it is written to.", "What a command picker shows beside the name.", "argumentHint", "The argument shape a picker hints at, such as \"list | get <key>\".", "body", "Markdown the model is shown, after any shell output.",
+"shell", "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.", "One slash command this plugin contributes.", "Slash commands this plugin contributes, which a host deploys without importing it.", "Paths this plugin writes to, relative to the home it runs in.", "paths", "Where this plugin keeps state that is not named after it.", "defaults", "Every setting this plugin has, and what it is worth until a home changes it.", "This plugin\'s settings as it ships them.", "install", "The entry exports install(ctx), run once after first deploy.",
+"repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.", "How the repo is published to npm.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.", "Domain topics, for example claude or gemini.", "domains",
+"tech", "The primary tech topic, typescript or java.", "Repository metadata: the GitHub description and topic set are derived from it."]);
 jl_String.prototype.toString = function() {
     return $rt_ustr(this);
 };

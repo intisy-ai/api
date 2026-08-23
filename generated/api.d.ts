@@ -236,6 +236,8 @@ export interface PluginManifest {
   commands?: ManifestCommand[];
   /** This plugin's settings as it ships them. */
   config?: ManifestConfig;
+  /** Where this plugin keeps state that is not named after it. */
+  data?: ManifestData;
   /** The name a surface shows instead of the id. */
   displayName?: string;
   /** The built module a host imports. Required once `capabilities` is non-empty. */
@@ -308,6 +310,19 @@ export interface Logger {
   info(message: string): void;
   /** Something unexpected that did not stop the operation. */
   warn(message: string): void;
+}
+
+/**
+ * Where a plugin keeps state that is not named after it.
+ *
+ * @remarks
+ * A surface finds most of what a plugin leaves behind by its id; this is the escape hatch
+ * for a plugin that writes elsewhere. Declared rather than asked for, because the surface that needs
+ * it most is an uninstall, where the plugin is on its way out and may not be running at all.
+ */
+export interface ManifestData {
+  /** Paths this plugin writes to, relative to the home it runs in. */
+  paths: string[];
 }
 
 /** A service id paired, in the type system, with the contract that id promises. */

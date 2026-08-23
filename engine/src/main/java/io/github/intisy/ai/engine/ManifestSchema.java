@@ -53,6 +53,7 @@ public final class ManifestSchema {
         properties.put("services", services());
         properties.put("commands", commands());
         properties.put("config", config());
+        properties.put("data", data());
 
         JsonSchema permissions = described(JsonSchema.ofType("array"), "Declared permissions, surfaced at install and in dashboards.");
         permissions.setItems(JsonSchema.ofType("string"));
@@ -102,6 +103,19 @@ public final class ManifestSchema {
                 "Slash commands this plugin contributes, which a host deploys without importing it.");
         commands.setItems(command);
         return commands;
+    }
+
+    private static JsonSchema data() {
+        JsonSchema paths = described(JsonSchema.ofType("array"),
+                "Paths this plugin writes to, relative to the home it runs in.");
+        paths.setItems(JsonSchema.ofType("string"));
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("paths", paths);
+        JsonSchema data = described(JsonSchema.ofType("object"),
+                "Where this plugin keeps state that is not named after it.");
+        data.setRequired(Arrays.asList("paths"));
+        data.setProperties(properties);
+        return data;
     }
 
     private static JsonSchema config() {

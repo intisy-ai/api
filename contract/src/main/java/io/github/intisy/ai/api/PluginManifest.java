@@ -57,6 +57,10 @@ public interface PluginManifest {
     @TsOptional
     ManifestConfig config();
 
+    /** Where this plugin keeps state that is not named after it. */
+    @TsOptional
+    ManifestData data();
+
     /** Declared permissions, surfaced at install and in dashboards. Not sandbox-enforced. */
     @TsOptional
     List<String> permissions();

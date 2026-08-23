@@ -109,6 +109,22 @@
         "defaults"
       ]
     },
+    "data": {
+      "description": "Where this plugin keeps state that is not named after it.",
+      "type": "object",
+      "properties": {
+        "paths": {
+          "description": "Paths this plugin writes to, relative to the home it runs in.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "paths"
+      ]
+    },
     "permissions": {
       "description": "Declared permissions, surfaced at install and in dashboards.",
       "type": "array",
