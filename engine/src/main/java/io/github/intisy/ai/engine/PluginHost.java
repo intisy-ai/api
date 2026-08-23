@@ -133,6 +133,17 @@ public final class PluginHost {
     }
 
     /**
+     * Offers a service the host itself implements, for every plugin to reach.
+     *
+     * @implNote How a plugin gets behaviour that belongs to a library it may not link: the host
+     * links it once and hands a typed handle over, rather than every plugin carrying its own copy.
+     * Owned by no plugin, so no quarantine takes it away.
+     */
+    public void provideService(String id, Object service) {
+        hub.hostService(id, service);
+    }
+
+    /**
      * Quarantines a plugin: its capabilities, services and subscriptions go, the host stays up.
      *
      * @implNote Its session is fenced too, so an activation that finishes after the host stopped

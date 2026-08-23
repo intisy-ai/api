@@ -43,6 +43,15 @@ public interface HostSurface {
     @TsNullable
     Object service(String id);
 
+    /**
+     * Offers a service the host itself implements, for every plugin to reach.
+     *
+     * @implNote How a plugin gets behaviour belonging to a library it may not link: the host links
+     * it once and hands over a typed handle, rather than every plugin carrying a private copy. Call
+     * it before starting plugins, so a plugin asking during activate finds it.
+     */
+    void provideService(String id, Object service);
+
     /** Quarantines a plugin, dropping its registrations and recording why. */
     void markBroken(String pluginId, PluginErrorShape error);
 

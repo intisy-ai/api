@@ -60,6 +60,15 @@ export interface HostSurface {
   readonly ledger: LedgerFacadeShape;
   /** Quarantines a plugin, dropping its registrations and recording why. */
   markBroken(pluginId: string, error: PluginErrorShape): void;
+  /**
+   * Offers a service the host itself implements, for every plugin to reach.
+   *
+   * @remarks
+   * How a plugin gets behaviour belonging to a library it may not link: the host links
+   * it once and hands over a typed handle, rather than every plugin carrying a private copy. Call
+   * it before starting plugins, so a plugin asking during activate finds it.
+   */
+  provideService(id: string, service: unknown): void;
   /** Drops a stopped plugin's registrations without marking it broken. */
   release(pluginId: string): void;
   /** The service registered under an id, or undefined when nothing is. */

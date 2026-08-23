@@ -1639,7 +1639,7 @@ igiaj_JsPluginHost_from = $tree => {
     return igiaj_JsPluginHost_build($host);
 },
 igiaj_JsPluginHost_build = $host => {
-    let var$2, var$3, var$4, $descriptor, $supports, $verifyActivation, $contextFor, $capability, $service, $markBroken, $release, $entries, $entry, $recordDeclared, $ledger;
+    let var$2, var$3, var$4, $descriptor, $supports, $verifyActivation, $contextFor, $capability, $service, $provideService, $markBroken, $release, $entries, $entry, $recordDeclared, $ledger;
     var$2 = igiae_PluginHost_getApp($host);
     var$3 = igiae_PluginHost_getApi($host);
     var$4 = igiaj_JsJson_fromStrings(igiae_PluginHost_getSurfaces($host));
@@ -1649,17 +1649,19 @@ igiaj_JsPluginHost_build = $host => {
     $contextFor = igiaj_JsPluginHost$3__init_0($host, $descriptor);
     $capability = igiaj_JsPluginHost$4__init_0($host);
     $service = igiaj_JsPluginHost$5__init_0($host);
-    $markBroken = igiaj_JsPluginHost$6__init_0($host);
-    $release = igiaj_JsPluginHost$7__init_0($host);
-    $entries = igiaj_JsPluginHost$8__init_0($host);
-    $entry = igiaj_JsPluginHost$9__init_0($host);
-    $recordDeclared = igiaj_JsPluginHost$10__init_0($host);
+    $provideService = igiaj_JsPluginHost$6__init_0($host);
+    $markBroken = igiaj_JsPluginHost$7__init_0($host);
+    $release = igiaj_JsPluginHost$8__init_0($host);
+    $entries = igiaj_JsPluginHost$9__init_0($host);
+    $entry = igiaj_JsPluginHost$10__init_0($host);
+    $recordDeclared = igiaj_JsPluginHost$11__init_0($host);
     $ledger = igiaj_JsPluginHost_ledgerObject$js_body$_17(otji_JS_function(otji_JSWrapper_unwrap($entries), "call"), otji_JS_function(otji_JSWrapper_unwrap($entry), "call"), otji_JS_function(otji_JSWrapper_unwrap($recordDeclared), "call"));
-    return igiaj_JsPluginHost_assemble$js_body$_20($descriptor, $ledger, otji_JS_function(otji_JSWrapper_unwrap($supports), "call"), otji_JS_function(otji_JSWrapper_unwrap($contextFor), "call"), otji_JS_function(otji_JSWrapper_unwrap($verifyActivation), "call"), otji_JS_function(otji_JSWrapper_unwrap($capability), "call"), otji_JS_function(otji_JSWrapper_unwrap($service), "call"), otji_JS_function(otji_JSWrapper_unwrap($markBroken), "call"), otji_JS_function(otji_JSWrapper_unwrap($release), "call"));
+    return igiaj_JsPluginHost_assemble$js_body$_20($descriptor, $ledger, otji_JS_function(otji_JSWrapper_unwrap($supports), "call"), otji_JS_function(otji_JSWrapper_unwrap($contextFor), "call"), otji_JS_function(otji_JSWrapper_unwrap($verifyActivation), "call"), otji_JS_function(otji_JSWrapper_unwrap($capability), "call"), otji_JS_function(otji_JSWrapper_unwrap($service), "call"), otji_JS_function(otji_JSWrapper_unwrap($provideService), "call"), otji_JS_function(otji_JSWrapper_unwrap($markBroken), "call"), otji_JS_function(otji_JSWrapper_unwrap($release),
+    "call"));
 },
 igiaj_JsPluginHost_promise = $pending => {
     let var$2;
-    var$2 = igiaj_JsPluginHost$11__init_0($pending);
+    var$2 = igiaj_JsPluginHost$12__init_0($pending);
     return igiaj_JsPluginHost_guarded$js_body$_4(new Promise(otji_JS_function(otji_JSWrapper_unwrap(var$2), "onExecute")));
 },
 igiaj_JsPluginHost_factsOf = $manifestObj => {
@@ -1677,7 +1679,7 @@ igiaj_JsPluginHost_errorOf = ($pluginId, $error) => {
     return igiae_PluginException__init_0($pluginId, igiaj_JsPluginHost_text($tree, $rt_s(19)), igiaj_JsPluginHost_text($tree, $rt_s(20)));
 },
 igiaj_JsPluginHost_wrapBus = $bus => {
-    return igiaj_JsPluginHost$12__init_0($bus);
+    return igiaj_JsPluginHost$13__init_0($bus);
 },
 igiaj_JsPluginHost_lower = $status => {
     igiae_PluginStatus_$callClinit();
@@ -1761,8 +1763,8 @@ igiaj_JsPluginHost_ledgerRowObject$js_body$_19 = (var$1, var$2, var$3, var$4, va
     }
     return row;
 },
-igiaj_JsPluginHost_assemble$js_body$_20 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9) => {
-    return { descriptor : var$1, ledger : var$2, supports : var$3, contextFor : var$4, verifyActivation : var$5, capability : var$6, service : var$7, markBroken : var$8, release : var$9 };
+igiaj_JsPluginHost_assemble$js_body$_20 = (var$1, var$2, var$3, var$4, var$5, var$6, var$7, var$8, var$9, var$10) => {
+    return { descriptor : var$1, ledger : var$2, supports : var$3, contextFor : var$4, verifyActivation : var$5, capability : var$6, service : var$7, provideService : var$8, markBroken : var$9, release : var$10 };
 },
 igiae_Activation = $rt_classWithoutFields(),
 igiae_Activation_order = (var$1, var$2, var$3) => {
@@ -2301,10 +2303,10 @@ jur_ReluctantGroupQuantifierSet_matches = ($this, $stringIndex, $testString, $ma
 jl_ClassCastException = $rt_classWithoutFields(jl_RuntimeException);
 function igiae_Scheduler$1$1() {
     jl_Object.call(this);
-    this.$this$033 = null;
+    this.$this$034 = null;
 }
 let igiae_Scheduler$1$1__init_ = ($this, $this$0) => {
-    $this.$this$033 = $this$0;
+    $this.$this$034 = $this$0;
     jl_Object__init_($this);
 },
 igiae_Scheduler$1$1__init_0 = var_0 => {
@@ -5132,12 +5134,12 @@ jur_PossessiveAltQuantifierSet_matches = ($this, $stringIndex, $testString, $mat
 igiae_ServiceHub$Listener = $rt_classWithoutFields(0);
 function igiaj_JsPluginContext$3$1() {
     let a = this; jl_Object.call(a);
-    a.$val$listener2 = null;
-    a.$this$034 = null;
+    a.$val$listener1 = null;
+    a.$this$035 = null;
 }
 let igiaj_JsPluginContext$3$1__init_ = ($this, $this$0, var$2) => {
-    $this.$this$034 = $this$0;
-    $this.$val$listener2 = var$2;
+    $this.$this$035 = $this$0;
+    $this.$val$listener1 = var$2;
     jl_Object__init_($this);
 },
 igiaj_JsPluginContext$3$1__init_0 = (var_0, var_1) => {
@@ -5147,7 +5149,7 @@ igiaj_JsPluginContext$3$1__init_0 = (var_0, var_1) => {
 },
 igiaj_JsPluginContext$3$1_changed = ($this, $service, $registered) => {
     let var$3, var$4, var$5;
-    var$3 = $this.$val$listener2;
+    var$3 = $this.$val$listener1;
     var$4 = igiaj_JsPluginHost_orUndefined$js_body$_10(otji_JSWrapper_unwrap($service));
     var$5 = igiaj_JsPluginHost_serviceEvent($registered);
     var$3.call(var$4, $rt_ustr(var$5));
@@ -5335,36 +5337,6 @@ otciu_UnicodeHelper_extractRle = $encoded => {
         var$13[$rangeIndex] = otciu_UnicodeHelper$Range__init_0($codePoint, $codePoint + $index | 0, ju_Arrays_copyOf($buffer, $index));
     }
     return ju_Arrays_copyOf0($ranges, var$14);
-},
-igiae_Pending$Settlement = $rt_classWithoutFields(0);
-function igiaj_JsPluginHost$11$1() {
-    let a = this; jl_Object.call(a);
-    a.$val$resolve = null;
-    a.$val$reject = null;
-    a.$this$038 = null;
-}
-let igiaj_JsPluginHost$11$1__init_ = ($this, $this$0, var$2, var$3) => {
-    $this.$this$038 = $this$0;
-    $this.$val$resolve = var$2;
-    $this.$val$reject = var$3;
-    jl_Object__init_($this);
-},
-igiaj_JsPluginHost$11$1__init_0 = (var_0, var_1, var_2) => {
-    let var_3 = new igiaj_JsPluginHost$11$1();
-    igiaj_JsPluginHost$11$1__init_(var_3, var_0, var_1, var_2);
-    return var_3;
-},
-igiaj_JsPluginHost$11$1_value = ($this, $value) => {
-    let var$2, var$3;
-    var$2 = $this.$val$resolve;
-    var$3 = otji_JSWrapper_unwrap($value);
-    var$2.accept(var$3);
-},
-igiaj_JsPluginHost$11$1_failure = ($this, $reason) => {
-    let var$2, var$3;
-    var$2 = $this.$val$reject;
-    var$3 = igiaj_JsErrors_of($reason);
-    var$2.accept(var$3);
 },
 ju_Objects = $rt_classWithoutFields(),
 ju_Objects_equals = ($a, $b) => {
@@ -6155,8 +6127,7 @@ jur_AbstractCharClass$LazyJavaJavaIdentifierPart_computeValue = $this => {
     $chCl = jur_AbstractCharClass$LazyJavaJavaIdentifierPart$1__init_0($this);
     $chCl.$mayContainSupplCodepoints0 = 1;
     return $chCl;
-},
-igiaj_JsPluginHost$RecordDeclaredFn = $rt_classWithoutFields(0);
+};
 function igiaj_JsPluginHost$10() {
     jl_Object.call(this);
     this.$val$host4 = null;
@@ -6170,21 +6141,22 @@ igiaj_JsPluginHost$10__init_0 = var_0 => {
     igiaj_JsPluginHost$10__init_(var_1, var_0);
     return var_1;
 },
-igiaj_JsPluginHost$10_call = ($this, $manifest) => {
-    let $facts;
-    $facts = igiaj_JsPluginHost_factsOf($manifest);
-    igiae_PluginLedger_recordDeclared(igiae_PluginHost_getLedger($this.$val$host4), igiae_ManifestFacts_getId($facts), igiae_ManifestFacts_getCapabilities($facts), igiae_ManifestFacts_getPermissions($facts));
+igiaj_JsPluginHost$10_call = ($this, $pluginId) => {
+    let $found;
+    $found = igiae_PluginLedger_entry(igiae_PluginHost_getLedger($this.$val$host4), $pluginId);
+    return igiaj_JsPluginHost_orUndefined$js_body$_10($found !== null ? igiaj_JsPluginHost_ledgerRow($found) : null);
 },
 igiaj_JsPluginHost$10_call$exported$0 = (var$1, var$2) => {
-    var$1.$call7(var$2);
+    var$2 = $rt_str(var$2);
+    return var$1.$call(var$2);
 },
-otjc_JSPromise$Executor = $rt_classWithoutFields(0);
+igiaj_JsPluginHost$RecordDeclaredFn = $rt_classWithoutFields(0);
 function igiaj_JsPluginHost$11() {
     jl_Object.call(this);
-    this.$val$pending = null;
+    this.$val$host9 = null;
 }
 let igiaj_JsPluginHost$11__init_ = ($this, var$1) => {
-    $this.$val$pending = var$1;
+    $this.$val$host9 = var$1;
     jl_Object__init_($this);
 },
 igiaj_JsPluginHost$11__init_0 = var_0 => {
@@ -6192,21 +6164,21 @@ igiaj_JsPluginHost$11__init_0 = var_0 => {
     igiaj_JsPluginHost$11__init_(var_1, var_0);
     return var_1;
 },
-igiaj_JsPluginHost$11_onExecute = ($this, $resolve, $reject) => {
-    igiae_Pending_then($this.$val$pending, igiaj_JsPluginHost$11$1__init_0($this, $resolve, $reject));
+igiaj_JsPluginHost$11_call = ($this, $manifest) => {
+    let $facts;
+    $facts = igiaj_JsPluginHost_factsOf($manifest);
+    igiae_PluginLedger_recordDeclared(igiae_PluginHost_getLedger($this.$val$host9), igiae_ManifestFacts_getId($facts), igiae_ManifestFacts_getCapabilities($facts), igiae_ManifestFacts_getPermissions($facts));
 },
-igiaj_JsPluginHost$11_onExecute$exported$0 = (var$1, var$2, var$3) => {
-    var$2 = otji_JS_functionAsObject(var$2, "accept");
-    var$3 = otji_JS_functionAsObject(var$3, "accept");
-    var$1.$onExecute(var$2, var$3);
+igiaj_JsPluginHost$11_call$exported$0 = (var$1, var$2) => {
+    var$1.$call7(var$2);
 },
-igiae_EventBus = $rt_classWithoutFields(0);
+otjc_JSPromise$Executor = $rt_classWithoutFields(0);
 function igiaj_JsPluginHost$12() {
     jl_Object.call(this);
-    this.$val$bus0 = null;
+    this.$val$pending = null;
 }
 let igiaj_JsPluginHost$12__init_ = ($this, var$1) => {
-    $this.$val$bus0 = var$1;
+    $this.$val$pending = var$1;
     jl_Object__init_($this);
 },
 igiaj_JsPluginHost$12__init_0 = var_0 => {
@@ -6214,18 +6186,13 @@ igiaj_JsPluginHost$12__init_0 = var_0 => {
     igiaj_JsPluginHost$12__init_(var_1, var_0);
     return var_1;
 },
-igiaj_JsPluginHost$12_publish = ($this, $topic, $payload) => {
-    let var$3, var$4;
-    var$3 = $this.$val$bus0;
-    var$4 = otji_JSWrapper_unwrap($payload);
-    var$3.publish($rt_ustr($topic), var$4);
+igiaj_JsPluginHost$12_onExecute = ($this, $resolve, $reject) => {
+    igiae_Pending_then($this.$val$pending, igiaj_JsPluginHost$12$1__init_0($this, $resolve, $reject));
 },
-igiaj_JsPluginHost$12_subscribe = ($this, $topic, $listener) => {
-    let var$3, var$4, $disposer;
-    var$3 = $this.$val$bus0;
-    var$4 = igiaj_JsPluginHost$12$1__init_0($this, $listener);
-    $disposer = otji_JS_functionAsObject(var$3.subscribe($rt_ustr($topic), otji_JS_function(otji_JSWrapper_unwrap(var$4), "received")), "dispose");
-    return igiaj_JsPluginHost$12$2__init_0($this, $disposer);
+igiaj_JsPluginHost$12_onExecute$exported$0 = (var$1, var$2, var$3) => {
+    var$2 = otji_JS_functionAsObject(var$2, "accept");
+    var$3 = otji_JS_functionAsObject(var$3, "accept");
+    var$1.$onExecute(var$2, var$3);
 },
 jur_UnifiedQuantifierSet = $rt_classWithoutFields(jur_LeafQuantifierSet),
 jur_UnifiedQuantifierSet__init_ = ($this, $quant) => {
@@ -6584,6 +6551,33 @@ ju_BitSet_xor = ($this, $set) => {
 },
 ju_BitSet_isEmpty = $this => {
     return $this.$length0 ? 0 : 1;
+},
+igiae_EventBus = $rt_classWithoutFields(0);
+function igiaj_JsPluginHost$13() {
+    jl_Object.call(this);
+    this.$val$bus = null;
+}
+let igiaj_JsPluginHost$13__init_ = ($this, var$1) => {
+    $this.$val$bus = var$1;
+    jl_Object__init_($this);
+},
+igiaj_JsPluginHost$13__init_0 = var_0 => {
+    let var_1 = new igiaj_JsPluginHost$13();
+    igiaj_JsPluginHost$13__init_(var_1, var_0);
+    return var_1;
+},
+igiaj_JsPluginHost$13_publish = ($this, $topic, $payload) => {
+    let var$3, var$4;
+    var$3 = $this.$val$bus;
+    var$4 = otji_JSWrapper_unwrap($payload);
+    var$3.publish($rt_ustr($topic), var$4);
+},
+igiaj_JsPluginHost$13_subscribe = ($this, $topic, $listener) => {
+    let var$3, var$4, $disposer;
+    var$3 = $this.$val$bus;
+    var$4 = igiaj_JsPluginHost$13$1__init_0($this, $listener);
+    $disposer = otji_JS_functionAsObject(var$3.subscribe($rt_ustr($topic), otji_JS_function(otji_JSWrapper_unwrap(var$4), "received")), "dispose");
+    return igiaj_JsPluginHost$13$2__init_0($this, $disposer);
 };
 function jur_AbstractCharClass$LazyJavaJavaIdentifierStart$1() {
     jur_AbstractCharClass.call(this);
@@ -7944,16 +7938,16 @@ igiae_ServiceHub$Waiter__init_0 = (var_0, var_1) => {
     igiae_ServiceHub$Waiter__init_(var_2, var_0, var_1);
     return var_2;
 },
-igiae_ServiceHub$Waiter_access$700 = $x0 => {
-    return $x0.$pluginId1;
-},
-igiae_ServiceHub$Waiter_access$800 = $x0 => {
+igiae_ServiceHub$Waiter_access$600 = $x0 => {
     return $x0.$timer;
 },
-igiae_ServiceHub$Waiter_access$900 = $x0 => {
+igiae_ServiceHub$Waiter_access$700 = $x0 => {
     return $x0.$settled0;
 },
-igiae_ServiceHub$Waiter_access$802 = ($x0, $x1) => {
+igiae_ServiceHub$Waiter_access$900 = $x0 => {
+    return $x0.$pluginId1;
+},
+igiae_ServiceHub$Waiter_access$602 = ($x0, $x1) => {
     $x0.$timer = $x1;
     return $x1;
 },
@@ -8231,7 +8225,7 @@ igiae_ServiceHub$3_run = $this => {
     $pending = (igiae_ServiceHub_access$1100($this.$this$013)).$get1($this.$val$id);
     if ($pending !== null)
         $pending.$remove1($this.$val$waiter);
-    igiae_Pending_reject(igiae_ServiceHub$Waiter_access$900($this.$val$waiter), igiae_PluginException__init_0($this.$val$pluginId5, ((((((jl_StringBuilder__init_()).$append3($rt_s(265))).$append9($this.$val$millis)).$append3($rt_s(266))).$append3($this.$val$id)).$append3($rt_s(267))).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(268))).$append3($this.$val$id)).$append3($rt_s(269))).$toString()));
+    igiae_Pending_reject(igiae_ServiceHub$Waiter_access$700($this.$val$waiter), igiae_PluginException__init_0($this.$val$pluginId5, ((((((jl_StringBuilder__init_()).$append3($rt_s(265))).$append9($this.$val$millis)).$append3($rt_s(266))).$append3($this.$val$id)).$append3($rt_s(267))).$toString(), ((((jl_StringBuilder__init_()).$append3($rt_s(268))).$append3($this.$val$id)).$append3($rt_s(269))).$toString()));
 };
 function igiae_ServiceHub$4() {
     let a = this; jl_Object.call(a);
@@ -8272,6 +8266,24 @@ jur_AbstractLineTerminator_getInstance = $flag => {
     jur_AbstractLineTerminator_unixLT = jur_AbstractLineTerminator$1__init_0();
     return jur_AbstractLineTerminator_unixLT;
 };
+function igiaj_JsPluginHost$13$2() {
+    let a = this; jl_Object.call(a);
+    a.$val$disposer = null;
+    a.$this$031 = null;
+}
+let igiaj_JsPluginHost$13$2__init_ = ($this, $this$0, var$2) => {
+    $this.$this$031 = $this$0;
+    $this.$val$disposer = var$2;
+    jl_Object__init_($this);
+},
+igiaj_JsPluginHost$13$2__init_0 = (var_0, var_1) => {
+    let var_2 = new igiaj_JsPluginHost$13$2();
+    igiaj_JsPluginHost$13$2__init_(var_2, var_0, var_1);
+    return var_2;
+},
+igiaj_JsPluginHost$13$2_cancel = $this => {
+    $this.$val$disposer.dispose();
+};
 function jur_AbstractCharClass$LazyJavaTitleCase$1() {
     jur_AbstractCharClass.call(this);
     this.$this$023 = null;
@@ -8288,6 +8300,28 @@ jur_AbstractCharClass$LazyJavaTitleCase$1__init_0 = var_0 => {
 jur_AbstractCharClass$LazyJavaTitleCase$1_contains = ($this, $ch) => {
     return jl_Character_isTitleCase($ch);
 },
+igiaj_JsRuntime$Listener = $rt_classWithoutFields(0);
+function igiaj_JsPluginHost$13$1() {
+    let a = this; jl_Object.call(a);
+    a.$val$listener2 = null;
+    a.$this$027 = null;
+}
+let igiaj_JsPluginHost$13$1__init_ = ($this, $this$0, var$2) => {
+    $this.$this$027 = $this$0;
+    $this.$val$listener2 = var$2;
+    jl_Object__init_($this);
+},
+igiaj_JsPluginHost$13$1__init_0 = (var_0, var_1) => {
+    let var_2 = new igiaj_JsPluginHost$13$1();
+    igiaj_JsPluginHost$13$1__init_(var_2, var_0, var_1);
+    return var_2;
+},
+igiaj_JsPluginHost$13$1_received = ($this, $payload) => {
+    $this.$val$listener2.$received(otji_JSWrapper_wrap($payload));
+},
+igiaj_JsPluginHost$13$1_received$exported$0 = (var$1, var$2) => {
+    var$1.$received0(var$2);
+},
 ju_Collections$_clinit_$lambda$_59_0 = $rt_classWithoutFields(),
 ju_Collections$_clinit_$lambda$_59_0__init_ = var$0 => {
     jl_Object__init_(var$0);
@@ -8299,10 +8333,10 @@ ju_Collections$_clinit_$lambda$_59_0__init_0 = () => {
 };
 function jur_AbstractCharClass$LazyJavaMirrored$1() {
     jur_AbstractCharClass.call(this);
-    this.$this$032 = null;
+    this.$this$033 = null;
 }
 let jur_AbstractCharClass$LazyJavaMirrored$1__init_ = ($this, $this$0) => {
-    $this.$this$032 = $this$0;
+    $this.$this$033 = $this$0;
     jur_AbstractCharClass__init_($this);
 },
 jur_AbstractCharClass$LazyJavaMirrored$1__init_0 = var_0 => {
@@ -9449,45 +9483,35 @@ jur_FSet$PossessiveFSet_getName = $this => {
 jur_FSet$PossessiveFSet_hasConsumed = ($this, $mr) => {
     return 0;
 },
-igiaj_JsRuntime$Listener = $rt_classWithoutFields(0);
+igiae_Pending$Settlement = $rt_classWithoutFields(0);
 function igiaj_JsPluginHost$12$1() {
     let a = this; jl_Object.call(a);
-    a.$val$listener0 = null;
+    a.$val$resolve = null;
+    a.$val$reject = null;
     a.$this$041 = null;
 }
-let igiaj_JsPluginHost$12$1__init_ = ($this, $this$0, var$2) => {
+let igiaj_JsPluginHost$12$1__init_ = ($this, $this$0, var$2, var$3) => {
     $this.$this$041 = $this$0;
-    $this.$val$listener0 = var$2;
+    $this.$val$resolve = var$2;
+    $this.$val$reject = var$3;
     jl_Object__init_($this);
 },
-igiaj_JsPluginHost$12$1__init_0 = (var_0, var_1) => {
-    let var_2 = new igiaj_JsPluginHost$12$1();
-    igiaj_JsPluginHost$12$1__init_(var_2, var_0, var_1);
-    return var_2;
+igiaj_JsPluginHost$12$1__init_0 = (var_0, var_1, var_2) => {
+    let var_3 = new igiaj_JsPluginHost$12$1();
+    igiaj_JsPluginHost$12$1__init_(var_3, var_0, var_1, var_2);
+    return var_3;
 },
-igiaj_JsPluginHost$12$1_received = ($this, $payload) => {
-    $this.$val$listener0.$received(otji_JSWrapper_wrap($payload));
+igiaj_JsPluginHost$12$1_value = ($this, $value) => {
+    let var$2, var$3;
+    var$2 = $this.$val$resolve;
+    var$3 = otji_JSWrapper_unwrap($value);
+    var$2.accept(var$3);
 },
-igiaj_JsPluginHost$12$1_received$exported$0 = (var$1, var$2) => {
-    var$1.$received0(var$2);
-};
-function igiaj_JsPluginHost$12$2() {
-    let a = this; jl_Object.call(a);
-    a.$val$disposer = null;
-    a.$this$027 = null;
-}
-let igiaj_JsPluginHost$12$2__init_ = ($this, $this$0, var$2) => {
-    $this.$this$027 = $this$0;
-    $this.$val$disposer = var$2;
-    jl_Object__init_($this);
-},
-igiaj_JsPluginHost$12$2__init_0 = (var_0, var_1) => {
-    let var_2 = new igiaj_JsPluginHost$12$2();
-    igiaj_JsPluginHost$12$2__init_(var_2, var_0, var_1);
-    return var_2;
-},
-igiaj_JsPluginHost$12$2_cancel = $this => {
-    $this.$val$disposer.dispose();
+igiaj_JsPluginHost$12$1_failure = ($this, $reason) => {
+    let var$2, var$3;
+    var$2 = $this.$val$reject;
+    var$3 = igiaj_JsErrors_of($reason);
+    var$2.accept(var$3);
 },
 jur_PosCompositeGroupQuantifierSet = $rt_classWithoutFields(jur_CompositeGroupQuantifierSet),
 jur_PosCompositeGroupQuantifierSet__init_ = ($this, $quant, $innerSet, $next, $type, $setCounter) => {
@@ -9707,20 +9731,20 @@ function igiae_ServiceHub$Entry() {
     a.$pluginId3 = null;
     a.$service0 = null;
 }
-let igiae_ServiceHub$Entry__init_ = ($this, $pluginId, $service) => {
+let igiae_ServiceHub$Entry__init_0 = ($this, $pluginId, $service) => {
     jl_Object__init_($this);
     $this.$pluginId3 = $pluginId;
     $this.$service0 = $service;
 },
-igiae_ServiceHub$Entry__init_0 = (var_0, var_1) => {
+igiae_ServiceHub$Entry__init_ = (var_0, var_1) => {
     let var_2 = new igiae_ServiceHub$Entry();
-    igiae_ServiceHub$Entry__init_(var_2, var_0, var_1);
+    igiae_ServiceHub$Entry__init_0(var_2, var_0, var_1);
     return var_2;
 },
 igiae_ServiceHub$Entry_access$200 = $x0 => {
     return $x0.$service0;
 },
-igiae_ServiceHub$Entry_access$600 = $x0 => {
+igiae_ServiceHub$Entry_access$800 = $x0 => {
     return $x0.$pluginId3;
 };
 function ju_HashMap$AbstractMapIterator() {
@@ -12191,10 +12215,10 @@ igiaj_JsPluginHost$4_call$exported$0 = (var$1, var$2) => {
 function jur_CharClass$13() {
     let a = this; jur_AbstractCharClass.call(a);
     a.$val$clazz4 = null;
-    a.$this$031 = null;
+    a.$this$032 = null;
 }
 let jur_CharClass$13__init_ = ($this, $this$0, var$2) => {
-    $this.$this$031 = $this$0;
+    $this.$this$032 = $this$0;
     $this.$val$clazz4 = var$2;
     jur_AbstractCharClass__init_($this);
 },
@@ -12368,10 +12392,10 @@ function jur_CharClass$16() {
     a.$val$curAlt3 = 0;
     a.$val$nb = null;
     a.$val$clazz3 = null;
-    a.$this$035 = null;
+    a.$this$036 = null;
 }
 let jur_CharClass$16__init_ = ($this, $this$0, var$2, var$3, var$4) => {
-    $this.$this$035 = $this$0;
+    $this.$this$036 = $this$0;
     $this.$val$curAlt3 = var$2;
     $this.$val$nb = var$3;
     $this.$val$clazz3 = var$4;
@@ -12407,10 +12431,10 @@ jur_CharClass$15_contains = ($this, $ch) => {
 };
 function jur_AbstractCharClass$LazyJavaDefined$1() {
     jur_AbstractCharClass.call(this);
-    this.$this$037 = null;
+    this.$this$038 = null;
 }
 let jur_AbstractCharClass$LazyJavaDefined$1__init_ = ($this, $this$0) => {
-    $this.$this$037 = $this$0;
+    $this.$this$038 = $this$0;
     jur_AbstractCharClass__init_($this);
 },
 jur_AbstractCharClass$LazyJavaDefined$1__init_0 = var_0 => {
@@ -13023,10 +13047,10 @@ jur_AbstractCharClass$LazyJavaIdentifierIgnorable$1_contains = ($this, $ch) => {
 };
 function jur_AbstractCharClass$LazyJavaLetter$1() {
     jur_AbstractCharClass.call(this);
-    this.$this$036 = null;
+    this.$this$037 = null;
 }
 let jur_AbstractCharClass$LazyJavaLetter$1__init_ = ($this, $this$0) => {
-    $this.$this$036 = $this$0;
+    $this.$this$037 = $this$0;
     jur_AbstractCharClass__init_($this);
 },
 jur_AbstractCharClass$LazyJavaLetter$1__init_0 = var_0 => {
@@ -13369,7 +13393,7 @@ otji_JSWrapper_maybeUnwrap = $o => {
         return null;
     return !($o instanceof $rt_objcls()) ? $o : otji_JSWrapper_unwrap($o);
 },
-igiaj_JsPluginHost$ReleaseFn = $rt_classWithoutFields(0);
+igiaj_JsPluginHost$MarkBrokenFn = $rt_classWithoutFields(0);
 function igiaj_JsPluginHost$7() {
     jl_Object.call(this);
     this.$val$host1 = null;
@@ -13383,14 +13407,14 @@ igiaj_JsPluginHost$7__init_0 = var_0 => {
     igiaj_JsPluginHost$7__init_(var_1, var_0);
     return var_1;
 },
-igiaj_JsPluginHost$7_call = ($this, $pluginId) => {
-    igiae_PluginHost_release($this.$val$host1, $pluginId);
+igiaj_JsPluginHost$7_call = ($this, $pluginId, $error) => {
+    igiae_PluginHost_markBroken($this.$val$host1, $pluginId, igiaj_JsPluginHost_errorOf($pluginId, $error));
 },
-igiaj_JsPluginHost$7_call$exported$0 = (var$1, var$2) => {
+igiaj_JsPluginHost$7_call$exported$0 = (var$1, var$2, var$3) => {
     var$2 = $rt_str(var$2);
-    var$1.$call10(var$2);
+    var$1.$call3(var$2, var$3);
 },
-igiaj_JsPluginHost$MarkBrokenFn = $rt_classWithoutFields(0);
+igiaj_JsPluginHost$ProvideServiceFn = $rt_classWithoutFields(0);
 function igiaj_JsPluginHost$6() {
     jl_Object.call(this);
     this.$val$host8 = null;
@@ -13404,8 +13428,8 @@ igiaj_JsPluginHost$6__init_0 = var_0 => {
     igiaj_JsPluginHost$6__init_(var_1, var_0);
     return var_1;
 },
-igiaj_JsPluginHost$6_call = ($this, $pluginId, $error) => {
-    igiae_PluginHost_markBroken($this.$val$host8, $pluginId, igiaj_JsPluginHost_errorOf($pluginId, $error));
+igiaj_JsPluginHost$6_call = ($this, $id, $service) => {
+    igiae_PluginHost_provideService($this.$val$host8, $id, otji_JSWrapper_wrap($service));
 },
 igiaj_JsPluginHost$6_call$exported$0 = (var$1, var$2, var$3) => {
     var$2 = $rt_str(var$2);
@@ -13424,15 +13448,22 @@ igiaj_JsPluginHost$9__init_0 = var_0 => {
     igiaj_JsPluginHost$9__init_(var_1, var_0);
     return var_1;
 },
-igiaj_JsPluginHost$9_call = ($this, $pluginId) => {
-    let $found;
-    $found = igiae_PluginLedger_entry(igiae_PluginHost_getLedger($this.$val$host7), $pluginId);
-    return igiaj_JsPluginHost_orUndefined$js_body$_10($found !== null ? igiaj_JsPluginHost_ledgerRow($found) : null);
+igiaj_JsPluginHost$9_call = $this => {
+    let $rows, $out, $index, var$4;
+    $rows = igiae_PluginLedger_entries(igiae_PluginHost_getLedger($this.$val$host7));
+    $out = new Array();
+    $index = 0;
+    while ($index < $rows.$size()) {
+        var$4 = igiaj_JsPluginHost_ledgerRow($rows.$get($index));
+        $out[$index] = var$4;
+        $index = $index + 1 | 0;
+    }
+    return $out;
 },
-igiaj_JsPluginHost$9_call$exported$0 = (var$1, var$2) => {
-    var$2 = $rt_str(var$2);
-    return var$1.$call(var$2);
-};
+igiaj_JsPluginHost$9_call$exported$0 = var$1 => {
+    return var$1.$call2();
+},
+igiaj_JsPluginHost$ReleaseFn = $rt_classWithoutFields(0);
 function igiaj_JsPluginHost$8() {
     jl_Object.call(this);
     this.$val$host6 = null;
@@ -13446,20 +13477,12 @@ igiaj_JsPluginHost$8__init_0 = var_0 => {
     igiaj_JsPluginHost$8__init_(var_1, var_0);
     return var_1;
 },
-igiaj_JsPluginHost$8_call = $this => {
-    let $rows, $out, $index, var$4;
-    $rows = igiae_PluginLedger_entries(igiae_PluginHost_getLedger($this.$val$host6));
-    $out = new Array();
-    $index = 0;
-    while ($index < $rows.$size()) {
-        var$4 = igiaj_JsPluginHost_ledgerRow($rows.$get($index));
-        $out[$index] = var$4;
-        $index = $index + 1 | 0;
-    }
-    return $out;
+igiaj_JsPluginHost$8_call = ($this, $pluginId) => {
+    igiae_PluginHost_release($this.$val$host6, $pluginId);
 },
-igiaj_JsPluginHost$8_call$exported$0 = var$1 => {
-    return var$1.$call2();
+igiaj_JsPluginHost$8_call$exported$0 = (var$1, var$2) => {
+    var$2 = $rt_str(var$2);
+    var$1.$call10(var$2);
 },
 igiaj_JsScheduler = $rt_classWithoutFields(),
 igiaj_JsScheduler__init_ = $this => {
@@ -13548,6 +13571,25 @@ igiae_ServiceHub_wellKnown = ($this, $ids) => {
 igiae_ServiceHub_forPlugin = ($this, $pluginId) => {
     return igiae_ServiceHub$1__init_0($this, $pluginId);
 },
+igiae_ServiceHub_hostService = ($this, $id, $service) => {
+    let $pending, var$4, $waiter;
+    a: {
+        $this.$entries0.$put($id, igiae_ServiceHub$Entry__init_($rt_s(10), $service));
+        $pending = $this.$waiters.$remove2($id);
+        if ($pending !== null) {
+            var$4 = $pending.$iterator();
+            while (true) {
+                if (!var$4.$hasNext())
+                    break a;
+                $waiter = var$4.$next();
+                if (igiae_ServiceHub$Waiter_access$600($waiter) !== null)
+                    (igiae_ServiceHub$Waiter_access$600($waiter)).$cancel();
+                igiae_Pending_resolve(igiae_ServiceHub$Waiter_access$700($waiter), $service);
+            }
+        }
+    }
+    igiae_ServiceHub_notifyWatchers($this, $id, $service, 1);
+},
 igiae_ServiceHub_get = ($this, $id) => {
     let $entry;
     $entry = $this.$entries0.$get1($id);
@@ -13574,7 +13616,7 @@ igiae_ServiceHub_releasePlugin = ($this, $pluginId) => {
     var$3 = (ju_ArrayList__init_0($this.$entries0.$entrySet())).$iterator();
     while (var$3.$hasNext()) {
         $registered = var$3.$next();
-        if (jl_String_equals(igiae_ServiceHub$Entry_access$600($registered.$getValue()), $pluginId))
+        if (jl_String_equals(igiae_ServiceHub$Entry_access$800($registered.$getValue()), $pluginId))
             igiae_ServiceHub_unregister($this, $pluginId, $registered.$getKey());
     }
     $pending = ($this.$waiters.$entrySet()).$iterator();
@@ -13583,12 +13625,12 @@ igiae_ServiceHub_releasePlugin = ($this, $pluginId) => {
         var$3 = (ju_ArrayList__init_0($waiting.$getValue())).$iterator();
         while (var$3.$hasNext()) {
             $waiter = var$3.$next();
-            if (!jl_String_equals(igiae_ServiceHub$Waiter_access$700($waiter), $pluginId))
+            if (!jl_String_equals(igiae_ServiceHub$Waiter_access$900($waiter), $pluginId))
                 continue;
             ($waiting.$getValue()).$remove1($waiter);
-            if (igiae_ServiceHub$Waiter_access$800($waiter) !== null)
-                (igiae_ServiceHub$Waiter_access$800($waiter)).$cancel();
-            igiae_Pending_reject(igiae_ServiceHub$Waiter_access$900($waiter), igiae_ServiceHub_stoppedWaiting($pluginId, $waiting.$getKey()));
+            if (igiae_ServiceHub$Waiter_access$600($waiter) !== null)
+                (igiae_ServiceHub$Waiter_access$600($waiter)).$cancel();
+            igiae_Pending_reject(igiae_ServiceHub$Waiter_access$700($waiter), igiae_ServiceHub_stoppedWaiting($pluginId, $waiting.$getKey()));
         }
         if (($waiting.$getValue()).$isEmpty())
             $pending.$remove0();
@@ -13601,11 +13643,11 @@ igiae_ServiceHub_addService = ($this, $pluginId, $id, $service) => {
         if ($existing !== null) {
             var$5 = new igiae_PluginException;
             var$6 = (((jl_StringBuilder__init_()).$append3($rt_s(333))).$append3($id)).$append3($rt_s(334));
-            igiae_PluginException__init_(var$5, $pluginId, (var$6.$append3(igiae_ServiceHub$Entry_access$600($existing))).$toString(), $rt_s(335));
+            igiae_PluginException__init_(var$5, $pluginId, (var$6.$append3(igiae_ServiceHub$Entry_access$800($existing))).$toString(), $rt_s(335));
             $rt_throw(var$5);
         }
         a: {
-            $this.$entries0.$put($id, igiae_ServiceHub$Entry__init_0($pluginId, $service));
+            $this.$entries0.$put($id, igiae_ServiceHub$Entry__init_($pluginId, $service));
             igiae_ServiceHub_provided($this, $pluginId, $id);
             $pending = $this.$waiters.$remove2($id);
             if ($pending !== null) {
@@ -13614,9 +13656,9 @@ igiae_ServiceHub_addService = ($this, $pluginId, $id, $service) => {
                     if (!var$6.$hasNext())
                         break a;
                     $waiter = var$6.$next();
-                    if (igiae_ServiceHub$Waiter_access$800($waiter) !== null)
-                        (igiae_ServiceHub$Waiter_access$800($waiter)).$cancel();
-                    igiae_Pending_resolve(igiae_ServiceHub$Waiter_access$900($waiter), $service);
+                    if (igiae_ServiceHub$Waiter_access$600($waiter) !== null)
+                        (igiae_ServiceHub$Waiter_access$600($waiter)).$cancel();
+                    igiae_Pending_resolve(igiae_ServiceHub$Waiter_access$700($waiter), $service);
                 }
             }
         }
@@ -13634,7 +13676,7 @@ igiae_ServiceHub_addService = ($this, $pluginId, $id, $service) => {
 igiae_ServiceHub_unregister = ($this, $pluginId, $id) => {
     let $entry;
     $entry = $this.$entries0.$get1($id);
-    if ($entry !== null && jl_String_equals(igiae_ServiceHub$Entry_access$600($entry), $pluginId)) {
+    if ($entry !== null && jl_String_equals(igiae_ServiceHub$Entry_access$800($entry), $pluginId)) {
         $this.$entries0.$remove2($id);
         igiae_ServiceHub_notifyWatchers($this, $id, null, 0);
         return;
@@ -13650,7 +13692,7 @@ igiae_ServiceHub_awaitService = ($this, $pluginId, $id, $timeoutMillis) => {
     $waiter = igiae_ServiceHub$Waiter__init_0($pluginId, $settled);
     if ($timeoutMillis !== null) {
         $millis = $timeoutMillis.$longValue();
-        igiae_ServiceHub$Waiter_access$802($waiter, $this.$scheduler.$schedule(igiae_ServiceHub$3__init_0($this, $id, $waiter, $pluginId, $millis), $millis));
+        igiae_ServiceHub$Waiter_access$602($waiter, $this.$scheduler.$schedule(igiae_ServiceHub$3__init_0($this, $id, $waiter, $pluginId, $millis), $millis));
     }
     $pending = $this.$waiters.$get1($id);
     if ($pending === null) {
@@ -13840,14 +13882,14 @@ jur_NonCapFSet__init_0 = var_0 => {
     let var_1 = new jur_NonCapFSet();
     jur_NonCapFSet__init_(var_1, var_0);
     return var_1;
-},
-jur_NonCapFSet_matches = ($this, $stringIndex, $testString, $matchResult) => {
+};
+let jur_NonCapFSet_matches = ($this, $stringIndex, $testString, $matchResult) => {
     let $gr;
     $gr = $this.$getGroupIndex();
     $matchResult.$setConsumed($gr, $stringIndex - $matchResult.$getConsumed($gr) | 0);
     return $this.$next2.$matches($stringIndex, $testString, $matchResult);
-};
-let jur_NonCapFSet_getName = $this => {
+},
+jur_NonCapFSet_getName = $this => {
     return $rt_s(346);
 },
 jur_NonCapFSet_hasConsumed = ($this, $mr) => {
@@ -14138,6 +14180,9 @@ igiae_PluginHost_capability = ($this, $id) => {
 igiae_PluginHost_service = ($this, $id) => {
     return igiae_ServiceHub_get($this.$hub, $id);
 },
+igiae_PluginHost_provideService = ($this, $id, $service) => {
+    igiae_ServiceHub_hostService($this.$hub, $id, $service);
+},
 igiae_PluginHost_markBroken = ($this, $pluginId, $error) => {
     let var$3;
     igiae_PluginHost_strip($this, $pluginId);
@@ -14296,13 +14341,13 @@ igiae_PluginHost_access$500 = $x0 => {
 };
 function igiae_PluginHost$3() {
     let a = this; jl_Object.call(a);
-    a.$val$bus = null;
+    a.$val$bus0 = null;
     a.$val$pluginId1 = null;
     a.$this$02 = null;
 }
 let igiae_PluginHost$3__init_ = ($this, $this$0, var$2, var$3) => {
     $this.$this$02 = $this$0;
-    $this.$val$bus = var$2;
+    $this.$val$bus0 = var$2;
     $this.$val$pluginId1 = var$3;
     jl_Object__init_($this);
 },
@@ -14312,13 +14357,13 @@ igiae_PluginHost$3__init_0 = (var_0, var_1, var_2) => {
     return var_3;
 },
 igiae_PluginHost$3_publish = ($this, $topic, $payload) => {
-    $this.$val$bus.$publish($topic, $payload);
+    $this.$val$bus0.$publish($topic, $payload);
 },
 igiae_PluginHost$3_subscribe = ($this, $topic, $listener) => {
     if (igiae_PluginHost_access$100($this.$this$02, $this.$val$pluginId1, $rt_s(366), $topic))
         return igiae_PluginHost_access$300();
     igiae_PluginLedger_recordTopic(igiae_PluginHost_access$000($this.$this$02), $this.$val$pluginId1, $topic);
-    return igiae_PluginHost_access$400($this.$this$02, $this.$val$pluginId1, $this.$val$bus.$subscribe($topic, $listener));
+    return igiae_PluginHost_access$400($this.$this$02, $this.$val$pluginId1, $this.$val$bus0.$subscribe($topic, $listener));
 };
 function igiae_PluginHost$2() {
     let a = this; jl_Object.call(a);
@@ -15525,12 +15570,12 @@ jur_SOLSet_getName = $this => {
 };
 function igiaj_JsPluginContext$7$1() {
     let a = this; jl_Object.call(a);
-    a.$val$listener1 = null;
+    a.$val$listener0 = null;
     a.$this$045 = null;
 }
 let igiaj_JsPluginContext$7$1__init_ = ($this, $this$0, var$2) => {
     $this.$this$045 = $this$0;
-    $this.$val$listener1 = var$2;
+    $this.$val$listener0 = var$2;
     jl_Object__init_($this);
 },
 igiaj_JsPluginContext$7$1__init_0 = (var_0, var_1) => {
@@ -15540,7 +15585,7 @@ igiaj_JsPluginContext$7$1__init_0 = (var_0, var_1) => {
 },
 igiaj_JsPluginContext$7$1_received = ($this, $payload) => {
     let var$2, var$3;
-    var$2 = $this.$val$listener1;
+    var$2 = $this.$val$listener0;
     var$3 = otji_JSWrapper_unwrap($payload);
     var$2.call(var$3);
 };
@@ -17163,8 +17208,6 @@ igiaj_JsScheduler$Task, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
 otji_JS, 0, jl_Object, [], 17, 0, 0, 0,
 jur_AbstractCharClass$LazyJavaUnicodeIdentifierStart$1, "AbstractCharClass$LazyJavaUnicodeIdentifierStart$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_65", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaUnicodeIdentifierStart$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaUnicodeIdentifierStart$1_contains)],
 otciu_UnicodeHelper, 0, jl_Object, [], 17, 0, 0, 0,
-igiae_Pending$Settlement, 0, jl_Object, [], 1537, 0, 0, 0,
-igiaj_JsPluginHost$11$1, "JsPluginHost$11$1", 14, jl_Object, [igiae_Pending$Settlement], 0, 0, 0, ["$_init_40", $rt_wrapFunction3(igiaj_JsPluginHost$11$1__init_), "$value", $rt_wrapFunction1(igiaj_JsPluginHost$11$1_value), "$failure", $rt_wrapFunction1(igiaj_JsPluginHost$11$1_failure)],
 ju_Objects, 0, jl_Object, [], 17, 0, 0, 0,
 jur_AbstractCharClass$LazyAlnum, 0, jur_AbstractCharClass$LazyAlpha, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyAlnum__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyAlnum_computeValue)],
 jur_AbstractCharClass$LazyGraph, 0, jur_AbstractCharClass$LazyAlnum, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyGraph__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyGraph_computeValue)],
@@ -17201,18 +17244,19 @@ jur_NegativeLookBehind, "NegativeLookBehind", 2, jur_AtomicJointSet, [], 0, 0, 0
 jur_BackReferenceSet, "BackReferenceSet", 2, jur_CIBackReferenceSet, [], 0, 0, 0, ["$_init_16", $rt_wrapFunction2(jur_BackReferenceSet__init_), "$matches", $rt_wrapFunction3(jur_BackReferenceSet_matches), "$find", $rt_wrapFunction3(jur_BackReferenceSet_find), "$findBack", $rt_wrapFunction4(jur_BackReferenceSet_findBack), "$first", $rt_wrapFunction1(jur_BackReferenceSet_first), "$getName", $rt_wrapFunction0(jur_BackReferenceSet_getName)],
 jur_DotQuantifierSet, "DotQuantifierSet", 2, jur_QuantifierSet, [], 0, 0, 0, ["$_init_58", $rt_wrapFunction4(jur_DotQuantifierSet__init_), "$matches", $rt_wrapFunction3(jur_DotQuantifierSet_matches), "$find", $rt_wrapFunction3(jur_DotQuantifierSet_find), "$getName", $rt_wrapFunction0(jur_DotQuantifierSet_getName)],
 jur_AbstractCharClass$LazyJavaJavaIdentifierPart, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaJavaIdentifierPart__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaJavaIdentifierPart_computeValue)],
+igiaj_JsPluginHost$10, 0, jl_Object, [igiaj_JsPluginHost$IdFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$10__init_), "$call", $rt_wrapFunction1(igiaj_JsPluginHost$10_call)],
 igiaj_JsPluginHost$RecordDeclaredFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
-igiaj_JsPluginHost$10, 0, jl_Object, [igiaj_JsPluginHost$RecordDeclaredFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$10__init_), "$call7", $rt_wrapFunction1(igiaj_JsPluginHost$10_call)],
+igiaj_JsPluginHost$11, 0, jl_Object, [igiaj_JsPluginHost$RecordDeclaredFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$11__init_), "$call7", $rt_wrapFunction1(igiaj_JsPluginHost$11_call)],
 otjc_JSPromise$Executor, 0, jl_Object, [otj_JSObject], 1537, 0, 0, 0,
-igiaj_JsPluginHost$11, 0, jl_Object, [otjc_JSPromise$Executor], 0, 0, 0, ["$_init_10", $rt_wrapFunction1(igiaj_JsPluginHost$11__init_), "$onExecute", $rt_wrapFunction2(igiaj_JsPluginHost$11_onExecute)],
-igiae_EventBus, 0, jl_Object, [], 1537, 0, 0, 0,
-igiaj_JsPluginHost$12, 0, jl_Object, [igiae_EventBus], 0, 0, 0, ["$_init_13", $rt_wrapFunction1(igiaj_JsPluginHost$12__init_), "$publish", $rt_wrapFunction2(igiaj_JsPluginHost$12_publish), "$subscribe", $rt_wrapFunction2(igiaj_JsPluginHost$12_subscribe)],
+igiaj_JsPluginHost$12, 0, jl_Object, [otjc_JSPromise$Executor], 0, 0, 0, ["$_init_10", $rt_wrapFunction1(igiaj_JsPluginHost$12__init_), "$onExecute", $rt_wrapFunction2(igiaj_JsPluginHost$12_onExecute)],
 jur_UnifiedQuantifierSet, "UnifiedQuantifierSet", 2, jur_LeafQuantifierSet, [], 0, 0, 0, ["$_init_57", $rt_wrapFunction1(jur_UnifiedQuantifierSet__init_), "$matches", $rt_wrapFunction3(jur_UnifiedQuantifierSet_matches), "$find", $rt_wrapFunction3(jur_UnifiedQuantifierSet_find)],
 jlr_Type, 0, jl_Object, [], 1537, 0, 0, 0,
-jl_Class, 0, jl_Object, [jlr_GenericDeclaration, jlr_Type], 17, 0, 0, ["$getClassInfo", $rt_wrapFunction0(jl_Class_getClassInfo), "$isInstance", $rt_wrapFunction1(jl_Class_isInstance), "$isAssignableFrom", $rt_wrapFunction1(jl_Class_isAssignableFrom), "$getName", $rt_wrapFunction0(jl_Class_getName), "$isPrimitive", $rt_wrapFunction0(jl_Class_isPrimitive), "$getComponentType", $rt_wrapFunction0(jl_Class_getComponentType)]]);
-$rt_metadata([ju_BitSet, 0, jl_Object, [jl_Cloneable, ji_Serializable], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_BitSet__init_0), "$_init_0", $rt_wrapFunction1(ju_BitSet__init_), "$set0", $rt_wrapFunction1(ju_BitSet_set), "$set", $rt_wrapFunction2(ju_BitSet_set0), "$clear", $rt_wrapFunction1(ju_BitSet_clear0), "$clear0", $rt_wrapFunction2(ju_BitSet_clear), "$get3", $rt_wrapFunction1(ju_BitSet_get), "$nextSetBit", $rt_wrapFunction1(ju_BitSet_nextSetBit), "$nextClearBit", $rt_wrapFunction1(ju_BitSet_nextClearBit),
-"$intersects", $rt_wrapFunction1(ju_BitSet_intersects), "$and", $rt_wrapFunction1(ju_BitSet_and), "$andNot", $rt_wrapFunction1(ju_BitSet_andNot), "$or", $rt_wrapFunction1(ju_BitSet_or), "$xor", $rt_wrapFunction1(ju_BitSet_xor), "$isEmpty", $rt_wrapFunction0(ju_BitSet_isEmpty)],
-jur_AbstractCharClass$LazyJavaJavaIdentifierStart$1, "AbstractCharClass$LazyJavaJavaIdentifierStart$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_71", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaJavaIdentifierStart$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaJavaIdentifierStart$1_contains)],
+jl_Class, 0, jl_Object, [jlr_GenericDeclaration, jlr_Type], 17, 0, 0, ["$getClassInfo", $rt_wrapFunction0(jl_Class_getClassInfo), "$isInstance", $rt_wrapFunction1(jl_Class_isInstance), "$isAssignableFrom", $rt_wrapFunction1(jl_Class_isAssignableFrom), "$getName", $rt_wrapFunction0(jl_Class_getName), "$isPrimitive", $rt_wrapFunction0(jl_Class_isPrimitive), "$getComponentType", $rt_wrapFunction0(jl_Class_getComponentType)],
+ju_BitSet, 0, jl_Object, [jl_Cloneable, ji_Serializable], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_BitSet__init_0), "$_init_0", $rt_wrapFunction1(ju_BitSet__init_), "$set0", $rt_wrapFunction1(ju_BitSet_set), "$set", $rt_wrapFunction2(ju_BitSet_set0), "$clear", $rt_wrapFunction1(ju_BitSet_clear0), "$clear0", $rt_wrapFunction2(ju_BitSet_clear), "$get3", $rt_wrapFunction1(ju_BitSet_get), "$nextSetBit", $rt_wrapFunction1(ju_BitSet_nextSetBit), "$nextClearBit", $rt_wrapFunction1(ju_BitSet_nextClearBit), "$intersects",
+$rt_wrapFunction1(ju_BitSet_intersects), "$and", $rt_wrapFunction1(ju_BitSet_and), "$andNot", $rt_wrapFunction1(ju_BitSet_andNot), "$or", $rt_wrapFunction1(ju_BitSet_or), "$xor", $rt_wrapFunction1(ju_BitSet_xor), "$isEmpty", $rt_wrapFunction0(ju_BitSet_isEmpty)],
+igiae_EventBus, 0, jl_Object, [], 1537, 0, 0, 0,
+igiaj_JsPluginHost$13, 0, jl_Object, [igiae_EventBus], 0, 0, 0, ["$_init_13", $rt_wrapFunction1(igiaj_JsPluginHost$13__init_), "$publish", $rt_wrapFunction2(igiaj_JsPluginHost$13_publish), "$subscribe", $rt_wrapFunction2(igiaj_JsPluginHost$13_subscribe)]]);
+$rt_metadata([jur_AbstractCharClass$LazyJavaJavaIdentifierStart$1, "AbstractCharClass$LazyJavaJavaIdentifierStart$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_71", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaJavaIdentifierStart$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaJavaIdentifierStart$1_contains)],
 ju_Arrays, 0, jl_Object, [], 1, 0, 0, 0,
 jur_CharSet, "CharSet", 2, jur_LeafSet, [], 0, 0, 0, ["$_init_56", $rt_wrapFunction1(jur_CharSet__init_0), "$charCount", $rt_wrapFunction0(jur_CharSet_charCount), "$accepts", $rt_wrapFunction2(jur_CharSet_accepts), "$find", $rt_wrapFunction3(jur_CharSet_find), "$findBack", $rt_wrapFunction4(jur_CharSet_findBack), "$getName", $rt_wrapFunction0(jur_CharSet_getName), "$getChar", $rt_wrapFunction0(jur_CharSet_getChar), "$first", $rt_wrapFunction1(jur_CharSet_first)],
 jur_CharClass$3, 0, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_68", $rt_wrapFunction3(jur_CharClass$3__init_), "$contains0", $rt_wrapFunction1(jur_CharClass$3_contains)],
@@ -17260,8 +17304,11 @@ jl_Runnable, 0, jl_Object, [], 1537, 0, 0, 0,
 igiae_ServiceHub$3, 0, jl_Object, [jl_Runnable], 0, 0, 0, ["$_init_85", function(var_1, var_2, var_3, var_4, var_5) { igiae_ServiceHub$3__init_(this, var_1, var_2, var_3, var_4, var_5); }, "$run", $rt_wrapFunction0(igiae_ServiceHub$3_run)],
 igiae_ServiceHub$4, 0, jl_Object, [igiae_Scheduler$Cancellable], 0, 0, 0, ["$_init_86", $rt_wrapFunction3(igiae_ServiceHub$4__init_), "$cancel", $rt_wrapFunction0(igiae_ServiceHub$4_cancel)],
 ju_SequencedSet, 0, jl_Object, [ju_SequencedCollection, ju_Set], 1537, 0, 0, 0,
-jur_AbstractLineTerminator, 0, jl_Object, [], 1024, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractLineTerminator__init_)]]);
+jur_AbstractLineTerminator, 0, jl_Object, [], 1024, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractLineTerminator__init_)],
+igiaj_JsPluginHost$13$2, 0, jl_Object, [igiae_Scheduler$Cancellable], 0, 0, 0, ["$_init_43", $rt_wrapFunction2(igiaj_JsPluginHost$13$2__init_), "$cancel", $rt_wrapFunction0(igiaj_JsPluginHost$13$2_cancel)]]);
 $rt_metadata([jur_AbstractCharClass$LazyJavaTitleCase$1, "AbstractCharClass$LazyJavaTitleCase$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_88", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaTitleCase$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaTitleCase$1_contains)],
+igiaj_JsRuntime$Listener, 0, jl_Object, [otj_JSObject], 1537, 0, 0, 0,
+igiaj_JsPluginHost$13$1, 0, jl_Object, [igiaj_JsRuntime$Listener], 0, 0, 0, ["$_init_42", $rt_wrapFunction2(igiaj_JsPluginHost$13$1__init_), "$received0", $rt_wrapFunction1(igiaj_JsPluginHost$13$1_received)],
 ju_Collections$_clinit_$lambda$_59_0, 0, jl_Object, [ju_Comparator], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_Collections$_clinit_$lambda$_59_0__init_)],
 jur_AbstractCharClass$LazyJavaMirrored$1, "AbstractCharClass$LazyJavaMirrored$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_103", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaMirrored$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaMirrored$1_contains)],
 ju_LinkedHashMapIterator, 0, jl_Object, [], 0, 0, 0, ["$_init_21", $rt_wrapFunction2(ju_LinkedHashMapIterator__init_), "$hasNext", $rt_wrapFunction0(ju_LinkedHashMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_LinkedHashMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_LinkedHashMapIterator_makeNext), "$remove0", $rt_wrapFunction0(ju_LinkedHashMapIterator_remove)],
@@ -17290,16 +17337,15 @@ igiae_JsonSchema, "JsonSchema", 13, jl_Object, [], 17, 0, 0, ["$getType2", $rt_w
 "$getItems", $rt_wrapFunction0(igiae_JsonSchema_getItems), "$setItems", $rt_wrapFunction1(igiae_JsonSchema_setItems), "$getAdditionalProperties", $rt_wrapFunction0(igiae_JsonSchema_getAdditionalProperties), "$getPattern", $rt_wrapFunction0(igiae_JsonSchema_getPattern), "$setPattern", $rt_wrapFunction1(igiae_JsonSchema_setPattern), "$getMinimum", $rt_wrapFunction0(igiae_JsonSchema_getMinimum), "$setMinimum", $rt_wrapFunction1(igiae_JsonSchema_setMinimum), "$getEnumValues", $rt_wrapFunction0(igiae_JsonSchema_getEnumValues),
 "$getFix", $rt_wrapFunction0(igiae_JsonSchema_getFix), "$setFix", $rt_wrapFunction1(igiae_JsonSchema_setFix), "$setSchemaDraft", $rt_wrapFunction1(igiae_JsonSchema_setSchemaDraft), "$setSchemaId", $rt_wrapFunction1(igiae_JsonSchema_setSchemaId), "$toTree0", $rt_wrapFunction0(igiae_JsonSchema_toTree)],
 jur_FSet$PossessiveFSet, "FSet$PossessiveFSet", 2, jur_AbstractSet, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_FSet$PossessiveFSet__init_), "$matches", $rt_wrapFunction3(jur_FSet$PossessiveFSet_matches), "$getName", $rt_wrapFunction0(jur_FSet$PossessiveFSet_getName), "$hasConsumed", $rt_wrapFunction1(jur_FSet$PossessiveFSet_hasConsumed)],
-igiaj_JsRuntime$Listener, 0, jl_Object, [otj_JSObject], 1537, 0, 0, 0,
-igiaj_JsPluginHost$12$1, 0, jl_Object, [igiaj_JsRuntime$Listener], 0, 0, 0, ["$_init_41", $rt_wrapFunction2(igiaj_JsPluginHost$12$1__init_), "$received0", $rt_wrapFunction1(igiaj_JsPluginHost$12$1_received)],
-igiaj_JsPluginHost$12$2, 0, jl_Object, [igiae_Scheduler$Cancellable], 0, 0, 0, ["$_init_42", $rt_wrapFunction2(igiaj_JsPluginHost$12$2__init_), "$cancel", $rt_wrapFunction0(igiaj_JsPluginHost$12$2_cancel)],
+igiae_Pending$Settlement, 0, jl_Object, [], 1537, 0, 0, 0,
+igiaj_JsPluginHost$12$1, "JsPluginHost$12$1", 14, jl_Object, [igiae_Pending$Settlement], 0, 0, 0, ["$_init_40", $rt_wrapFunction3(igiaj_JsPluginHost$12$1__init_), "$value", $rt_wrapFunction1(igiaj_JsPluginHost$12$1_value), "$failure", $rt_wrapFunction1(igiaj_JsPluginHost$12$1_failure)],
 jur_PosCompositeGroupQuantifierSet, "PosCompositeGroupQuantifierSet", 2, jur_CompositeGroupQuantifierSet, [], 0, 0, 0, ["$_init_46", function(var_1, var_2, var_3, var_4, var_5) { jur_PosCompositeGroupQuantifierSet__init_(this, var_1, var_2, var_3, var_4, var_5); }, "$matches", $rt_wrapFunction3(jur_PosCompositeGroupQuantifierSet_matches)],
 jur_MultiLineEOLSet, "MultiLineEOLSet", 2, jur_AbstractSet, [], 0, 0, 0, ["$_init_0", $rt_wrapFunction1(jur_MultiLineEOLSet__init_), "$matches", $rt_wrapFunction3(jur_MultiLineEOLSet_matches), "$hasConsumed", $rt_wrapFunction1(jur_MultiLineEOLSet_hasConsumed), "$getName", $rt_wrapFunction0(jur_MultiLineEOLSet_getName)],
 ju_Queue, 0, jl_Object, [ju_Collection], 1537, 0, 0, 0,
 ju_Deque, 0, jl_Object, [ju_Queue, ju_SequencedCollection], 1537, 0, 0, 0,
 ju_ArrayDeque, 0, ju_AbstractCollection, [ju_Deque, jl_Cloneable, ji_Serializable], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_ArrayDeque__init_0), "$_init_0", $rt_wrapFunction1(ju_ArrayDeque__init_), "$addFirst", $rt_wrapFunction1(ju_ArrayDeque_addFirst), "$removeFirst", $rt_wrapFunction0(ju_ArrayDeque_removeFirst), "$pollFirst", $rt_wrapFunction0(ju_ArrayDeque_pollFirst), "$push", $rt_wrapFunction1(ju_ArrayDeque_push), "$pop", $rt_wrapFunction0(ju_ArrayDeque_pop), "$size", $rt_wrapFunction0(ju_ArrayDeque_size)],
 jur_AbstractCharClass$LazyJavaDigit$1, "AbstractCharClass$LazyJavaDigit$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_30", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaDigit$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaDigit$1_contains)],
-igiae_ServiceHub$Entry, "ServiceHub$Entry", 13, jl_Object, [], 16, 0, 0, ["$_init_82", $rt_wrapFunction2(igiae_ServiceHub$Entry__init_)],
+igiae_ServiceHub$Entry, "ServiceHub$Entry", 13, jl_Object, [], 16, 0, 0, ["$_init_82", $rt_wrapFunction2(igiae_ServiceHub$Entry__init_0)],
 ju_HashMap$AbstractMapIterator, 0, jl_Object, [], 0, 0, 0, ["$_init_19", $rt_wrapFunction1(ju_HashMap$AbstractMapIterator__init_), "$hasNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_hasNext), "$checkConcurrentMod", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_checkConcurrentMod), "$makeNext", $rt_wrapFunction0(ju_HashMap$AbstractMapIterator_makeNext)],
 jl_NullPointerException, "NullPointerException", 3, jl_RuntimeException, [], 1, 0, 0, ["$_init_1", $rt_wrapFunction1(jl_NullPointerException__init_1), "$_init_", $rt_wrapFunction0(jl_NullPointerException__init_0)],
 jur_AbstractCharClass$LazyJavaSpaceChar$1, "AbstractCharClass$LazyJavaSpaceChar$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_35", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaSpaceChar$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaSpaceChar$1_contains)],
@@ -17315,9 +17361,9 @@ jur_PosAltGroupQuantifierSet, "PosAltGroupQuantifierSet", 2, jur_AltGroupQuantif
 jl_Enum, 0, jl_Object, [jl_Comparable, ji_Serializable], 1025, 0, 0, ["$_init_51", $rt_wrapFunction2(jl_Enum__init_)],
 igiae_PluginStatus, 0, jl_Enum, [], 65553, 0, () => igiae_PluginStatus_$callClinit(), 0,
 ju_Collections$13, 0, ju_AbstractMap, [], 0, 0, 0, ["$_init_15", $rt_wrapFunction1(ju_Collections$13__init_)],
-igiaj_JsPluginHost$ContextForFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
-jur_AbstractCharClass$LazyJavaLetterOrDigit, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaLetterOrDigit__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaLetterOrDigit_computeValue)]]);
-$rt_metadata([otciu_UnicodeHelper$Range, "UnicodeHelper$Range", 8, jl_Object, [], 1, 0, 0, ["$_init_34", $rt_wrapFunction3(otciu_UnicodeHelper$Range__init_)],
+igiaj_JsPluginHost$ContextForFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0]);
+$rt_metadata([jur_AbstractCharClass$LazyJavaLetterOrDigit, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaLetterOrDigit__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyJavaLetterOrDigit_computeValue)],
+otciu_UnicodeHelper$Range, "UnicodeHelper$Range", 8, jl_Object, [], 1, 0, 0, ["$_init_34", $rt_wrapFunction3(otciu_UnicodeHelper$Range__init_)],
 jur_AbstractLineTerminator$2, 0, jur_AbstractLineTerminator, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractLineTerminator$2__init_), "$isLineTerminator", $rt_wrapFunction1(jur_AbstractLineTerminator$2_isLineTerminator), "$isAfterLineTerminator", $rt_wrapFunction2(jur_AbstractLineTerminator$2_isAfterLineTerminator)],
 otciu_CharMapping, 0, jl_Object, [], 1, 0, 0, ["$_init_33", $rt_wrapFunction2(otciu_CharMapping__init_)],
 jur_AbstractLineTerminator$1, 0, jur_AbstractLineTerminator, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractLineTerminator$1__init_), "$isLineTerminator", $rt_wrapFunction1(jur_AbstractLineTerminator$1_isLineTerminator), "$isAfterLineTerminator", $rt_wrapFunction2(jur_AbstractLineTerminator$1_isAfterLineTerminator)],
@@ -17367,9 +17413,9 @@ jur_CharClass$17, 0, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_66", $rt_wrapF
 jur_UCISequenceSet, "UCISequenceSet", 2, jur_LeafSet, [], 0, 0, 0, ["$_init_54", $rt_wrapFunction1(jur_UCISequenceSet__init_), "$accepts", $rt_wrapFunction2(jur_UCISequenceSet_accepts), "$getName", $rt_wrapFunction0(jur_UCISequenceSet_getName)],
 jur_CharClass$16, 0, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_66", $rt_wrapFunction4(jur_CharClass$16__init_), "$contains0", $rt_wrapFunction1(jur_CharClass$16_contains)],
 jur_CharClass$15, 0, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_69", $rt_wrapFunction3(jur_CharClass$15__init_), "$contains0", $rt_wrapFunction1(jur_CharClass$15_contains)],
-jur_AbstractCharClass$LazyJavaDefined$1, "AbstractCharClass$LazyJavaDefined$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_49", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaDefined$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaDefined$1_contains)],
-jur_CharClass$14, 0, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_69", $rt_wrapFunction3(jur_CharClass$14__init_), "$contains0", $rt_wrapFunction1(jur_CharClass$14_contains)]]);
-$rt_metadata([igiaj_JsPluginHost$EntriesFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
+jur_AbstractCharClass$LazyJavaDefined$1, "AbstractCharClass$LazyJavaDefined$1", 2, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_49", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaDefined$1__init_), "$contains0", $rt_wrapFunction1(jur_AbstractCharClass$LazyJavaDefined$1_contains)]]);
+$rt_metadata([jur_CharClass$14, 0, jur_AbstractCharClass, [], 0, 0, 0, ["$_init_69", $rt_wrapFunction3(jur_CharClass$14__init_), "$contains0", $rt_wrapFunction1(jur_CharClass$14_contains)],
+igiaj_JsPluginHost$EntriesFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
 jl_StringBuilder, 0, jl_AbstractStringBuilder, [jl_Appendable], 1, 0, 0, ["$_init_0", $rt_wrapFunction1(jl_StringBuilder__init_2), "$_init_", $rt_wrapFunction0(jl_StringBuilder__init_1), "$append", $rt_wrapFunction1(jl_StringBuilder_append), "$append3", $rt_wrapFunction1(jl_StringBuilder_append2), "$append2", $rt_wrapFunction1(jl_StringBuilder_append1), "$append9", $rt_wrapFunction1(jl_StringBuilder_append7), "$append10", $rt_wrapFunction1(jl_StringBuilder_append4), "$append0", $rt_wrapFunction1(jl_StringBuilder_append0),
 "$append18", $rt_wrapFunction3(jl_StringBuilder_append3), "$append8", $rt_wrapFunction1(jl_StringBuilder_append6), "$insert13", $rt_wrapFunction2(jl_StringBuilder_insert5), "$insert12", $rt_wrapFunction2(jl_StringBuilder_insert6), "$insert9", $rt_wrapFunction4(jl_StringBuilder_insert3), "$insert10", $rt_wrapFunction2(jl_StringBuilder_insert7), "$insert11", $rt_wrapFunction2(jl_StringBuilder_insert1), "$delete0", $rt_wrapFunction2(jl_StringBuilder_delete), "$deleteCharAt", $rt_wrapFunction1(jl_StringBuilder_deleteCharAt),
 "$insert14", $rt_wrapFunction2(jl_StringBuilder_insert9), "$insert6", $rt_wrapFunction4(jl_StringBuilder_insert8), "$append4", $rt_wrapFunction3(jl_StringBuilder_append5), "$length", $rt_wrapFunction0(jl_StringBuilder_length), "$toString", $rt_wrapFunction0(jl_StringBuilder_toString), "$ensureCapacity", $rt_wrapFunction1(jl_StringBuilder_ensureCapacity), "$insert", $rt_wrapFunction2(jl_StringBuilder_insert0), "$insert5", $rt_wrapFunction2(jl_StringBuilder_insert), "$insert4", $rt_wrapFunction2(jl_StringBuilder_insert4),
@@ -17403,15 +17449,16 @@ igiae_ServiceHub$Recorder, 0, jl_Object, [], 1537, 0, 0, 0,
 ju_HashMap$KeyIterator, 0, ju_HashMap$AbstractMapIterator, [ju_Iterator], 0, 0, 0, ["$_init_19", $rt_wrapFunction1(ju_HashMap$KeyIterator__init_), "$next", $rt_wrapFunction0(ju_HashMap$KeyIterator_next)],
 igiae_PluginSession, 0, jl_Object, [], 17, 0, 0, ["$_init_95", $rt_wrapFunction4(igiae_PluginSession__init_), "$getFacts", $rt_wrapFunction0(igiae_PluginSession_getFacts), "$getServices", $rt_wrapFunction0(igiae_PluginSession_getServices), "$getEvents", $rt_wrapFunction0(igiae_PluginSession_getEvents), "$provide", $rt_wrapFunction2(igiae_PluginSession_provide)],
 otji_JSWrapper, 0, jl_Object, [], 17, 0, 0, 0,
-igiaj_JsPluginHost$ReleaseFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
-igiaj_JsPluginHost$7, 0, jl_Object, [igiaj_JsPluginHost$ReleaseFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$7__init_), "$call10", $rt_wrapFunction1(igiaj_JsPluginHost$7_call)],
 igiaj_JsPluginHost$MarkBrokenFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
-igiaj_JsPluginHost$6, 0, jl_Object, [igiaj_JsPluginHost$MarkBrokenFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$6__init_), "$call3", $rt_wrapFunction2(igiaj_JsPluginHost$6_call)],
-igiaj_JsPluginHost$9, 0, jl_Object, [igiaj_JsPluginHost$IdFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$9__init_), "$call", $rt_wrapFunction1(igiaj_JsPluginHost$9_call)],
-igiaj_JsPluginHost$8, 0, jl_Object, [igiaj_JsPluginHost$EntriesFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$8__init_), "$call2", $rt_wrapFunction0(igiaj_JsPluginHost$8_call)],
+igiaj_JsPluginHost$7, 0, jl_Object, [igiaj_JsPluginHost$MarkBrokenFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$7__init_), "$call3", $rt_wrapFunction2(igiaj_JsPluginHost$7_call)],
+igiaj_JsPluginHost$ProvideServiceFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
+igiaj_JsPluginHost$6, 0, jl_Object, [igiaj_JsPluginHost$ProvideServiceFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$6__init_), "$call3", $rt_wrapFunction2(igiaj_JsPluginHost$6_call)],
+igiaj_JsPluginHost$9, 0, jl_Object, [igiaj_JsPluginHost$EntriesFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$9__init_), "$call2", $rt_wrapFunction0(igiaj_JsPluginHost$9_call)],
+igiaj_JsPluginHost$ReleaseFn, 0, jl_Object, [otj_JSObject], 1536, 0, 0, 0,
+igiaj_JsPluginHost$8, 0, jl_Object, [igiaj_JsPluginHost$ReleaseFn], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiaj_JsPluginHost$8__init_), "$call10", $rt_wrapFunction1(igiaj_JsPluginHost$8_call)],
 igiaj_JsScheduler, 0, jl_Object, [igiae_Scheduler], 16, 0, 0, ["$_init_", $rt_wrapFunction0(igiaj_JsScheduler__init_), "$schedule", $rt_wrapFunction2(igiaj_JsScheduler_schedule)],
 jur_MultiLineSOLSet, "MultiLineSOLSet", 2, jur_AbstractSet, [], 0, 0, 0, ["$_init_60", $rt_wrapFunction1(jur_MultiLineSOLSet__init_), "$matches", $rt_wrapFunction3(jur_MultiLineSOLSet_matches), "$hasConsumed", $rt_wrapFunction1(jur_MultiLineSOLSet_hasConsumed), "$getName", $rt_wrapFunction0(jur_MultiLineSOLSet_getName)],
-igiae_ServiceHub, 0, jl_Object, [], 17, 0, 0, ["$_init_94", $rt_wrapFunction2(igiae_ServiceHub__init_), "$wellKnown", $rt_wrapFunction1(igiae_ServiceHub_wellKnown), "$forPlugin", $rt_wrapFunction1(igiae_ServiceHub_forPlugin), "$get0", $rt_wrapFunction1(igiae_ServiceHub_get), "$ids", $rt_wrapFunction0(igiae_ServiceHub_ids), "$releasePlugin", $rt_wrapFunction1(igiae_ServiceHub_releasePlugin)],
+igiae_ServiceHub, 0, jl_Object, [], 17, 0, 0, ["$_init_94", $rt_wrapFunction2(igiae_ServiceHub__init_), "$wellKnown", $rt_wrapFunction1(igiae_ServiceHub_wellKnown), "$forPlugin", $rt_wrapFunction1(igiae_ServiceHub_forPlugin), "$hostService", $rt_wrapFunction2(igiae_ServiceHub_hostService), "$get0", $rt_wrapFunction1(igiae_ServiceHub_get), "$ids", $rt_wrapFunction0(igiae_ServiceHub_ids), "$releasePlugin", $rt_wrapFunction1(igiae_ServiceHub_releasePlugin)],
 otjc_JSString, 0, jl_Object, [otj_JSObject], 1025, 0, 0, 0,
 otcic_JSStderrPrintStream, 0, otcic_JsConsolePrintStream, [], 1, 0, 0, ["$_init_", $rt_wrapFunction0(otcic_JSStderrPrintStream__init_), "$print", $rt_wrapFunction1(otcic_JSStderrPrintStream_print)],
 jur_AbstractCharClass$LazyLower, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyLower__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyLower_computeValue)],
@@ -17419,11 +17466,11 @@ jur_AbstractCharClass$LazyJavaTitleCase, 0, jur_AbstractCharClass$LazyCharClass,
 jur_PreviousMatch, "PreviousMatch", 2, jur_AbstractSet, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_PreviousMatch__init_), "$matches", $rt_wrapFunction3(jur_PreviousMatch_matches), "$hasConsumed", $rt_wrapFunction1(jur_PreviousMatch_hasConsumed), "$getName", $rt_wrapFunction0(jur_PreviousMatch_getName)],
 jur_NonCapFSet, "NonCapFSet", 2, jur_FSet, [], 0, 0, 0, ["$_init_0", $rt_wrapFunction1(jur_NonCapFSet__init_), "$matches", $rt_wrapFunction3(jur_NonCapFSet_matches), "$getName", $rt_wrapFunction0(jur_NonCapFSet_getName), "$hasConsumed", $rt_wrapFunction1(jur_NonCapFSet_hasConsumed)],
 jur_UCISupplCharSet, "UCISupplCharSet", 2, jur_LeafSet, [], 0, 0, 0, ["$_init_0", $rt_wrapFunction1(jur_UCISupplCharSet__init_), "$accepts", $rt_wrapFunction2(jur_UCISupplCharSet_accepts), "$getName", $rt_wrapFunction0(jur_UCISupplCharSet_getName)],
-jl_System, 0, jl_Object, [], 17, 0, 0, 0,
-igiae_PluginHost$1, 0, jl_Object, [igiae_ServiceHub$Recorder], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiae_PluginHost$1__init_), "$provided", $rt_wrapFunction2(igiae_PluginHost$1_provided), "$consumed", $rt_wrapFunction2(igiae_PluginHost$1_consumed)],
-igiaj_JsPluginContext, 0, jl_Object, [otj_JSObject], 16, 0, 0, 0]);
-$rt_metadata([igiae_PluginHost, 0, jl_Object, [], 17, 0, 0, ["$_init_7", $rt_wrapFunction4(igiae_PluginHost__init_), "$getApp", $rt_wrapFunction0(igiae_PluginHost_getApp), "$getApi", $rt_wrapFunction0(igiae_PluginHost_getApi), "$getSurfaces", $rt_wrapFunction0(igiae_PluginHost_getSurfaces), "$getLedger", $rt_wrapFunction0(igiae_PluginHost_getLedger), "$knownCapabilities", $rt_wrapFunction1(igiae_PluginHost_knownCapabilities), "$wellKnownServices", $rt_wrapFunction1(igiae_PluginHost_wellKnownServices), "$supports",
-$rt_wrapFunction2(igiae_PluginHost_supports), "$sessionFor", $rt_wrapFunction2(igiae_PluginHost_sessionFor), "$verifyActivation", $rt_wrapFunction1(igiae_PluginHost_verifyActivation), "$capability", $rt_wrapFunction1(igiae_PluginHost_capability), "$service", $rt_wrapFunction1(igiae_PluginHost_service), "$markBroken", $rt_wrapFunction2(igiae_PluginHost_markBroken), "$release", $rt_wrapFunction1(igiae_PluginHost_release), "$provide0", $rt_wrapFunction3(igiae_PluginHost_provide)],
+jl_System, 0, jl_Object, [], 17, 0, 0, 0]);
+$rt_metadata([igiae_PluginHost$1, 0, jl_Object, [igiae_ServiceHub$Recorder], 0, 0, 0, ["$_init_8", $rt_wrapFunction1(igiae_PluginHost$1__init_), "$provided", $rt_wrapFunction2(igiae_PluginHost$1_provided), "$consumed", $rt_wrapFunction2(igiae_PluginHost$1_consumed)],
+igiaj_JsPluginContext, 0, jl_Object, [otj_JSObject], 16, 0, 0, 0,
+igiae_PluginHost, 0, jl_Object, [], 17, 0, 0, ["$_init_7", $rt_wrapFunction4(igiae_PluginHost__init_), "$getApp", $rt_wrapFunction0(igiae_PluginHost_getApp), "$getApi", $rt_wrapFunction0(igiae_PluginHost_getApi), "$getSurfaces", $rt_wrapFunction0(igiae_PluginHost_getSurfaces), "$getLedger", $rt_wrapFunction0(igiae_PluginHost_getLedger), "$knownCapabilities", $rt_wrapFunction1(igiae_PluginHost_knownCapabilities), "$wellKnownServices", $rt_wrapFunction1(igiae_PluginHost_wellKnownServices), "$supports", $rt_wrapFunction2(igiae_PluginHost_supports),
+"$sessionFor", $rt_wrapFunction2(igiae_PluginHost_sessionFor), "$verifyActivation", $rt_wrapFunction1(igiae_PluginHost_verifyActivation), "$capability", $rt_wrapFunction1(igiae_PluginHost_capability), "$service", $rt_wrapFunction1(igiae_PluginHost_service), "$provideService", $rt_wrapFunction2(igiae_PluginHost_provideService), "$markBroken", $rt_wrapFunction2(igiae_PluginHost_markBroken), "$release", $rt_wrapFunction1(igiae_PluginHost_release), "$provide0", $rt_wrapFunction3(igiae_PluginHost_provide)],
 igiae_PluginHost$3, 0, jl_Object, [igiae_EventBus], 0, 0, 0, ["$_init_97", $rt_wrapFunction3(igiae_PluginHost$3__init_), "$publish", $rt_wrapFunction2(igiae_PluginHost$3_publish), "$subscribe", $rt_wrapFunction2(igiae_PluginHost$3_subscribe)],
 igiae_PluginHost$2, 0, jl_Object, [igiae_ServiceHub$Registry], 0, 0, 0, ["$_init_96", $rt_wrapFunction3(igiae_PluginHost$2__init_), "$get0", $rt_wrapFunction1(igiae_PluginHost$2_get), "$want", $rt_wrapFunction1(igiae_PluginHost$2_want0), "$want0", $rt_wrapFunction2(igiae_PluginHost$2_want), "$watch", $rt_wrapFunction2(igiae_PluginHost$2_watch), "$register", $rt_wrapFunction2(igiae_PluginHost$2_register), "$ids", $rt_wrapFunction0(igiae_PluginHost$2_ids)],
 jur_AbstractCharClass$LazyRange, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_16", $rt_wrapFunction2(jur_AbstractCharClass$LazyRange__init_0), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyRange_computeValue)],
@@ -17474,10 +17521,10 @@ otr_StringInfo, 0, otrr_ReflectionInfo, [], 17, 0, 0, 0,
 igiaj_EngineJs$1, 0, jl_Object, [igiae_Diagnostics$Sink], 0, 0, 0, ["$_init_74", $rt_wrapFunction1(igiaj_EngineJs$1__init_), "$accept", $rt_wrapFunction1(igiaj_EngineJs$1_accept)],
 jur_Lexer, 0, jl_Object, [], 0, 0, 0, ["$_init_51", $rt_wrapFunction2(jur_Lexer__init_), "$peek", $rt_wrapFunction0(jur_Lexer_peek), "$setMode", $rt_wrapFunction1(jur_Lexer_setMode), "$restoreFlags", $rt_wrapFunction1(jur_Lexer_restoreFlags), "$peekSpecial", $rt_wrapFunction0(jur_Lexer_peekSpecial), "$isSpecial", $rt_wrapFunction0(jur_Lexer_isSpecial), "$isNextSpecial", $rt_wrapFunction0(jur_Lexer_isNextSpecial), "$next1", $rt_wrapFunction0(jur_Lexer_next), "$nextSpecial", $rt_wrapFunction0(jur_Lexer_nextSpecial),
 "$lookAhead", $rt_wrapFunction0(jur_Lexer_lookAhead), "$back", $rt_wrapFunction0(jur_Lexer_back), "$toString", $rt_wrapFunction0(jur_Lexer_toString), "$isEmpty", $rt_wrapFunction0(jur_Lexer_isEmpty), "$isLetter0", $rt_wrapFunction0(jur_Lexer_isLetter0), "$isHighSurrogate0", $rt_wrapFunction0(jur_Lexer_isHighSurrogate0), "$isLowSurrogate0", $rt_wrapFunction0(jur_Lexer_isLowSurrogate0), "$getIndex", $rt_wrapFunction0(jur_Lexer_getIndex)],
-jur_AbstractCharClass$LazySpecialsBlock, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazySpecialsBlock__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazySpecialsBlock_computeValue)],
-jur_AbstractCharClass$LazyNonSpace, 0, jur_AbstractCharClass$LazySpace, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyNonSpace__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyNonSpace_computeValue)],
-igiae_ManifestSchema, 0, jl_Object, [], 17, 0, 0, 0]);
-$rt_metadata([igiae_ManifestFacts, 0, jl_Object, [], 17, 0, 0, ["$_init_11", function(var_1, var_2, var_3, var_4, var_5) { igiae_ManifestFacts__init_(this, var_1, var_2, var_3, var_4, var_5); }, "$getId", $rt_wrapFunction0(igiae_ManifestFacts_getId), "$getApi", $rt_wrapFunction0(igiae_ManifestFacts_getApi), "$getCapabilities", $rt_wrapFunction0(igiae_ManifestFacts_getCapabilities), "$getPermissions", $rt_wrapFunction0(igiae_ManifestFacts_getPermissions), "$getPayload", $rt_wrapFunction0(igiae_ManifestFacts_getPayload)],
+jur_AbstractCharClass$LazySpecialsBlock, 0, jur_AbstractCharClass$LazyCharClass, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazySpecialsBlock__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazySpecialsBlock_computeValue)]]);
+$rt_metadata([jur_AbstractCharClass$LazyNonSpace, 0, jur_AbstractCharClass$LazySpace, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_AbstractCharClass$LazyNonSpace__init_), "$computeValue", $rt_wrapFunction0(jur_AbstractCharClass$LazyNonSpace_computeValue)],
+igiae_ManifestSchema, 0, jl_Object, [], 17, 0, 0, 0,
+igiae_ManifestFacts, 0, jl_Object, [], 17, 0, 0, ["$_init_11", function(var_1, var_2, var_3, var_4, var_5) { igiae_ManifestFacts__init_(this, var_1, var_2, var_3, var_4, var_5); }, "$getId", $rt_wrapFunction0(igiae_ManifestFacts_getId), "$getApi", $rt_wrapFunction0(igiae_ManifestFacts_getApi), "$getCapabilities", $rt_wrapFunction0(igiae_ManifestFacts_getCapabilities), "$getPermissions", $rt_wrapFunction0(igiae_ManifestFacts_getPermissions), "$getPayload", $rt_wrapFunction0(igiae_ManifestFacts_getPayload)],
 otji_JSWrapper$Helper$_clinit_$lambda$_3_1, 0, jl_Object, [otji_JSWrapper$Helper$FinalizationRegistryConsumer], 1, 0, 0, ["$_init_", $rt_wrapFunction0(otji_JSWrapper$Helper$_clinit_$lambda$_3_1__init_), "$accept0", $rt_wrapFunction1(otji_JSWrapper$Helper$_clinit_$lambda$_3_1_accept)],
 otji_JSWrapper$Helper$_clinit_$lambda$_3_0, 0, jl_Object, [otji_JSWrapper$Helper$FinalizationRegistryConsumer], 1, 0, 0, ["$_init_", $rt_wrapFunction0(otji_JSWrapper$Helper$_clinit_$lambda$_3_0__init_), "$accept0", $rt_wrapFunction1(otji_JSWrapper$Helper$_clinit_$lambda$_3_0_accept)],
 ju_Arrays$ArrayAsList, "Arrays$ArrayAsList", 1, ju_AbstractList, [ju_RandomAccess, ji_Serializable], 0, 0, 0, ["$_init_44", $rt_wrapFunction1(ju_Arrays$ArrayAsList__init_), "$get", $rt_wrapFunction1(ju_Arrays$ArrayAsList_get), "$size", $rt_wrapFunction0(ju_Arrays$ArrayAsList_size)],
@@ -17541,7 +17588,9 @@ let $rt_jso_marker = Symbol('jsoClass');
     c = igiaj_JsPluginHost$10.prototype;
     c.call = $rt_callWithReceiver(igiaj_JsPluginHost$10_call$exported$0);
     c = igiaj_JsPluginHost$11.prototype;
-    c.onExecute = $rt_callWithReceiver(igiaj_JsPluginHost$11_onExecute$exported$0);
+    c.call = $rt_callWithReceiver(igiaj_JsPluginHost$11_call$exported$0);
+    c = igiaj_JsPluginHost$12.prototype;
+    c.onExecute = $rt_callWithReceiver(igiaj_JsPluginHost$12_onExecute$exported$0);
     c = igiaj_JsPluginContext$10.prototype;
     c.call = $rt_callWithReceiver(igiaj_JsPluginContext$10_call$exported$0);
     c = igiaj_JsPluginContext$11.prototype;
@@ -17550,10 +17599,10 @@ let $rt_jso_marker = Symbol('jsoClass');
     c.call = $rt_callWithReceiver(igiaj_JsPluginContext$12_call$exported$0);
     c = igiaj_JsPluginContext$13.prototype;
     c.dispose = $rt_callWithReceiver(igiaj_JsPluginContext$13_dispose$exported$0);
+    c = igiaj_JsPluginHost$13$1.prototype;
+    c.received = $rt_callWithReceiver(igiaj_JsPluginHost$13$1_received$exported$0);
     c = igiaj_JsScheduler$1.prototype;
     c.run = $rt_callWithReceiver(igiaj_JsScheduler$1_run$exported$0);
-    c = igiaj_JsPluginHost$12$1.prototype;
-    c.received = $rt_callWithReceiver(igiaj_JsPluginHost$12$1_received$exported$0);
     c = igiaj_JsPluginHost$1.prototype;
     c.call = $rt_callWithReceiver(igiaj_JsPluginHost$1_call$exported$0);
     c = igiaj_JsPluginHost$3.prototype;

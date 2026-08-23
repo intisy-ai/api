@@ -65,6 +65,11 @@ final class JsPluginHost implements JSObject {
     }
 
     @JSFunctor
+    interface ProvideServiceFn extends JSObject {
+        void call(String id, JSObject service);
+    }
+
+    @JSFunctor
     interface MarkBrokenFn extends JSObject {
         void call(String pluginId, JSObject error);
     }
@@ -132,6 +137,12 @@ final class JsPluginHost implements JSObject {
                 return orUndefined((JSObject) host.service(id));
             }
         };
+        ProvideServiceFn provideService = new ProvideServiceFn() {
+            @Override
+            public void call(String id, JSObject service) {
+                host.provideService(id, service);
+            }
+        };
         MarkBrokenFn markBroken = new MarkBrokenFn() {
             @Override
             public void call(String pluginId, JSObject error) {
@@ -171,7 +182,8 @@ final class JsPluginHost implements JSObject {
         };
         JSObject ledger = ledgerObject(entries, entry, recordDeclared);
 
-        return assemble(descriptor, ledger, supports, contextFor, verifyActivation, capability, service, markBroken, release);
+        return assemble(descriptor, ledger, supports, contextFor, verifyActivation, capability, service,
+                provideService, markBroken, release);
     }
 
     /**
@@ -326,11 +338,11 @@ final class JsPluginHost implements JSObject {
             JSObject permissions, String errorDetail, String errorFix);
 
     @JSBody(params = {"descriptor", "ledger", "supports", "contextFor", "verifyActivation", "capability", "service",
-            "markBroken", "release"}, script =
+            "provideService", "markBroken", "release"}, script =
             "return { descriptor: descriptor, ledger: ledger, supports: supports, contextFor: contextFor, "
             + "verifyActivation: verifyActivation, capability: capability, service: service, "
-            + "markBroken: markBroken, release: release };")
+            + "provideService: provideService, markBroken: markBroken, release: release };")
     private static native JsPluginHost assemble(JSObject descriptor, JSObject ledger, ManifestFn supports,
             ContextForFn contextFor, ManifestFn verifyActivation, IdFn capability, IdFn service,
-            MarkBrokenFn markBroken, ReleaseFn release);
+            ProvideServiceFn provideService, MarkBrokenFn markBroken, ReleaseFn release);
 }

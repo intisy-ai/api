@@ -73,6 +73,10 @@ public final class ServiceHub {
     private final Map<String, List<Scheduler.Cancellable>> watching = new LinkedHashMap<String, List<Scheduler.Cancellable>>();
     private List<String> wellKnown = new ArrayList<String>();
 
+    // No plugin can own this, because a manifest id is never empty, which is what keeps a host's own
+    // service out of every per-plugin sweep.
+    private static final String HOST_OWNER = "";
+
     public ServiceHub(Scheduler scheduler, Recorder recorder) {
         this.scheduler = scheduler == null ? Scheduler.NEVER : scheduler;
         this.recorder = recorder;
@@ -123,6 +127,28 @@ public final class ServiceHub {
                 return ServiceHub.this.ids();
             }
         };
+    }
+
+    /**
+     * Registers a service the HOST supplies rather than a plugin.
+     *
+     * @implNote Owned by no plugin, so quarantining or deactivating one never takes it away, and it
+     * is exempt from the namespacing rule a plugin registration is held to: the ids a host offers
+     * are ones it defines rather than ones it is claiming from a shared space. Registering the same
+     * id twice replaces it, because a host wiring itself up twice is a restart, not a conflict.
+     */
+    public void hostService(String id, Object service) {
+        entries.put(id, new Entry(HOST_OWNER, service));
+        Set<Waiter> pending = waiters.remove(id);
+        if (pending != null) {
+            for (Waiter waiter : pending) {
+                if (waiter.timer != null) {
+                    waiter.timer.cancel();
+                }
+                waiter.settled.resolve(service);
+            }
+        }
+        notifyWatchers(id, service, true);
     }
 
     /** The service now, or null, without attributing the read to a plugin. */

@@ -291,6 +291,7 @@ it("assembles the host object with exactly these keys, pinning it against HostSu
     "descriptor",
     "ledger",
     "markBroken",
+    "provideService",
     "release",
     "service",
     "supports",
@@ -318,6 +319,27 @@ it("assembles the context object with exactly these keys, pinning it against Con
   ]);
   expect(Object.keys(context.services).sort()).toEqual(["get", "ids", "register", "want", "watch"]);
   expect(Object.keys(context.events).sort()).toEqual(["publish", "subscribe"]);
+});
+
+// How a plugin reaches behaviour belonging to a library it may not link: the host links it once and
+// offers a handle. Owned by no plugin, so a quarantine must not take it away.
+it("offers a host's own service to a plugin, and keeps it through a quarantine", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const support = { build: () => "built" };
+  host.provideService("provider-support", support);
+
+  const context = host.contextFor(SCREENS, runtime());
+  expect(context.services.get("provider-support")).toBe(support);
+
+  host.markBroken("screens", pluginError("screens", "boom", "fix it"));
+  expect(host.service("provider-support")).toBe(support);
+});
+
+it("lets a host replace its own service, since wiring up twice is a restart rather than a conflict", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  host.provideService("provider-support", { generation: 1 });
+  host.provideService("provider-support", { generation: 2 });
+  expect(host.service("provider-support")).toEqual({ generation: 2 });
 });
 
 it("mints a service and a topic key from an id alone, the same shape as a capability key", () => {
