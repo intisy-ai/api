@@ -303,8 +303,10 @@ it("assembles the context object with exactly these keys, pinning it against Con
   const host = createPluginHost({ app: "claude", api: 1 });
   const context = host.contextFor(SCREENS, runtime());
   expect(Object.keys(context).sort()).toEqual([
+    "capability",
     "config",
     "events",
+    "homes",
     "host",
     "log",
     "manifest",
@@ -314,6 +316,31 @@ it("assembles the context object with exactly these keys, pinning it against Con
   ]);
   expect(Object.keys(context.services).sort()).toEqual(["get", "ids", "register", "want", "watch"]);
   expect(Object.keys(context.events).sort()).toEqual(["publish", "subscribe"]);
+});
+
+it("mints a capability key from an id alone, and provide accepts the key it minted", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const context = host.contextFor(SCREENS, runtime());
+  expect(context.capability("screens")).toEqual({ id: "screens" });
+
+  const screens = { screens: () => [] };
+  context.provide(context.capability("screens"), screens);
+  expect(host.capability("screens")).toEqual([{ pluginId: "config-ledger", implementation: screens }]);
+});
+
+it("answers homes from the host's registry on every call, so a home appearing later is seen", () => {
+  const registered = [{ app: "claude", label: "Claude Code", present: true, paths: { home: "/claude", repos: "/claude/repos", plugin: "/claude/plugin", cache: "/claude/cache", config: "/claude/config" } }];
+  const host = createPluginHost({ app: "claude", api: 1 });
+  const context = host.contextFor(SCREENS, { ...runtime(), homes: { all: () => registered } });
+
+  expect(context.homes().map((home) => home.app)).toEqual(["claude"]);
+  registered.push({ app: "opencode", label: "OpenCode", present: false, paths: { home: "/oc", repos: "/oc/repos", plugin: "/oc/plugin", cache: "/oc/cache", config: "/oc/config" } });
+  expect(context.homes().map((home) => home.app)).toEqual(["claude", "opencode"]);
+});
+
+it("answers homes with an empty list for a host that supplies no registry", () => {
+  const host = createPluginHost({ app: "claude", api: 1 });
+  expect(host.contextFor(SCREENS, runtime()).homes()).toEqual([]);
 });
 
 it("reports every issue in a manifest rather than throwing on the first", () => {

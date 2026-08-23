@@ -2,6 +2,7 @@ package io.github.intisy.ai.js.surface;
 
 import io.github.intisy.ai.tsemit.TsInterface;
 import io.github.intisy.ai.tsemit.TsProperty;
+import java.util.List;
 
 /** The context a plugin's activate receives. */
 @TsInterface
@@ -25,6 +26,17 @@ public interface ContextSurface {
     /** The storage directories of the home the plugin runs in. */
     @TsProperty(readOnly = true)
     PluginPathsShape paths();
+
+    /** Every app home the host knows about, asked fresh on each call. */
+    List<HomeDescriptorShape> homes();
+
+    /**
+     * The typed key for a capability id.
+     *
+     * @implNote Untyped return rather than a key shape, mirroring {@code provide}: the engine works
+     * in ids, and the contract is where the phantom type is attached.
+     */
+    Object capability(String id);
 
     /** The service registry, fenced to this plugin's namespace. */
     @TsProperty(readOnly = true)

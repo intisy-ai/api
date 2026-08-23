@@ -160,9 +160,42 @@ final class JsPluginContext implements JSObject {
             }
         };
 
+        IdFn capability = new IdFn() {
+            @Override
+            public JSObject call(String id) {
+                return capabilityKey(id);
+            }
+        };
+        final JsRuntime.Homes registry = runtime.getHomes();
+        IdsFn homes = new IdsFn() {
+            @Override
+            public JSObject call() {
+                return homesOf(registry);
+            }
+        };
+
         return assemble(manifest, hostDescriptor, runtime.getConfig(), runtime.getLog(), runtime.getPaths(),
-                servicesObj, eventsObj, provide);
+                servicesObj, eventsObj, provide, capability, homes);
     }
+
+    /**
+     * The typed key for a capability id.
+     *
+     * @implNote The id alone is the whole key at run time; the phantom type the contract declares
+     * exists only in the type system, so there is nothing else to carry.
+     */
+    @JSBody(params = "id", script = "return { id: String(id) };")
+    private static native JSObject capabilityKey(String id);
+
+    /**
+     * Every home the host's registry knows, or none where it supplied no registry.
+     *
+     * @implNote The absence check is JavaScript's rather than Java's, because a host that omits the
+     * property hands over {@code undefined}, which a Java {@code null} comparison does not catch.
+     */
+    @JSBody(params = "registry", script =
+            "return registry === null || registry === undefined ? [] : registry.all();")
+    private static native JSObject homesOf(JsRuntime.Homes registry);
 
     /**
      * The capability id behind whatever {@code provide} was handed: a typed key's {@code id}, or the
@@ -198,9 +231,10 @@ final class JsPluginContext implements JSObject {
     @JSBody(params = {"publish", "subscribe"}, script = "return { publish: publish, subscribe: subscribe };")
     private static native JSObject eventsObject(PublishFn publish, SubscribeFn subscribe);
 
-    @JSBody(params = {"manifest", "host", "config", "log", "paths", "services", "events", "provide"}, script =
+    @JSBody(params = {"manifest", "host", "config", "log", "paths", "services", "events", "provide", "capability",
+            "homes"}, script =
             "return { manifest: manifest, host: host, config: config, log: log, paths: paths, services: services, "
-            + "events: events, provide: provide };")
+            + "events: events, provide: provide, capability: capability, homes: homes };")
     private static native JsPluginContext assemble(JSObject manifest, JSObject host, JSObject config, JSObject log,
-            JSObject paths, JSObject services, JSObject events, ProvideFn provide);
+            JSObject paths, JSObject services, JSObject events, ProvideFn provide, IdFn capability, IdsFn homes);
 }

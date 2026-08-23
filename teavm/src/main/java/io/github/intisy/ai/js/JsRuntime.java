@@ -26,6 +26,11 @@ public interface JsRuntime extends JSObject {
         Disposer subscribe(String topic, Listener listener);
     }
 
+    /** The host's home registry, asked on each call so a home appearing later is seen. */
+    interface Homes extends JSObject {
+        JSObject all();
+    }
+
     @JSProperty
     JSObject getConfig();
 
@@ -37,4 +42,7 @@ public interface JsRuntime extends JSObject {
 
     @JSProperty
     Bus getEvents();
+
+    @JSProperty
+    Homes getHomes();
 }

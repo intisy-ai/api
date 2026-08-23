@@ -36,10 +36,28 @@ export interface ManifestConfig {
  * of process without changing plugin code.
  */
 export interface PluginContext {
+  /**
+   * The typed key for a capability id, so a plugin can provide one without linking the library
+   * that mints it.
+   *
+   * @remarks
+   * The id is data the manifest already states, and the payload type comes from a
+   * type-only import, which erases at build time. That pair is what makes a plugin's only runtime
+   * dependency this package.
+   */
+  capability<T>(id: string): CapabilityType<T>;
   /** This plugin's resolved configuration. */
   readonly config: PluginConfig;
   /** How this plugin says something happened, and hears that something did. */
   readonly events: Events;
+  /**
+   * Every app home the host knows about, whether or not each exists on disk.
+   *
+   * @remarks
+   * Asked rather than held, because a home can appear, and can be installed, while a
+   * plugin is running. `paths` is this plugin's own home; this is every home there is.
+   */
+  homes(): HomeDescriptor[];
   /** What this plugin may know about the host. */
   readonly host: HostDescriptor;
   /** This plugin's logger. */
@@ -129,6 +147,27 @@ export interface Store {
    * step, and hands the mutator `null` when the key holds nothing yet.
    */
   update(key: string, mutator: ((value: string) => string)): void;
+}
+
+/**
+ * One app home the host knows about.
+ *
+ * @remarks
+ * A plugin whose job spans more than its own home takes them from the host rather than
+ * resolving a registry itself, which is what keeps it from linking the library that owns the
+ * registry's shape.
+ */
+export interface HomeDescriptor {
+  /** The app id, for example `claude` or `opencode`. */
+  app: string;
+  /** The name a surface shows instead of the id. */
+  label: string;
+  /** The id of the plugin this app is reached through, absent when it has none. */
+  loader?: string;
+  /** This home's storage directories. */
+  paths: PluginPaths;
+  /** Whether this home exists on disk. An absent home means that app is not installed. */
+  present: boolean;
 }
 
 /**

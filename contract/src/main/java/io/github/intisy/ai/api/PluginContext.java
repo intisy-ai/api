@@ -3,6 +3,7 @@ package io.github.intisy.ai.api;
 import io.github.intisy.ai.api.seam.Logger;
 import io.github.intisy.ai.tsemit.TsInterface;
 import io.github.intisy.ai.tsemit.TsProperty;
+import java.util.List;
 
 /**
  * Everything a plugin may touch, and the only way it touches any of it.
@@ -20,6 +21,24 @@ public interface PluginContext {
      * payload compile through the string side.
      */
     <T> void provide(CapabilityType<T> type, T implementation);
+
+    /**
+     * The typed key for a capability id, so a plugin can provide one without linking the library
+     * that mints it.
+     *
+     * @implNote The id is data the manifest already states, and the payload type comes from a
+     * type-only import, which erases at build time. That pair is what makes a plugin's only runtime
+     * dependency this package.
+     */
+    <T> CapabilityType<T> capability(String id);
+
+    /**
+     * Every app home the host knows about, whether or not each exists on disk.
+     *
+     * @implNote Asked rather than held, because a home can appear, and can be installed, while a
+     * plugin is running. {@code paths} is this plugin's own home; this is every home there is.
+     */
+    List<HomeDescriptor> homes();
 
     /** What this plugin may know about the host. */
     @TsProperty(readOnly = true)

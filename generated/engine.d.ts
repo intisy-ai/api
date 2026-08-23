@@ -1,6 +1,19 @@
 // Generated from Java sources. Do not edit.
 
 /**
+ * Every app home the host knows about, as reached only through {@link ContextSurface}.
+ *
+ * @remarks
+ * An object with a method rather than a plain array, for the same reason
+ * {@link EventBusShape} is one: a runtime is handed over once per plugin, and a home can appear, or
+ * be installed, long after that.
+ */
+export interface HomeRegistryShape {
+  /** Every registered home, whether or not each exists on disk. */
+  all(): HomeDescriptorShape[];
+}
+
+/**
  * One plugin's view of the live service registry, as reached through {@link ContextSurface}.
  *
  * @remarks
@@ -61,6 +74,20 @@ export interface HostSurface {
 export interface WantOptionsShape {
   /** How long to wait before giving up. */
   timeoutMs?: number;
+}
+
+/** One app home the host knows about, as the host supplies it. */
+export interface HomeDescriptorShape {
+  /** The app id, for example `claude` or `opencode`. */
+  app: string;
+  /** The name a surface shows instead of the id. */
+  label: string;
+  /** The id of the plugin this app is reached through, absent when it has none. */
+  loader?: string;
+  /** This home's storage directories. */
+  paths: PluginPathsShape;
+  /** Whether this home exists on disk. */
+  present: boolean;
 }
 
 /** One plugin's implementation of a capability, with the plugin it came from. */
@@ -148,10 +175,20 @@ export interface EventBusShape {
 
 /** The context a plugin's activate receives. */
 export interface ContextSurface {
+  /**
+   * The typed key for a capability id.
+   *
+   * @remarks
+   * Untyped return rather than a key shape, mirroring `provide`: the engine works
+   * in ids, and the contract is where the phantom type is attached.
+   */
+  capability(id: string): unknown;
   /** The plugin's resolved configuration, as the runtime supplied it. */
   readonly config: unknown;
   /** Publish and subscribe, attributed to this plugin. */
   readonly events: EventBusShape;
+  /** Every app home the host knows about, asked fresh on each call. */
+  homes(): HomeDescriptorShape[];
   /** What the plugin may know about the host. */
   readonly host: HostDescriptorShape;
   /** The plugin's logger, as the runtime supplied it. */
@@ -238,6 +275,8 @@ export interface PluginRuntimeShape {
   config: unknown;
   /** The event bus, scoped to this plugin as its source. */
   events: EventBusShape;
+  /** Every app home the host knows about. Absent means this host knows of none but its own. */
+  homes?: HomeRegistryShape;
   /** The plugin's logger. */
   log: unknown;
   /** The storage directories of the home the plugin runs in. */

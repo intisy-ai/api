@@ -30,15 +30,26 @@ class ContractEmissionTest {
                 "install must be optional and maybe-async");
     }
 
+    /**
+     * @implNote The ids are looked for as quoted LITERALS rather than as bare substrings. A bare
+     * substring stopped meaning what this test means the day the manifest gained a {@code commands}
+     * field and a {@code config} whose prose says "settings": naming a manifest field after the
+     * thing it carries is not the same as minting a capability, and only a literal id or a type
+     * named after one would be.
+     */
     @Test
     void knowsNoCategories() throws IOException {
         String text = emitted();
-        String[] categories = {"provider", "front-door", "screens", "settings", "commands",
+        String[] ids = {"provider", "front-door", "screens", "settings", "commands",
             "plugin-management", "cross-app-sync", "custom-endpoints", "config-history",
-            "marketplace-source", "CapabilityMap", "ServiceMap", "EventMap", "IrRequest", "routing",
-            "accounts", "activity"};
-        for (String category : categories) {
-            assertFalse(text.contains(category), "the contract must not know the category " + category);
+            "marketplace-source", "routing", "accounts", "activity"};
+        for (String id : ids) {
+            assertFalse(text.contains("\"" + id + "\"") || text.contains("'" + id + "'"),
+                    "the contract must not mint the id " + id);
+        }
+        String[] registries = {"CapabilityMap", "ServiceMap", "EventMap", "IrRequest"};
+        for (String registry : registries) {
+            assertFalse(text.contains(registry), "the contract must not declare " + registry);
         }
     }
 }
