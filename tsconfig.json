@@ -9,7 +9,11 @@
     // but the CLI now, and an inferred root would flatten it to dist/.
     "rootDir": "./src",
     "declaration": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    // Pinned so an ancestor checkout's ambient types cannot reach this compile. api is built as a
+    // nested submodule of repos that depend on @types/bun, whose narrower process.removeListener
+    // overloads fail this repo's suites in a fresh clone while passing standalone.
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test.ts", "src/**/__tests__/**"]
