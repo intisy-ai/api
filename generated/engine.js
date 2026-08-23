@@ -16822,10 +16822,11 @@ igiae_ManifestSchema_data = () => {
 igiae_ManifestSchema_config = () => {
     let $properties, $config, var$3;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(439), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(440)));
-    $config = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(441));
+    $properties.$put($rt_s(425), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(439)));
+    $properties.$put($rt_s(440), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(441)));
+    $config = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(442));
     var$3 = $rt_createArray(jl_String, 1);
-    var$3.data[0] = $rt_s(439);
+    var$3.data[0] = $rt_s(440);
     igiae_JsonSchema_setRequired($config, ju_Arrays_asList(var$3));
     igiae_JsonSchema_setProperties($config, $properties);
     return $config;
@@ -16833,31 +16834,31 @@ igiae_ManifestSchema_config = () => {
 igiae_ManifestSchema_lifecycle = () => {
     let $properties, $lifecycle;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(442), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(443)));
-    $properties.$put($rt_s(444), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(445)));
-    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(446));
+    $properties.$put($rt_s(443), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(444)));
+    $properties.$put($rt_s(445), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(446)));
+    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(447));
     igiae_JsonSchema_setProperties($lifecycle, $properties);
     return $lifecycle;
 },
 igiae_ManifestSchema_publish = () => {
     let $properties, $publish;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(447), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(448)));
-    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(449));
+    $properties.$put($rt_s(448), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(449)));
+    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(450));
     igiae_JsonSchema_setProperties($publish, $properties);
     return $publish;
 },
 igiae_ManifestSchema_repo = () => {
     let $properties, $domains, $repo;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(450), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(451)));
-    $properties.$put($rt_s(452), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(453)));
-    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(454));
+    $properties.$put($rt_s(451), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(452)));
+    $properties.$put($rt_s(453), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(454)));
+    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(455));
     igiae_JsonSchema_setItems($domains, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(455), $domains);
-    $properties.$put($rt_s(456), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(457)));
-    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(458));
-    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(450), $rt_s(452), $rt_s(456)])));
+    $properties.$put($rt_s(456), $domains);
+    $properties.$put($rt_s(457), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(458)));
+    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(459));
+    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(451), $rt_s(453), $rt_s(457)])));
     igiae_JsonSchema_setProperties($repo, $properties);
     return $repo;
 },
@@ -17467,9 +17468,9 @@ $rt_stringPool(["String is null", "String is empty", "String contains invalid di
 "The plugin\'s permanent identity, matching its repository name.", "^[a-z0-9]+(-[a-z0-9]+)*$", "use lowercase words joined by single hyphens, for example \"config-ledger\"", "The lowest API major version this plugin needs. A floor, not a build tag.", "set \"api\" to the lowest API major version this plugin needs, for example 1", "The built module a host imports. Required once capabilities are declared.", "point \"entry\" at the built module a host imports, for example \"dist/index.js\"", "displayName", "The name a surface shows instead of the id.",
 "icon", "Path to a square-viewBox SVG mark, relative to the repo root.", "Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "commands", "config", "data", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "The single machine-readable description of a repo in the intisy-ai ecosystem.", "http://json-schema.org/draft-07/schema#", "https://intisy-ai.github.io/api/schema/plugin.schema.json",
 "intisy-ai plugin manifest", "Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.", "name", "The command\'s name, which is also the file it is written to.", "What a command picker shows beside the name.", "argumentHint", "The argument shape a picker hints at, such as \"list | get <key>\".", "body", "Markdown the model is shown, after any shell output.",
-"shell", "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.", "One slash command this plugin contributes.", "Slash commands this plugin contributes, which a host deploys without importing it.", "Paths this plugin writes to, relative to the home it runs in.", "paths", "Where this plugin keeps state that is not named after it.", "defaults", "Every setting this plugin has, and what it is worth until a home changes it.", "This plugin\'s settings as it ships them.", "install", "The entry exports install(ctx), run once after first deploy.",
-"repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.", "How the repo is published to npm.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.", "Domain topics, for example claude or gemini.", "domains",
-"tech", "The primary tech topic, typescript or java.", "Repository metadata: the GitHub description and topic set are derived from it."]);
+"shell", "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.", "One slash command this plugin contributes.", "Slash commands this plugin contributes, which a host deploys without importing it.", "Paths this plugin writes to, relative to the home it runs in.", "paths", "Where this plugin keeps state that is not named after it.", "The file these settings live in, config/<name>.json, when that is not the plugin\'s id.", "defaults", "Every setting this plugin has, and what it is worth until a home changes it.",
+"This plugin\'s settings as it ships them.", "install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.", "How the repo is published to npm.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.",
+"Domain topics, for example claude or gemini.", "domains", "tech", "The primary tech topic, typescript or java.", "Repository metadata: the GitHub description and topic set are derived from it."]);
 jl_String.prototype.toString = function() {
     return $rt_ustr(this);
 };

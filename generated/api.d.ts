@@ -25,6 +25,15 @@ export interface CapabilityType<T> {
 export interface ManifestConfig {
   /** Every setting this plugin has, and what it is worth until a home changes it. */
   defaults: Record<string, unknown>;
+  /**
+   * The file these settings live in, `config/<name>.json`, when that is not the plugin's id.
+   *
+   * @remarks
+   * Absent means the id, which is the case for all but a plugin whose settings file
+   * predates its repository name. Stated rather than assumed, because a surface that guesses
+   * writes to a file the plugin never reads.
+   */
+  name?: string;
 }
 
 /**

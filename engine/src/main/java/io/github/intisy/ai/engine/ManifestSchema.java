@@ -120,6 +120,8 @@ public final class ManifestSchema {
 
     private static JsonSchema config() {
         Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("name", described(JsonSchema.ofType("string"),
+                "The file these settings live in, config/<name>.json, when that is not the plugin's id."));
         properties.put("defaults", described(JsonSchema.ofType("object"),
                 "Every setting this plugin has, and what it is worth until a home changes it."));
         JsonSchema config = described(JsonSchema.ofType("object"), "This plugin's settings as it ships them.");
