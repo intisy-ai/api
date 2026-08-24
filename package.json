@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Plugin API contract and service registry for the intisy-ai AI-proxy ecosystem.",
   "type": "module",
   "main": "generated/api.keys.js",
@@ -42,8 +42,7 @@
     "dist/",
     "generated/",
     "schema/",
-    "scripts/copy-generated.mjs",
-    "scripts/teavm-build.mjs",
+    "scripts/",
     "plugin.json",
     "README.md",
     "LICENSE"
