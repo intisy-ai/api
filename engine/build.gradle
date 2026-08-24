@@ -1,0 +1,39 @@
+// No dependency on :contract: this module works on JSON trees and plain ids, which is what a host
+// holds after reading a sidecar. Adding the typed manifest would serve no caller that exists.
+dependencies {
+    compileOnly project(":annotations")
+    annotationProcessor project(":processor")
+}
+
+// The one gate that catches a JDK type TeaVM cannot compile before :teavm does. javac at release 8
+// accepts CompletableFuture happily; TeaVM 0.15.0's classlib has no such class, so the engine would
+// compile here and fail to transpile there. Comment lines are skipped so a javadoc that names the
+// forbidden package to explain why it is forbidden does not trip the gate on itself.
+def noConcurrency = tasks.register("noConcurrency") {
+    def mainDir = file("src/main/java")
+    inputs.dir mainDir
+    doLast {
+        def offenders = []
+        mainDir.eachFileRecurse { file ->
+            if (!file.name.endsWith(".java")) {
+                return
+            }
+            def lineNumber = 0
+            file.eachLine { line ->
+                lineNumber++
+                def trimmed = line.trim()
+                if (trimmed.startsWith("*") || trimmed.startsWith("//") || trimmed.startsWith("/*")) {
+                    return
+                }
+                if (line.contains("java.util.concurrent")) {
+                    offenders << (file.name + ":" + lineNumber)
+                }
+            }
+        }
+        if (!offenders.isEmpty()) {
+            throw new GradleException("java.util.concurrent is not transpilable by TeaVM 0.15.0, found in: " + offenders.join(", "))
+        }
+    }
+}
+
+tasks.named("check") { dependsOn noConcurrency }

@@ -1,0 +1,43 @@
+import org.teavm.gradle.api.JSModuleType
+import org.teavm.gradle.api.OptimizationLevel
+
+plugins {
+    id "org.teavm" version "0.15.0"
+}
+
+dependencies {
+    implementation project(":engine")
+    implementation project(":contract")
+    teavm teavm.libs.jsoApis
+    compileOnly project(":annotations")
+    annotationProcessor project(":processor")
+}
+
+// TeaVM 0.15.0's classlib, jso-apis and extension-spi artifacts publish minimum-JVM metadata above
+// 8, so this module cannot hold the ecosystem's 1.8 floor. Both the extension's compatibility (which
+// Gradle matches on when resolving) and compileJava's release option need the override, because the
+// root block sets release 8 through tasks.matching{}.configureEach{} and last-registered-wins.
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.matching { it.name == "compileJava" || it.name == "compileTestJava" }.configureEach {
+    options.release = 17
+}
+
+tasks.named("compileJava") {
+    options.compilerArgs << "-Atsemit.name=engine"
+}
+
+// Deliberately unoptimized. obfuscated=true plus AGGRESSIVE gets this from 774 KB to 298 KB, but
+// TeaVM 0.15.0's obfuscator reorders declarations between runs, and the committed bundle is compared
+// byte for byte against a fresh emission, so a gate that flaps teaches people to ignore it. Size is
+// cheap here because the engine is consumed by hosts only, never bundled into a plugin.
+teavm.js {
+    mainClass = "io.github.intisy.ai.js.EngineJs"
+    moduleType = JSModuleType.ES2015
+    obfuscated = false
+    optimization = OptimizationLevel.NONE
+    targetFileName = "engine.js"
+}

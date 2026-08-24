@@ -1,0 +1,11 @@
+// The annotations are SOURCE-retention, so compileOnly is right: nothing needs them at run time.
+dependencies {
+    compileOnly project(":annotations")
+    annotationProcessor project(":processor")
+}
+
+tasks.named("compileJava") {
+    // This module's keys file IS the package root, so it re-exports the surface it sits beside:
+    // one generated entry point serving both the types a consumer imports and API_VERSION.
+    options.compilerArgs += ["-Atsemit.reexport=true"]
+}

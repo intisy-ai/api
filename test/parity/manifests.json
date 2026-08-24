@@ -1,0 +1,18 @@
+[
+  { "name": "minimal", "manifest": { "id": "config-ledger", "api": 2 }, "expectedPaths": [] },
+  { "name": "missing id", "manifest": { "api": 2 }, "expectedPaths": ["id"] },
+  { "name": "id wrong type", "manifest": { "id": 7, "api": 2 }, "expectedPaths": ["id"] },
+  { "name": "id pattern", "manifest": { "id": "Config Ledger", "api": 2 }, "expectedPaths": ["id"] },
+  { "name": "api below the floor", "manifest": { "id": "a", "api": 0 }, "expectedPaths": ["api"] },
+  { "name": "capabilities without entry", "manifest": { "id": "a", "api": 2, "capabilities": ["screens"] }, "expectedPaths": ["entry"] },
+  { "name": "entry escapes", "manifest": { "id": "a", "api": 2, "entry": "../x.js" }, "expectedPaths": ["entry"] },
+  { "name": "entry absolute", "manifest": { "id": "a", "api": 2, "entry": "/x.js" }, "expectedPaths": ["entry"] },
+  { "name": "squatting service", "manifest": { "id": "a", "api": 2, "services": { "provides": ["b:thing"] } }, "expectedPaths": ["services.provides[0]"] },
+  { "name": "well known service", "manifest": { "id": "a", "api": 2, "services": { "provides": ["accounts"] } }, "expectedPaths": [] },
+  { "name": "own namespaced service", "manifest": { "id": "a", "api": 2, "services": { "provides": ["a:thing"] } }, "expectedPaths": [] },
+  { "name": "duplicate capability", "manifest": { "id": "a", "api": 2, "entry": "dist/index.js", "capabilities": ["screens", "screens"] }, "expectedPaths": ["capabilities[1]"] },
+  { "name": "duplicate permission", "manifest": { "id": "a", "api": 2, "permissions": ["fs", "fs"] }, "expectedPaths": ["permissions[1]"] },
+  { "name": "unknown field ignored", "manifest": { "id": "a", "api": 2, "fromNextYear": true }, "expectedPaths": [] },
+  { "name": "lifecycle wrong type", "manifest": { "id": "a", "api": 2, "lifecycle": { "install": "yes" } }, "expectedPaths": ["lifecycle.install"] },
+  { "name": "repo missing tech", "manifest": { "id": "a", "api": 2, "repo": { "role": "Thing", "category": "tool" } }, "expectedPaths": ["repo.tech"] }
+]

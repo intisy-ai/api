@@ -1,0 +1,9 @@
+# The emitted declarations are compared byte for byte against a fresh emission, and the processor
+# writes LF. Without this, core.autocrlf checks them out as CRLF and the drift gate fails.
+generated/*.ts text eol=lf
+
+# A CRLF gradlew is not executable on Linux.
+gradlew text eol=lf
+
+# The emitted bundle is compared byte for byte against a fresh emission, and TeaVM writes LF.
+generated/*.js text eol=lf

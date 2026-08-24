@@ -5,3 +5,10 @@ site/
 docs/
 .superpowers/
 graphify-out/
+.idea/
+
+# Gradle (each java module lives in its own directory at the repository root)
+**/build/
+.gradle/
+**/.gradle/
+*.iml

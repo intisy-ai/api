@@ -1,0 +1,2 @@
+// Separate from :processor because :contract compiles at release 8, and javac refuses to read a class
+// file built for a newer release, which is what :processor must be.

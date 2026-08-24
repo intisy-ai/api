@@ -1,0 +1,15 @@
+{
+  // Compiles the generated keys file in place rather than into dist/, because it IS the package
+  // root: the exports map serves generated/api.keys.js, and a dist/ copy would put the root one
+  // directory away from the surface it re-exports. engine.d.ts emits nothing and is listed so
+  // typedoc, which reads this config, can see both entry points.
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "declaration": true,
+    "skipLibCheck": true
+  },
+  "files": ["generated/api.keys.ts", "generated/engine.d.ts"]
+}

@@ -1,0 +1,198 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://intisy-ai.github.io/api/schema/plugin.schema.json",
+  "title": "intisy-ai plugin manifest",
+  "description": "The single machine-readable description of a repo in the intisy-ai ecosystem.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "description": "Pointer at the published manifest schema, for an editor's completion and validation.",
+      "type": "string"
+    },
+    "id": {
+      "description": "The plugin's permanent identity, matching its repository name.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "fix": "use lowercase words joined by single hyphens, for example \"config-ledger\""
+    },
+    "api": {
+      "description": "The lowest API major version this plugin needs. A floor, not a build tag.",
+      "type": "integer",
+      "minimum": 1,
+      "fix": "set \"api\" to the lowest API major version this plugin needs, for example 1"
+    },
+    "entry": {
+      "description": "The built module a host imports. Required once capabilities are declared.",
+      "type": "string",
+      "fix": "point \"entry\" at the built module a host imports, for example \"dist/index.js\""
+    },
+    "displayName": {
+      "description": "The name a surface shows instead of the id.",
+      "type": "string"
+    },
+    "icon": {
+      "description": "Path to a square-viewBox SVG mark, relative to the repo root.",
+      "type": "string"
+    },
+    "capabilities": {
+      "description": "Host-facing abilities this plugin provides at activation.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "fix": "list capability ids as strings, for example [\"provider\", \"screens\"]"
+    },
+    "services": {
+      "description": "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.",
+      "type": "object",
+      "properties": {
+        "provides": {
+          "description": "Service ids this plugin registers, each namespaced by its own id or a well-known bare id.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "consumes": {
+          "description": "Service ids this plugin asks for.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "commands": {
+      "description": "Slash commands this plugin contributes, which a host deploys without importing it.",
+      "type": "array",
+      "items": {
+        "description": "One slash command this plugin contributes.",
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The command's name, which is also the file it is written to.",
+            "type": "string"
+          },
+          "description": {
+            "description": "What a command picker shows beside the name.",
+            "type": "string"
+          },
+          "argumentHint": {
+            "description": "The argument shape a picker hints at, such as \"list | get <key>\".",
+            "type": "string"
+          },
+          "body": {
+            "description": "Markdown the model is shown, after any shell output.",
+            "type": "string"
+          },
+          "shell": {
+            "description": "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ]
+      }
+    },
+    "config": {
+      "description": "This plugin's settings as it ships them.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The file these settings live in, config/<name>.json, when that is not the plugin's id.",
+          "type": "string"
+        },
+        "defaults": {
+          "description": "Every setting this plugin has, and what it is worth until a home changes it.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "defaults"
+      ]
+    },
+    "data": {
+      "description": "Where this plugin keeps state that is not named after it.",
+      "type": "object",
+      "properties": {
+        "paths": {
+          "description": "Paths this plugin writes to, relative to the home it runs in.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "paths"
+      ]
+    },
+    "permissions": {
+      "description": "Declared permissions, surfaced at install and in dashboards.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lifecycle": {
+      "description": "Which optional lifecycle hooks the entry module exports.",
+      "type": "object",
+      "properties": {
+        "install": {
+          "description": "The entry exports install(ctx), run once after first deploy.",
+          "type": "boolean"
+        },
+        "repair": {
+          "description": "The entry exports repair(ctx), run on demand from a host.",
+          "type": "boolean"
+        }
+      }
+    },
+    "publish": {
+      "description": "How the repo is published to npm.",
+      "type": "object",
+      "properties": {
+        "scopedOnly": {
+          "description": "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.",
+          "type": "boolean"
+        }
+      }
+    },
+    "repo": {
+      "description": "Repository metadata: the GitHub description and topic set are derived from it.",
+      "type": "object",
+      "properties": {
+        "role": {
+          "description": "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.",
+          "type": "string"
+        },
+        "category": {
+          "description": "The single category topic, for example core-library or ai-provider.",
+          "type": "string"
+        },
+        "domains": {
+          "description": "Domain topics, for example claude or gemini.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tech": {
+          "description": "The primary tech topic, typescript or java.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "category",
+        "tech"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "api"
+  ]
+}

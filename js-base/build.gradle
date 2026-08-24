@@ -1,0 +1,24 @@
+plugins {
+    id "org.teavm" version "0.15.0"
+}
+
+dependencies {
+    api project(":contract")
+    teavm teavm.libs.jsoApis
+}
+
+// TeaVM 0.15.0's classlib, jso-apis and extension-spi artifacts publish a minimum-JVM metadata above
+// 8, so this module needs 17 on both compile steps: the extension's compatibility fixes Gradle's
+// JVM-version attribute matching, and the task options fix javac.
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.named("compileJava") {
+    options.release = 17
+}
+
+tasks.named("compileTestJava") {
+    options.release = 17
+}

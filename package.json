@@ -1,10 +1,27 @@
 {
   "name": "api",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Plugin API contract and service registry for the intisy-ai AI-proxy ecosystem.",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "generated/api.keys.js",
+  "types": "generated/api.keys.d.ts",
+  "exports": {
+    ".": {
+      "types": "./generated/api.keys.d.ts",
+      "default": "./generated/api.keys.js"
+    },
+    "./engine": {
+      "types": "./generated/engine.d.ts",
+      "default": "./generated/engine.js"
+    },
+    "./contract": {
+      "types": "./generated/api.d.ts"
+    },
+    "./host": {
+      "types": "./dist/host/index.d.ts",
+      "default": "./dist/host/index.js"
+    }
+  },
   "bin": {
     "intisy-plugin": "dist/cli/main.js"
   },
@@ -23,7 +40,9 @@
   ],
   "files": [
     "dist/",
+    "generated/",
     "schema/",
+    "plugin.json",
     "README.md",
     "LICENSE"
   ],
@@ -31,11 +50,15 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc -p tsconfig.generated.json && tsc --noEmit -p tsconfig.test.json && npm run schema",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
     "schema": "node scripts/emit-schema.mjs",
     "docs": "typedoc",
-    "test": "vitest run",
-    "prepublishOnly": "npm run build"
+    "test": "npm run build && vitest run",
+    "prepublishOnly": "npm run build",
+    "emit": "npm run emit:contract && npm run emit:teavm",
+    "emit:contract": "node scripts/emit-dts.mjs --java-dir . --module :contract --out generated",
+    "emit:teavm": "node scripts/emit-dts.mjs --java-dir . --module :teavm --out generated && node scripts/emit-dts.mjs --java-dir . --module :teavm --ext .js --gradle-task :teavm:generateJavaScript --source-dir teavm/build/generated/teavm/js --out generated"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

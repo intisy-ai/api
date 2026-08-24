@@ -1,0 +1,193 @@
+package io.github.intisy.ai.engine;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
+
+/**
+ * Checks a parsed JSON tree against a {@link JsonSchema}, collecting every problem rather than
+ * stopping at the first.
+ *
+ * @implNote The tree is Map, List, String, Number, Boolean and null, which is what a host holds
+ * after parsing a sidecar. Taking a tree rather than a typed object is what keeps this module
+ * dependency-free and therefore transpilable.
+ */
+public final class SchemaValidator {
+
+    private SchemaValidator() {
+    }
+
+    /**
+     * @param source who supplied the value, for the diagnostic an ignored unknown field produces;
+     * null ignores silently
+     */
+    public static List<SchemaIssue> validate(Object value, JsonSchema schema, String path, String source) {
+        List<SchemaIssue> issues = new ArrayList<SchemaIssue>();
+        check(value, schema, path == null ? "(root)" : path, issues, source);
+        return issues;
+    }
+
+    private static void check(Object value, JsonSchema schema, String path, List<SchemaIssue> issues, String source) {
+        String type = schema.getType();
+        if ("object".equals(type)) {
+            checkObject(value, schema, path, issues, source);
+        } else if ("array".equals(type)) {
+            checkArray(value, schema, path, issues, source);
+        } else if ("string".equals(type)) {
+            checkString(value, schema, path, issues);
+        } else if ("integer".equals(type) || "number".equals(type)) {
+            checkNumber(value, schema, path, issues);
+        } else if ("boolean".equals(type) && !(value instanceof Boolean)) {
+            issues.add(typeIssue(value, schema, path));
+        }
+    }
+
+    private static void checkObject(Object value, JsonSchema schema, String path, List<SchemaIssue> issues, String source) {
+        if (!(value instanceof Map)) {
+            issues.add(typeIssue(value, schema, path));
+            return;
+        }
+        Map<?, ?> record = (Map<?, ?>) value;
+        List<String> required = schema.getRequired();
+        if (required != null) {
+            for (String key : required) {
+                if (record.get(key) != null) {
+                    continue;
+                }
+                JsonSchema child = property(schema, key);
+                issues.add(new SchemaIssue(
+                        childPath(path, key),
+                        "required field \"" + key + "\" is missing",
+                        child != null && child.getFix() != null ? child.getFix() : "add \"" + key + "\" to " + path));
+            }
+        }
+        for (Map.Entry<?, ?> entry : record.entrySet()) {
+            if (entry.getValue() == null) {
+                continue;
+            }
+            String key = String.valueOf(entry.getKey());
+            JsonSchema childSchema = property(schema, key);
+            if (childSchema == null) {
+                childSchema = schema.getAdditionalProperties();
+            }
+            if (childSchema == null) {
+                if (source != null) {
+                    Diagnostics.ignoreUnknown("field", childPath(path, key), source);
+                }
+                continue;
+            }
+            check(entry.getValue(), childSchema, childPath(path, key), issues, source);
+        }
+    }
+
+    private static JsonSchema property(JsonSchema schema, String key) {
+        Map<String, JsonSchema> properties = schema.getProperties();
+        return properties == null ? null : properties.get(key);
+    }
+
+    private static void checkArray(Object value, JsonSchema schema, String path, List<SchemaIssue> issues, String source) {
+        if (!(value instanceof List)) {
+            issues.add(typeIssue(value, schema, path));
+            return;
+        }
+        JsonSchema items = schema.getItems();
+        if (items == null) {
+            return;
+        }
+        List<?> values = (List<?>) value;
+        for (int index = 0; index < values.size(); index++) {
+            check(values.get(index), items, path + "[" + index + "]", issues, source);
+        }
+    }
+
+    private static void checkString(Object value, JsonSchema schema, String path, List<SchemaIssue> issues) {
+        if (!(value instanceof String)) {
+            issues.add(typeIssue(value, schema, path));
+            return;
+        }
+        String text = (String) value;
+        String pattern = schema.getPattern();
+        // find() rather than matches(): the TypeScript uses RegExp.test, which is unanchored, and the
+        // manifest patterns supply their own anchors.
+        if (pattern != null && !Pattern.compile(pattern).matcher(text).find()) {
+            issues.add(new SchemaIssue(path, "\"" + text + "\" does not match " + pattern,
+                    schema.getFix() != null ? schema.getFix() : "make " + path + " match " + pattern));
+        }
+        List<String> allowed = schema.getEnumValues();
+        if (allowed != null && !allowed.contains(text)) {
+            String joined = join(allowed);
+            issues.add(new SchemaIssue(path, "\"" + text + "\" is not one of " + joined,
+                    schema.getFix() != null ? schema.getFix() : "set " + path + " to one of " + joined));
+        }
+    }
+
+    private static void checkNumber(Object value, JsonSchema schema, String path, List<SchemaIssue> issues) {
+        if (!(value instanceof Number) || isNotANumber((Number) value)
+                || ("integer".equals(schema.getType()) && !isIntegral((Number) value))) {
+            issues.add(typeIssue(value, schema, path));
+            return;
+        }
+        Integer minimum = schema.getMinimum();
+        if (minimum != null && ((Number) value).doubleValue() < minimum.doubleValue()) {
+            issues.add(new SchemaIssue(path,
+                    "expected a value >= " + minimum + ", got " + describeNumber((Number) value),
+                    schema.getFix() != null ? schema.getFix() : "set " + path + " to a value >= " + minimum));
+        }
+    }
+
+    private static boolean isNotANumber(Number value) {
+        double asDouble = value.doubleValue();
+        return Double.isNaN(asDouble) || Double.isInfinite(asDouble);
+    }
+
+    private static boolean isIntegral(Number value) {
+        double asDouble = value.doubleValue();
+        return asDouble == Math.floor(asDouble);
+    }
+
+    private static String describeNumber(Number value) {
+        double asDouble = value.doubleValue();
+        return asDouble == Math.floor(asDouble) ? String.valueOf((long) asDouble) : String.valueOf(asDouble);
+    }
+
+    private static SchemaIssue typeIssue(Object value, JsonSchema schema, String path) {
+        return new SchemaIssue(path, "expected " + schema.getType() + ", got " + describe(value),
+                schema.getFix() != null ? schema.getFix() : "set " + path + " to a " + schema.getType());
+    }
+
+    /** The names the TypeScript reports, so a message reads identically whichever side produced it. */
+    private static String describe(Object value) {
+        if (value == null) {
+            return "null";
+        }
+        if (value instanceof List) {
+            return "array";
+        }
+        if (value instanceof String) {
+            return "string";
+        }
+        if (value instanceof Boolean) {
+            return "boolean";
+        }
+        if (value instanceof Number) {
+            return "number";
+        }
+        return "object";
+    }
+
+    private static String join(List<String> values) {
+        StringBuilder out = new StringBuilder();
+        for (int index = 0; index < values.size(); index++) {
+            if (index > 0) {
+                out.append(", ");
+            }
+            out.append(values.get(index));
+        }
+        return out.toString();
+    }
+
+    private static String childPath(String path, String key) {
+        return "(root)".equals(path) ? key : path + "." + key;
+    }
+}
