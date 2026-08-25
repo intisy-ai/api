@@ -81,12 +81,6 @@ Through the plugin manager, as a dependency of the host or plugin that needs it:
 npm install @intisy-ai/api
 ```
 
-Inside this repo's own sibling packages, as a file dependency on the submodule checkout:
-
-```json
-{ "dependencies": { "api": "file:../api" } }
-```
-
 ## Configuration
 
 This package reads no configuration file. Its one environment switch is
@@ -104,6 +98,27 @@ the mode with `setStrict(true)`.
 This package writes no log files. Every plugin-facing message goes to the `Logger` the host puts
 on the context, and the package's own diagnostics go to the sink a host installs, or to the
 console when it installs none.
+
+## scripts/teavm-build.mjs (generic TeaVM build harness)
+
+A standalone Node script, invoked directly from a consuming package's `build` script rather than
+imported from the api surface. It runs a Gradle TeaVM `generateJavaScript` task for a Java module and
+copies the emitted ESM to a stable path, so a bundler can stage it alongside the package's own
+TypeScript. Nothing in it is specific to any one consumer.
+
+Contract: runs `./gradlew <module>:<task>` inside `--java-dir`, locates the single non-sourcemap
+`.js` file under `<java-dir>/<module-dir>/build/generated/teavm/js/`, and copies it (plus its
+`.map`, if present) to `--out`. Fails loudly if the java dir or gradle wrapper is missing, the
+generated-js directory does not exist after the build, more or fewer than one `.js` file is found, or
+the staged output is empty.
+
+Usage, from the consuming package's own directory:
+```bash
+node node_modules/@intisy-ai/api/scripts/teavm-build.mjs --java-dir . --module :stub-teavm --out src/generated/stub-provider.teavm.js
+```
+Flags: `--java-dir` / `--module` / `--out` (all required), `--task` (default `generateJavaScript`),
+`--module-dir` (default `--module` minus its leading `:`), `--skip-build` (re-copy the
+last-generated output without re-running Gradle).
 
 ## License
 
