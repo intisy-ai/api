@@ -1,0 +1,10 @@
+dependencies {
+    api project(":contract")
+    // GsonJsonCodec's own surface takes Gson types, so a consumer configuring one needs them too.
+    api "com.google.code.gson:gson:2.10.1"
+
+    // JdbcStore takes a javax.sql.DataSource the caller supplies; H2 and SQLite are here only to
+    // exercise both dialect paths (SQLite has no SELECT ... FOR UPDATE) against real drivers.
+    testImplementation "com.h2database:h2:2.2.224"
+    testImplementation "org.xerial:sqlite-jdbc:3.45.3.0"
+}

@@ -1,4 +1,4 @@
 {
   "scopedOnly": true,
-  "jarModule": "annotations processor contract seam js-base"
+  "jarModule": "annotations processor contract seam js-base jvm-seam"
 }
