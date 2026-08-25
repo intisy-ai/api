@@ -1,9 +1,3 @@
-# api
-
-[![npm version](https://img.shields.io/npm/v/@intisy-ai/api)](https://www.npmjs.com/package/@intisy-ai/api)
-[![npm downloads](https://img.shields.io/npm/dm/@intisy-ai/api)](https://www.npmjs.com/package/@intisy-ai/api)
-[![CI](https://img.shields.io/github/actions/workflow/status/intisy-ai/api/publish.yml)](https://github.com/intisy-ai/api/actions)
-
 The plugin contract for the intisy-ai ecosystem, published as `@intisy-ai/api`. It holds the
 `plugin.json` manifest schema, the plugin context and lifecycle, the typed keys a capability or a
 service is reached by, the declaration engine a host runs, the ESM driver a host starts plugins with,
@@ -119,7 +113,3 @@ node node_modules/@intisy-ai/api/scripts/teavm-build.mjs --java-dir . --module :
 Flags: `--java-dir` / `--module` / `--out` (all required), `--task` (default `generateJavaScript`),
 `--module-dir` (default `--module` minus its leading `:`), `--skip-build` (re-copy the
 last-generated output without re-running Gradle).
-
-## License
-
-MIT
