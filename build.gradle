@@ -59,6 +59,7 @@ ext.PUBLISHED_MODULES = [
     ":contract"   : "contract",
     ":seam"       : "seam",
     ":js-base"    : "js-base",
+    ":jvm-seam"   : "jvm-seam",
 ]
 
 configure(subprojects.findAll { PUBLISHED_MODULES.containsKey(it.path) }) {

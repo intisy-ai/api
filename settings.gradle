@@ -20,6 +20,10 @@ include ":engine"
 include ":seam"
 include ":js-base"
 
+// :jvm-seam - the JVM implementations of those same seams. JVM-only and never TeaVM-compiled,
+//             so a JDK-only class like URLConnection or java.sql is fair game here.
+include ":jvm-seam"
+
 // :teavm - the engine compiled to an ES2015 module. JDK 17, because TeaVM 0.15.0's artifacts
 //          publish minimum-JVM metadata above 8.
 include ":teavm"
