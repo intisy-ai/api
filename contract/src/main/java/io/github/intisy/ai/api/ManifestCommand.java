@@ -11,21 +11,41 @@ import io.github.intisy.ai.tsemit.TsOptional;
  */
 @TsInterface(data = true)
 public interface ManifestCommand {
-    /** The command's name, which is also the file it is written to. */
+    /**
+     * The command's name, which is also the file it is written to.
+     *
+     * @return the command name
+     */
     String name();
 
-    /** What a command picker shows beside the name. */
+    /**
+     * What a command picker shows beside the name.
+     *
+     * @return the command description
+     */
     String description();
 
-    /** The argument shape a picker hints at, such as {@code list | get <key>}. */
+    /**
+     * The argument shape a picker hints at, such as {@code list | get <key>}.
+     *
+     * @return the argument hint, or absent when this command declares none
+     */
     @TsOptional
     String argumentHint();
 
-    /** Markdown the model is shown, after any shell output. */
+    /**
+     * Markdown the model is shown, after any shell output.
+     *
+     * @return the command body, or absent when this command runs shell output only
+     */
     @TsOptional
     String body();
 
-    /** A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}. */
+    /**
+     * A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.
+     *
+     * @return the shell line, or absent when this command runs no shell step
+     */
     @TsOptional
     String shell();
 }

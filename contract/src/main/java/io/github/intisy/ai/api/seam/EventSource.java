@@ -15,6 +15,7 @@ public interface EventSource {
      *
      * @throws RuntimeException when the underlying source fails. A failure is terminal: the source
      * must not be pulled again afterwards.
+     * @return the next event, or {@code null} once the source is drained
      */
     String next();
 }

@@ -10,9 +10,17 @@ import io.github.intisy.ai.tsemit.TsInterface;
  */
 @TsInterface(data = true)
 public interface AppLoader {
-    /** The loader plugin's id. */
+    /**
+     * The loader plugin's id.
+     *
+     * @return the loader plugin id
+     */
     String id();
 
-    /** Where the loader is cloned from, as {@code owner/repo} or a full URL. */
+    /**
+     * Where the loader is cloned from, as {@code owner/repo} or a full URL.
+     *
+     * @return the clone source
+     */
     String url();
 }

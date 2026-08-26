@@ -10,15 +10,27 @@ import io.github.intisy.ai.tsemit.TsOptional;
  */
 @TsInterface(data = true)
 public interface AppDiscovery {
-    /** The repository topic a community plugin carries. */
+    /**
+     * The repository topic a community plugin carries.
+     *
+     * @return the topic string, or absent when this app has no topic convention
+     */
     @TsOptional
     String topic();
 
-    /** A free-text search to run where the topic alone under-reports. */
+    /**
+     * A free-text search to run where the topic alone under-reports.
+     *
+     * @return the search query, or absent when none is needed
+     */
     @TsOptional
     String searchQuery();
 
-    /** A curated list to read, as a raw URL. */
+    /**
+     * A curated list to read, as a raw URL.
+     *
+     * @return the raw URL of the curated list, or absent when this app has none
+     */
     @TsOptional
     String awesomeList();
 }

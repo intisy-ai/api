@@ -11,7 +11,10 @@ import java.util.Map;
  * inside the stream instead.
  */
 public class HttpResponse {
+    /** The HTTP status code. */
     public int status;
+
+    /** Response headers. */
     public Map<String, String> headers;
 
     /** The whole body, when this response is buffered. Null when {@link #bodyStream} is set. */

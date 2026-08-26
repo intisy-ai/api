@@ -19,10 +19,15 @@ public interface ManifestConfig {
      * @implNote Absent means the id, which is the case for all but a plugin whose settings file
      * predates its repository name. Stated rather than assumed, because a surface that guesses
      * writes to a file the plugin never reads.
+     * @return the settings file name, or absent when it is the plugin's id
      */
     @TsOptional
     String name();
 
-    /** Every setting this plugin has, and what it is worth until a home changes it. */
+    /**
+     * Every setting this plugin has, and what it is worth until a home changes it.
+     *
+     * @return the setting keys mapped to their default values
+     */
     Map<String, Object> defaults();
 }

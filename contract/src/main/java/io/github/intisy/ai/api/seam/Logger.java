@@ -10,18 +10,39 @@ import io.github.intisy.ai.tsemit.TsInterface;
  */
 @TsInterface
 public interface Logger {
-    /** Normal operation. */
+    /**
+     * Normal operation.
+     *
+     * @param message the line to log
+     */
     void info(String message);
 
-    /** Something unexpected that did not stop the operation. */
+    /**
+     * Something unexpected that did not stop the operation.
+     *
+     * @param message the line to log
+     */
     void warn(String message);
 
-    /** Detail only useful while debugging. */
+    /**
+     * Detail only useful while debugging.
+     *
+     * @param message the line to log
+     */
     void debug(String message);
 
-    /** Something that failed. */
+    /**
+     * Something that failed.
+     *
+     * @param message the line to log
+     */
     void error(String message);
 
-    /** Something that failed, with the cause. */
+    /**
+     * Something that failed, with the cause.
+     *
+     * @param message the line to log
+     * @param cause the failure, logged alongside the message
+     */
     void error(String message, Object cause);
 }

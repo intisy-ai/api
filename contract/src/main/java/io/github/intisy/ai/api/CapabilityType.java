@@ -13,7 +13,11 @@ import io.github.intisy.ai.tsemit.TsProperty;
 @TsInterface
 @TsPhantom("T")
 public interface CapabilityType<T> {
-    /** The id itself, which is what crosses the boundary at run time. */
+    /**
+     * The id itself, which is what crosses the boundary at run time.
+     *
+     * @return the capability id
+     */
     @TsProperty(readOnly = true)
     String id();
 }

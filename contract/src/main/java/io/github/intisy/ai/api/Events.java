@@ -11,9 +11,22 @@ import java.util.function.Consumer;
  */
 @TsInterface
 public interface Events {
-    /** Says a topic carried this payload, to whoever is listening and to nobody in particular. */
+    /**
+     * Says a topic carried this payload, to whoever is listening and to nobody in particular.
+     *
+     * @param <T> the topic's payload type
+     * @param topic the topic to publish on
+     * @param payload the event payload
+     */
     <T> void publish(TopicType<T> topic, T payload);
 
-    /** Hears this topic until the returned function is called. */
+    /**
+     * Hears this topic until the returned function is called.
+     *
+     * @param <T> the topic's payload type
+     * @param topic the topic to listen on
+     * @param listener called with each payload published on {@code topic}
+     * @return a function that stops the subscription when called
+     */
     <T> Runnable subscribe(TopicType<T> topic, Consumer<T> listener);
 }

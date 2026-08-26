@@ -11,15 +11,31 @@ import io.github.intisy.ai.tsemit.TsInterface;
  */
 @TsInterface(data = true)
 public interface AppPathNames {
-    /** Where plugin checkouts live. */
+    /**
+     * Where plugin checkouts live.
+     *
+     * @return the repos subdirectory name
+     */
     String repos();
 
-    /** Where deployed plugin bundles and their manifest sidecars live. */
+    /**
+     * Where deployed plugin bundles and their manifest sidecars live.
+     *
+     * @return the plugin subdirectory name
+     */
     String plugin();
 
-    /** Where cached downloads live. */
+    /**
+     * Where cached downloads live.
+     *
+     * @return the cache subdirectory name
+     */
     String cache();
 
-    /** Where configuration files live. */
+    /**
+     * Where configuration files live.
+     *
+     * @return the config subdirectory name
+     */
     String config();
 }

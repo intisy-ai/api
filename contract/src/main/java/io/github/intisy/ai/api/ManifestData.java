@@ -12,6 +12,10 @@ import java.util.List;
  */
 @TsInterface(data = true)
 public interface ManifestData {
-    /** Paths this plugin writes to, relative to the home it runs in. */
+    /**
+     * Paths this plugin writes to, relative to the home it runs in.
+     *
+     * @return the plugin's data paths
+     */
     List<String> paths();
 }

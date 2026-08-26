@@ -12,14 +12,26 @@ import java.util.List;
  */
 @TsInterface(data = true)
 public interface AppModelCatalog {
-    /** Files to try in order, relative to the app home. */
+    /**
+     * Files to try in order, relative to the app home.
+     *
+     * @return the candidate file paths, tried in order
+     */
     List<String> files();
 
-    /** Environment variable naming the config file outright. */
+    /**
+     * Environment variable naming the config file outright.
+     *
+     * @return the environment variable name, or absent when this app has none
+     */
     @TsOptional
     String envOverride();
 
-    /** The app's config schema, for an editor's completion. */
+    /**
+     * The app's config schema, for an editor's completion.
+     *
+     * @return the schema URL, or absent when this app publishes none
+     */
     @TsOptional
     String schemaUrl();
 
@@ -28,6 +40,7 @@ public interface AppModelCatalog {
      *
      * @implNote Named after the app's OWN config key, which is data this package quotes rather than
      * a category it serves: it never reads what the key contains.
+     * @return the config key holding the catalog
      */
     String providerKey();
 }
