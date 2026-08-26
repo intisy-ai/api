@@ -9406,6 +9406,9 @@ igiae_JsonSchema_setItems = ($this, $value) => {
 igiae_JsonSchema_getAdditionalProperties = $this => {
     return $this.$additionalProperties;
 },
+igiae_JsonSchema_setAdditionalProperties = ($this, $value) => {
+    $this.$additionalProperties = $value;
+},
 igiae_JsonSchema_getPattern = $this => {
     return $this.$pattern2;
 },
@@ -9420,6 +9423,9 @@ igiae_JsonSchema_setMinimum = ($this, $value) => {
 },
 igiae_JsonSchema_getEnumValues = $this => {
     return $this.$enumValues;
+},
+igiae_JsonSchema_setEnumValues = ($this, $value) => {
+    $this.$enumValues = $value;
 },
 igiae_JsonSchema_getFix = $this => {
     return $this.$fix0;
@@ -14086,7 +14092,7 @@ igiaj_JsPluginContext_assemble$js_body$_9 = (var$1, var$2, var$3, var$4, var$5, 
 };
 function igiae_PluginHost() {
     let a = this; jl_Object.call(a);
-    a.$app = null;
+    a.$app0 = null;
     a.$api = 0;
     a.$surfaces = null;
     a.$ledger = null;
@@ -14103,7 +14109,7 @@ let igiae_PluginHost__init_ = ($this, var$1, var$2, var$3, var$4) => {
     $this.$disposers = ju_LinkedHashMap__init_();
     $this.$revoked = ju_HashSet__init_0();
     $this.$known = ju_ArrayList__init_();
-    $this.$app = var$1;
+    $this.$app0 = var$1;
     $this.$api = var$2;
     $this.$surfaces = var$3 !== null ? ju_ArrayList__init_0(var$3) : ju_ArrayList__init_();
     $this.$hub = igiae_ServiceHub__init_0(var$4, igiae_PluginHost$1__init_0($this));
@@ -14114,7 +14120,7 @@ igiae_PluginHost__init_0 = (var_0, var_1, var_2, var_3) => {
     return var_4;
 },
 igiae_PluginHost_getApp = $this => {
-    return $this.$app;
+    return $this.$app0;
 },
 igiae_PluginHost_getApi = $this => {
     return $this.$api;
@@ -16819,7 +16825,7 @@ jur_AbstractCharClass$LazyNonSpace_computeValue = $this => {
 },
 igiae_ManifestSchema = $rt_classWithoutFields(),
 igiae_ManifestSchema_get = () => {
-    let $properties, $id, $api, $entry, $capabilities, $permissions, $root;
+    let $properties, $id, $api, $entry, $icons, $capabilities, $permissions, $root;
     $properties = ju_LinkedHashMap__init_();
     $properties.$put($rt_s(274), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(397)));
     $id = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(398));
@@ -16835,24 +16841,29 @@ igiae_ManifestSchema_get = () => {
     $properties.$put($rt_s(310), $entry);
     $properties.$put($rt_s(405), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(406)));
     $properties.$put($rt_s(407), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(408)));
-    $capabilities = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(409));
+    $icons = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(409));
+    igiae_JsonSchema_setAdditionalProperties($icons, igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(408)));
+    $properties.$put($rt_s(410), $icons);
+    $capabilities = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(411));
     igiae_JsonSchema_setItems($capabilities, igiae_JsonSchema_ofType($rt_s(260)));
-    igiae_JsonSchema_setFix($capabilities, $rt_s(410));
+    igiae_JsonSchema_setFix($capabilities, $rt_s(412));
     $properties.$put($rt_s(17), $capabilities);
     $properties.$put($rt_s(296), igiae_ManifestSchema_services());
-    $properties.$put($rt_s(411), igiae_ManifestSchema_commands());
-    $properties.$put($rt_s(412), igiae_ManifestSchema_config());
-    $properties.$put($rt_s(413), igiae_ManifestSchema_data());
-    $permissions = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(414));
+    $properties.$put($rt_s(413), igiae_ManifestSchema_commands());
+    $properties.$put($rt_s(414), igiae_ManifestSchema_config());
+    $properties.$put($rt_s(415), igiae_ManifestSchema_data());
+    $permissions = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(416));
     igiae_JsonSchema_setItems($permissions, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(18), $permissions);
-    $properties.$put($rt_s(415), igiae_ManifestSchema_lifecycle());
-    $properties.$put($rt_s(416), igiae_ManifestSchema_publish());
-    $properties.$put($rt_s(417), igiae_ManifestSchema_repo());
-    $root = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(418));
-    igiae_JsonSchema_setSchemaDraft($root, $rt_s(419));
-    igiae_JsonSchema_setSchemaId($root, $rt_s(420));
-    igiae_JsonSchema_setTitle($root, $rt_s(421));
+    $properties.$put($rt_s(417), igiae_ManifestSchema_lifecycle());
+    $properties.$put($rt_s(418), igiae_ManifestSchema_publish());
+    $properties.$put($rt_s(419), igiae_ManifestSchema_repo());
+    $properties.$put($rt_s(420), igiae_ManifestSchema_marketplace());
+    $properties.$put($rt_s(11), igiae_ManifestSchema_app());
+    $root = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(421));
+    igiae_JsonSchema_setSchemaDraft($root, $rt_s(422));
+    igiae_JsonSchema_setSchemaId($root, $rt_s(423));
+    igiae_JsonSchema_setTitle($root, $rt_s(424));
     igiae_JsonSchema_setRequired($root, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(16), $rt_s(12)])));
     igiae_JsonSchema_setProperties($root, $properties);
     return $root;
@@ -16860,40 +16871,40 @@ igiae_ManifestSchema_get = () => {
 let igiae_ManifestSchema_services = () => {
     let $properties, $provides, $consumes, $services;
     $properties = ju_LinkedHashMap__init_();
-    $provides = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(422));
+    $provides = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(425));
     igiae_JsonSchema_setItems($provides, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(297), $provides);
-    $consumes = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(423));
+    $consumes = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(426));
     igiae_JsonSchema_setItems($consumes, igiae_JsonSchema_ofType($rt_s(260)));
     $properties.$put($rt_s(298), $consumes);
-    $services = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(424));
+    $services = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(427));
     igiae_JsonSchema_setProperties($services, $properties);
     return $services;
 },
 igiae_ManifestSchema_commands = () => {
     let $properties, $command, $commands;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(425), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(426)));
-    $properties.$put($rt_s(277), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(427)));
     $properties.$put($rt_s(428), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(429)));
-    $properties.$put($rt_s(430), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(431)));
-    $properties.$put($rt_s(432), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(433)));
-    $command = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(434));
-    igiae_JsonSchema_setRequired($command, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(425), $rt_s(277)])));
+    $properties.$put($rt_s(277), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(430)));
+    $properties.$put($rt_s(431), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(432)));
+    $properties.$put($rt_s(433), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(434)));
+    $properties.$put($rt_s(435), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(436)));
+    $command = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(437));
+    igiae_JsonSchema_setRequired($command, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(428), $rt_s(277)])));
     igiae_JsonSchema_setProperties($command, $properties);
-    $commands = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(435));
+    $commands = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(438));
     igiae_JsonSchema_setItems($commands, $command);
     return $commands;
 },
 igiae_ManifestSchema_data = () => {
     let $paths, $properties, $data, var$4;
-    $paths = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(436));
+    $paths = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(439));
     igiae_JsonSchema_setItems($paths, igiae_JsonSchema_ofType($rt_s(260)));
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(437), $paths);
-    $data = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(438));
+    $properties.$put($rt_s(440), $paths);
+    $data = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(441));
     var$4 = $rt_createArray(jl_String, 1);
-    var$4.data[0] = $rt_s(437);
+    var$4.data[0] = $rt_s(440);
     igiae_JsonSchema_setRequired($data, ju_Arrays_asList(var$4));
     igiae_JsonSchema_setProperties($data, $properties);
     return $data;
@@ -16901,11 +16912,11 @@ igiae_ManifestSchema_data = () => {
 igiae_ManifestSchema_config = () => {
     let $properties, $config, var$3;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(425), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(439)));
-    $properties.$put($rt_s(440), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(441)));
-    $config = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(442));
+    $properties.$put($rt_s(428), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(442)));
+    $properties.$put($rt_s(443), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(444)));
+    $config = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(445));
     var$3 = $rt_createArray(jl_String, 1);
-    var$3.data[0] = $rt_s(440);
+    var$3.data[0] = $rt_s(443);
     igiae_JsonSchema_setRequired($config, ju_Arrays_asList(var$3));
     igiae_JsonSchema_setProperties($config, $properties);
     return $config;
@@ -16913,43 +16924,222 @@ igiae_ManifestSchema_config = () => {
 igiae_ManifestSchema_lifecycle = () => {
     let $properties, $lifecycle;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(443), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(444)));
-    $properties.$put($rt_s(445), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(446)));
-    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(447));
+    $properties.$put($rt_s(446), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(447)));
+    $properties.$put($rt_s(448), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(449)));
+    $lifecycle = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(450));
     igiae_JsonSchema_setProperties($lifecycle, $properties);
     return $lifecycle;
 },
 igiae_ManifestSchema_publish = () => {
     let $properties, $jarModule, $publish;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(448), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(449)));
-    $jarModule = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(450));
+    $properties.$put($rt_s(451), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(452)));
+    $jarModule = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(453));
     igiae_JsonSchema_setItems($jarModule, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(451), $jarModule);
-    $properties.$put($rt_s(452), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(453)));
-    $properties.$put($rt_s(454), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(455)));
-    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(456));
+    $properties.$put($rt_s(454), $jarModule);
+    $properties.$put($rt_s(455), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(456)));
+    $properties.$put($rt_s(457), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(458)));
+    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(459));
     igiae_JsonSchema_setProperties($publish, $properties);
     return $publish;
 },
 igiae_ManifestSchema_repo = () => {
     let $properties, $domains, $tech, $topics, $repo;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(457), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(458)));
-    $properties.$put($rt_s(459), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(460)));
-    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(461));
+    $properties.$put($rt_s(460), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(461)));
+    $properties.$put($rt_s(462), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(463)));
+    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(464));
     igiae_JsonSchema_setItems($domains, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(462), $domains);
-    $tech = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(463));
+    $properties.$put($rt_s(465), $domains);
+    $tech = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(466));
     igiae_JsonSchema_setItems($tech, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(464), $tech);
-    $topics = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(465));
+    $properties.$put($rt_s(467), $tech);
+    $topics = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(468));
     igiae_JsonSchema_setItems($topics, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(466), $topics);
-    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(467));
-    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(457), $rt_s(459), $rt_s(464)])));
+    $properties.$put($rt_s(469), $topics);
+    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(470));
+    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(460), $rt_s(462), $rt_s(467)])));
     igiae_JsonSchema_setProperties($repo, $properties);
     return $repo;
+},
+igiae_ManifestSchema_marketplace = () => {
+    let $matchProperties, $topics, $match, $categoryProperties, $category, $categories, $properties, $marketplace, var$9;
+    $matchProperties = ju_LinkedHashMap__init_();
+    $topics = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(471));
+    igiae_JsonSchema_setItems($topics, igiae_JsonSchema_ofType($rt_s(260)));
+    $matchProperties.$put($rt_s(469), $topics);
+    $matchProperties.$put($rt_s(472), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(473)));
+    $match = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(474));
+    igiae_JsonSchema_setProperties($match, $matchProperties);
+    $categoryProperties = ju_LinkedHashMap__init_();
+    $categoryProperties.$put($rt_s(16), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(475)));
+    $categoryProperties.$put($rt_s(476), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(477)));
+    $categoryProperties.$put($rt_s(478), $match);
+    $category = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(479));
+    igiae_JsonSchema_setRequired($category, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(16), $rt_s(478)])));
+    igiae_JsonSchema_setProperties($category, $categoryProperties);
+    $categories = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(480));
+    igiae_JsonSchema_setItems($categories, $category);
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(481), $categories);
+    $marketplace = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(482));
+    var$9 = $rt_createArray(jl_String, 1);
+    var$9.data[0] = $rt_s(481);
+    igiae_JsonSchema_setRequired($marketplace, ju_Arrays_asList(var$9));
+    igiae_JsonSchema_setProperties($marketplace, $properties);
+    return $marketplace;
+},
+igiae_ManifestSchema_app = () => {
+    let $properties, $integration, $app;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(16), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(483)));
+    $properties.$put($rt_s(476), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(406)));
+    $properties.$put($rt_s(407), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(484)));
+    $properties.$put($rt_s(485), igiae_ManifestSchema_appHome());
+    $properties.$put($rt_s(486), igiae_ManifestSchema_appDetect());
+    $properties.$put($rt_s(487), igiae_ManifestSchema_appLoader());
+    $properties.$put($rt_s(488), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(489)));
+    $properties.$put($rt_s(440), igiae_ManifestSchema_appPathNames());
+    $properties.$put($rt_s(490), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(376)), $rt_s(491)));
+    $integration = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(492));
+    igiae_JsonSchema_setEnumValues($integration, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(493), $rt_s(494)])));
+    igiae_JsonSchema_setFix($integration, $rt_s(495));
+    $properties.$put($rt_s(496), $integration);
+    $properties.$put($rt_s(497), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(498)));
+    $properties.$put($rt_s(499), igiae_ManifestSchema_appUsage());
+    $properties.$put($rt_s(500), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(501)));
+    $properties.$put($rt_s(502), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(503)));
+    $properties.$put($rt_s(504), igiae_ManifestSchema_appNpmPlugins());
+    $properties.$put($rt_s(505), igiae_ManifestSchema_appStartupHook());
+    $properties.$put($rt_s(506), igiae_ManifestSchema_appDiscovery());
+    $properties.$put($rt_s(507), igiae_ManifestSchema_appProjects());
+    $properties.$put($rt_s(508), igiae_ManifestSchema_appModelCatalog());
+    $app = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(509));
+    igiae_JsonSchema_setRequired($app, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(16), $rt_s(476), $rt_s(485)])));
+    igiae_JsonSchema_setProperties($app, $properties);
+    return $app;
+},
+igiae_ManifestSchema_appHome = () => {
+    let $properties, $candidates, $home, var$4;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(510), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(511)));
+    $properties.$put($rt_s(512), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(513)));
+    $properties.$put($rt_s(514), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(515)));
+    $candidates = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(516));
+    igiae_JsonSchema_setItems($candidates, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(517), $candidates);
+    $home = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(518));
+    var$4 = $rt_createArray(jl_String, 1);
+    var$4.data[0] = $rt_s(517);
+    igiae_JsonSchema_setRequired($home, ju_Arrays_asList(var$4));
+    igiae_JsonSchema_setProperties($home, $properties);
+    return $home;
+},
+igiae_ManifestSchema_appDetect = () => {
+    let $properties, $detect;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(519), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(520)));
+    $properties.$put($rt_s(521), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(522)));
+    $detect = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(523));
+    igiae_JsonSchema_setProperties($detect, $properties);
+    return $detect;
+},
+igiae_ManifestSchema_appLoader = () => {
+    let $properties, $loader;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(16), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(524)));
+    $properties.$put($rt_s(525), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(526)));
+    $loader = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(527));
+    igiae_JsonSchema_setRequired($loader, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(16), $rt_s(525)])));
+    igiae_JsonSchema_setProperties($loader, $properties);
+    return $loader;
+},
+igiae_ManifestSchema_appPathNames = () => {
+    let $properties, $paths;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(528), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(529)));
+    $properties.$put($rt_s(530), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(531)));
+    $properties.$put($rt_s(532), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(533)));
+    $properties.$put($rt_s(414), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(534)));
+    $paths = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(535));
+    igiae_JsonSchema_setProperties($paths, $properties);
+    return $paths;
+},
+igiae_ManifestSchema_appUsage = () => {
+    let $properties, $formats, $usage, var$4;
+    $properties = ju_LinkedHashMap__init_();
+    $formats = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(536));
+    igiae_JsonSchema_setItems($formats, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(537), $formats);
+    $usage = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(538));
+    var$4 = $rt_createArray(jl_String, 1);
+    var$4.data[0] = $rt_s(537);
+    igiae_JsonSchema_setRequired($usage, ju_Arrays_asList(var$4));
+    igiae_JsonSchema_setProperties($usage, $properties);
+    return $usage;
+},
+igiae_ManifestSchema_appNpmPlugins = () => {
+    let $properties, $configFiles, $npmPlugins;
+    $properties = ju_LinkedHashMap__init_();
+    $configFiles = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(539));
+    igiae_JsonSchema_setItems($configFiles, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(540), $configFiles);
+    $properties.$put($rt_s(541), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(542)));
+    $properties.$put($rt_s(543), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(544)));
+    $properties.$put($rt_s(545), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(546)));
+    $npmPlugins = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(547));
+    igiae_JsonSchema_setRequired($npmPlugins, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(540), $rt_s(541)])));
+    igiae_JsonSchema_setProperties($npmPlugins, $properties);
+    return $npmPlugins;
+},
+igiae_ManifestSchema_appStartupHook = () => {
+    let $properties, $path, $startupHook;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(548), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(549)));
+    $path = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(550));
+    igiae_JsonSchema_setItems($path, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(551), $path);
+    $properties.$put($rt_s(310), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(552)));
+    $startupHook = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(553));
+    igiae_JsonSchema_setRequired($startupHook, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(548), $rt_s(551), $rt_s(310)])));
+    igiae_JsonSchema_setProperties($startupHook, $properties);
+    return $startupHook;
+},
+igiae_ManifestSchema_appDiscovery = () => {
+    let $properties, $discovery;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(554), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(555)));
+    $properties.$put($rt_s(556), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(557)));
+    $properties.$put($rt_s(558), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(559)));
+    $discovery = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(560));
+    igiae_JsonSchema_setProperties($discovery, $properties);
+    return $discovery;
+},
+igiae_ManifestSchema_appProjects = () => {
+    let $properties, $sessionDb, $projects;
+    $properties = ju_LinkedHashMap__init_();
+    $properties.$put($rt_s(561), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(562)));
+    $sessionDb = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(563));
+    igiae_JsonSchema_setItems($sessionDb, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(564), $sessionDb);
+    $properties.$put($rt_s(565), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(566)));
+    $projects = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(567));
+    igiae_JsonSchema_setProperties($projects, $properties);
+    return $projects;
+},
+igiae_ManifestSchema_appModelCatalog = () => {
+    let $properties, $files, $modelCatalog;
+    $properties = ju_LinkedHashMap__init_();
+    $files = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(568));
+    igiae_JsonSchema_setItems($files, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(569), $files);
+    $properties.$put($rt_s(510), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(570)));
+    $properties.$put($rt_s(545), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(546)));
+    $properties.$put($rt_s(571), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(572)));
+    $modelCatalog = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(573));
+    igiae_JsonSchema_setRequired($modelCatalog, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(569), $rt_s(571)])));
+    igiae_JsonSchema_setProperties($modelCatalog, $properties);
+    return $modelCatalog;
 },
 igiae_ManifestSchema_described = ($schema, $description) => {
     igiae_JsonSchema_setDescription($schema, $description);
@@ -17344,8 +17534,8 @@ $rt_wrapFunction2(jl_String_subSequence), "$contains1", $rt_wrapFunction1(jl_Str
 ju_HashSet, "HashSet", 1, ju_AbstractSet, [jl_Cloneable, ji_Serializable], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_HashSet__init_1), "$_init_19", $rt_wrapFunction1(ju_HashSet__init_), "$add2", $rt_wrapFunction1(ju_HashSet_add), "$contains", $rt_wrapFunction1(ju_HashSet_contains), "$isEmpty", $rt_wrapFunction0(ju_HashSet_isEmpty), "$iterator", $rt_wrapFunction0(ju_HashSet_iterator), "$remove1", $rt_wrapFunction1(ju_HashSet_remove), "$size", $rt_wrapFunction0(ju_HashSet_size)],
 ju_LinkedHashSet, "LinkedHashSet", 1, ju_HashSet, [ju_SequencedSet, jl_Cloneable, ji_Serializable], 1, 0, 0, ["$_init_", $rt_wrapFunction0(ju_LinkedHashSet__init_0)],
 igiae_JsonSchema, "JsonSchema", 13, jl_Object, [], 17, 0, 0, ["$getType2", $rt_wrapFunction0(igiae_JsonSchema_getType), "$setTitle", $rt_wrapFunction1(igiae_JsonSchema_setTitle), "$setDescription", $rt_wrapFunction1(igiae_JsonSchema_setDescription), "$getProperties", $rt_wrapFunction0(igiae_JsonSchema_getProperties), "$setProperties", $rt_wrapFunction1(igiae_JsonSchema_setProperties), "$getRequired", $rt_wrapFunction0(igiae_JsonSchema_getRequired), "$setRequired", $rt_wrapFunction1(igiae_JsonSchema_setRequired),
-"$getItems", $rt_wrapFunction0(igiae_JsonSchema_getItems), "$setItems", $rt_wrapFunction1(igiae_JsonSchema_setItems), "$getAdditionalProperties", $rt_wrapFunction0(igiae_JsonSchema_getAdditionalProperties), "$getPattern", $rt_wrapFunction0(igiae_JsonSchema_getPattern), "$setPattern", $rt_wrapFunction1(igiae_JsonSchema_setPattern), "$getMinimum", $rt_wrapFunction0(igiae_JsonSchema_getMinimum), "$setMinimum", $rt_wrapFunction1(igiae_JsonSchema_setMinimum), "$getEnumValues", $rt_wrapFunction0(igiae_JsonSchema_getEnumValues),
-"$getFix", $rt_wrapFunction0(igiae_JsonSchema_getFix), "$setFix", $rt_wrapFunction1(igiae_JsonSchema_setFix), "$setSchemaDraft", $rt_wrapFunction1(igiae_JsonSchema_setSchemaDraft), "$setSchemaId", $rt_wrapFunction1(igiae_JsonSchema_setSchemaId), "$toTree0", $rt_wrapFunction0(igiae_JsonSchema_toTree)],
+"$getItems", $rt_wrapFunction0(igiae_JsonSchema_getItems), "$setItems", $rt_wrapFunction1(igiae_JsonSchema_setItems), "$getAdditionalProperties", $rt_wrapFunction0(igiae_JsonSchema_getAdditionalProperties), "$setAdditionalProperties", $rt_wrapFunction1(igiae_JsonSchema_setAdditionalProperties), "$getPattern", $rt_wrapFunction0(igiae_JsonSchema_getPattern), "$setPattern", $rt_wrapFunction1(igiae_JsonSchema_setPattern), "$getMinimum", $rt_wrapFunction0(igiae_JsonSchema_getMinimum), "$setMinimum", $rt_wrapFunction1(igiae_JsonSchema_setMinimum),
+"$getEnumValues", $rt_wrapFunction0(igiae_JsonSchema_getEnumValues), "$setEnumValues", $rt_wrapFunction1(igiae_JsonSchema_setEnumValues), "$getFix", $rt_wrapFunction0(igiae_JsonSchema_getFix), "$setFix", $rt_wrapFunction1(igiae_JsonSchema_setFix), "$setSchemaDraft", $rt_wrapFunction1(igiae_JsonSchema_setSchemaDraft), "$setSchemaId", $rt_wrapFunction1(igiae_JsonSchema_setSchemaId), "$toTree0", $rt_wrapFunction0(igiae_JsonSchema_toTree)],
 jur_FSet$PossessiveFSet, "FSet$PossessiveFSet", 2, jur_AbstractSet, [], 0, 0, 0, ["$_init_", $rt_wrapFunction0(jur_FSet$PossessiveFSet__init_), "$matches", $rt_wrapFunction3(jur_FSet$PossessiveFSet_matches), "$getName", $rt_wrapFunction0(jur_FSet$PossessiveFSet_getName), "$hasConsumed", $rt_wrapFunction1(jur_FSet$PossessiveFSet_hasConsumed)],
 igiae_Pending$Settlement, 0, jl_Object, [], 1537, 0, 0, 0,
 igiaj_JsPluginHost$12$1, "JsPluginHost$12$1", 14, jl_Object, [igiae_Pending$Settlement], 0, 0, 0, ["$_init_40", $rt_wrapFunction3(igiaj_JsPluginHost$12$1__init_), "$value", $rt_wrapFunction1(igiaj_JsPluginHost$12$1_value), "$failure", $rt_wrapFunction1(igiaj_JsPluginHost$12$1_failure)],
@@ -17559,12 +17749,20 @@ $rt_stringPool(["String is null", "String is empty", "String contains invalid di
 ", this host has api ", "update the app to a version that implements api ", " or later", "capabilities declared but never provided: ", "call ctx.provide(\"", "\", ...) in activate, or remove it from \"capabilities\" in plugin.json", "capabilities provided but never declared: ", "add \"", "\" to \"capabilities\" in plugin.json", "a late provision of capability", "capability", "provided capability \"", "\" twice", "call ctx.provide once per capability in activate", "ignored ", ", which is no longer running", "a late subscription to topic",
 "a late want of service", "a late watch of service", "a late registration of service", "DotAll", "decomposed Hangul syllable:", " (fix: ", ")", "WordBoundary", "array", "integer", "required field \"", "\" is missing", "\" to ", "field", "\" does not match ", "make ", " match ", "\" is not one of ", "set ", " to one of ", "expected a value >= ", ", got ", " to a value >= ", "expected ", " to a ", "<SOL>", "<Unix MultiLine $>", "Name capturing group should start with letter", "Is", "In", "Pointer at the published manifest schema, for an editor\'s completion and validation.",
 "The plugin\'s permanent identity, matching its repository name.", "^[a-z0-9]+(-[a-z0-9]+)*$", "use lowercase words joined by single hyphens, for example \"config-ledger\"", "The lowest API major version this plugin needs. A floor, not a build tag.", "set \"api\" to the lowest API major version this plugin needs, for example 1", "The built module a host imports. Required once capabilities are declared.", "point \"entry\" at the built module a host imports, for example \"dist/index.js\"", "displayName", "The name a surface shows instead of the id.",
-"icon", "Path to a square-viewBox SVG mark, relative to the repo root.", "Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "commands", "config", "data", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "The single machine-readable description of a repo in the intisy-ai ecosystem.", "http://json-schema.org/draft-07/schema#", "https://intisy-ai.github.io/api/schema/plugin.schema.json",
-"intisy-ai plugin manifest", "Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.", "name", "The command\'s name, which is also the file it is written to.", "What a command picker shows beside the name.", "argumentHint", "The argument shape a picker hints at, such as \"list | get <key>\".", "body", "Markdown the model is shown, after any shell output.",
-"shell", "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.", "One slash command this plugin contributes.", "Slash commands this plugin contributes, which a host deploys without importing it.", "Paths this plugin writes to, relative to the home it runs in.", "paths", "Where this plugin keeps state that is not named after it.", "The file these settings live in, config/<name>.json, when that is not the plugin\'s id.", "defaults", "Every setting this plugin has, and what it is worth until a home changes it.",
-"This plugin\'s settings as it ships them.", "install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.", "The Gradle modules whose jars ship as release assets, each named by its own classifier.", "jarModule", "generatedReadme", "The README is rendered at build time, so the release promotes it rather than testing it.",
-"jarPretest", "Run the Gradle build before the tests, because a test needs its jar installed first.", "How the repo is published, to npm and as Java release assets.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.", "Domain topics, for example claude or gemini.", "domains", "The tech topics, for example typescript, java or svelte.", "tech", "Topics this repo needs that no other rule derives, for example github-actions.",
-"topics", "Repository metadata: the GitHub description and topic set are derived from it."]);
+"icon", "Path to a square-viewBox SVG mark, relative to the repo root.", "Further marks this repo ships, each keyed by the id of the thing it belongs to.", "icons", "Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "commands", "config", "data", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "marketplace", "The single machine-readable description of a repo in the intisy-ai ecosystem.",
+"http://json-schema.org/draft-07/schema#", "https://intisy-ai.github.io/api/schema/plugin.schema.json", "intisy-ai plugin manifest", "Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.", "name", "The command\'s name, which is also the file it is written to.", "What a command picker shows beside the name.", "argumentHint", "The argument shape a picker hints at, such as \"list | get <key>\".",
+"body", "Markdown the model is shown, after any shell output.", "shell", "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.", "One slash command this plugin contributes.", "Slash commands this plugin contributes, which a host deploys without importing it.", "Paths this plugin writes to, relative to the home it runs in.", "paths", "Where this plugin keeps state that is not named after it.", "The file these settings live in, config/<name>.json, when that is not the plugin\'s id.", "defaults",
+"Every setting this plugin has, and what it is worth until a home changes it.", "This plugin\'s settings as it ships them.", "install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.", "The Gradle modules whose jars ship as release assets, each named by its own classifier.",
+"jarModule", "generatedReadme", "The README is rendered at build time, so the release promotes it rather than testing it.", "jarPretest", "Run the Gradle build before the tests, because a test needs its jar installed first.", "How the repo is published, to npm and as Java release assets.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.", "Domain topics, for example claude or gemini.",
+"domains", "The tech topics, for example typescript, java or svelte.", "tech", "Topics this repo needs that no other rule derives, for example github-actions.", "topics", "Repository metadata: the GitHub description and topic set are derived from it.", "Repository topics an entry must carry.", "kind", "The catalog kind an entry must be, as the reading host names its kinds.", "Which entries this category holds.", "The category\'s id, unique across every plugin declaring one.", "label", "The name a surface shows. Absent means the id is shown.",
+"match", "One category a plugin adds to a host\'s catalog of installable things.", "Categories this plugin adds.", "categories", "What this plugin contributes to a host\'s catalog of installable things.", "The app\'s permanent id, for example claude or opencode.", "Path to a square-viewBox SVG mark for the app, relative to the repo root.", "home", "detect", "loader", "commandsSubdir", "The subdirectory inside the app home holding its slash commands.", "proxyPort", "The port this app\'s proxy listens on, or 0 when it needs none.",
+"How this app reaches the local API.", "env-baseurl", "native", "set \"integration\" to \"env-baseurl\" when the app is pointed at the proxy by an environment variable, or \"native\" when it loads the plugin itself", "integration", "wireFormat", "The wire format this app speaks, for example anthropic.", "usage", "accent", "Accent colour for this app\'s surfaces, as a #rrggbb hex string.", "wrapperCommand", "The command a user types to launch this app through its loader\'s wrapper.", "npmPlugins", "startupHook",
+"discovery", "projects", "modelCatalog", "The app this repo is the loader for, declared by the app\'s own project.", "envOverride", "Environment variable that overrides every candidate, set by a host driving this app.", "nativeEnv", "The app\'s OWN environment variable for its config directory, which it reads itself.", "xdgSubdir", "Subdirectory under the XDG config directory, when the app follows that layout.", "Paths to try in order, each with a leading ~ for the user home.", "candidates", "Where this app keeps its home directory, in the order a resolver tries.",
+"binary", "The executable a user launches, looked up on the path.", "pkg", "The npm package the app ships as, for a global-install check.", "How to tell whether this app is installed.", "The loader plugin\'s id.", "url", "Where the loader is cloned from, as owner/repo or a full URL.", "The plugin this app is reached through. Absent means the app has no loader.", "repos", "Where plugin checkouts live.", "plugin", "Where deployed plugin bundles and their manifest sidecars live.", "cache", "Where cached downloads live.",
+"Where configuration files live.", "The names of the storage subdirectories inside this app\'s home.", "Format ids, each of which a consumer maps to a parser of its own.", "formats", "Session-storage formats this app writes, for usage readers.", "Config files to look in, in order, for the plugin list.", "configFiles", "pluginsKey", "The key inside those files holding the plugin list.", "packageCache", "Where the app caches the packages it installed.", "schemaUrl", "The app\'s config schema, for an editor\'s completion.",
+"This app\'s own npm-plugin mechanism. Absent means it has none.", "file", "The file to write, relative to the app home.", "The key path to the array the entry joins.", "path", "A JSON template whose strings have the {plugin} placeholder replaced with the plugin\'s name.", "How this app runs a plugin at startup when it has no npm-plugin list of its own.", "topic", "The repository topic a community plugin carries.", "searchQuery", "A free-text search to run where the topic alone under-reports.", "awesomeList",
+"A curated list to read, as a raw URL.", "Where a marketplace looks for this app\'s community plugins.", "historyFile", "A history file inside the app home.", "Session databases to try in order, absolute or relative to the app home.", "sessionDb", "markerFile", "The file the app writes inside a project\'s git directory to record the project id.", "Where this app records the projects a user has worked in.", "Files to try in order, relative to the app home.", "files", "Environment variable naming the config file outright.",
+"providerKey", "The key inside that file holding the catalog, named after the app\'s own config key.", "The app config file a model catalog is merged into."]);
 jl_String.prototype.toString = function() {
     return $rt_ustr(this);
 };

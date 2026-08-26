@@ -3,6 +3,7 @@ package io.github.intisy.ai.api;
 import io.github.intisy.ai.tsemit.TsInterface;
 import io.github.intisy.ai.tsemit.TsOptional;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The contents of a repo's plugin.json.
@@ -41,6 +42,16 @@ public interface PluginManifest {
     @TsOptional
     String icon();
 
+    /**
+     * Further marks this repo ships, each keyed by the id of the thing it belongs to.
+     *
+     * @implNote One repo can contribute several named things, and a single repo-level {@code icon}
+     * cannot serve them. Keyed by id rather than by kind, so this package carries the marks without
+     * learning what any of the ids name.
+     */
+    @TsOptional
+    Map<String, String> icons();
+
     /** Host-facing abilities this plugin provides at activation, declared statically so a host can answer what it can do without executing it. */
     @TsOptional
     List<String> capabilities();
@@ -76,4 +87,17 @@ public interface PluginManifest {
     /** Repository metadata. */
     @TsOptional
     RepoMeta repo();
+
+    /** What this plugin contributes to a host's catalog of installable things. */
+    @TsOptional
+    ManifestMarketplace marketplace();
+
+    /**
+     * The app this repo is the loader for, declared by the app's own project.
+     *
+     * @implNote Present only on a repo that IS an app's loader, which is what makes "whose loader is
+     * this" answerable from the manifest alone, with no consumer naming a plugin.
+     */
+    @TsOptional
+    AppDescriptor app();
 }

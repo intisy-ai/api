@@ -19,18 +19,28 @@ interface SchemaNode {
   type?: string;
   properties?: Record<string, SchemaNode>;
   items?: SchemaNode;
+  additionalProperties?: SchemaNode;
+}
+
+function shapeOf(node: SchemaNode | undefined): SchemaNode | undefined {
+  return node?.type === "array" ? node.items : node;
 }
 
 function schemaFields(node: SchemaNode | undefined): string[] {
-  const shape = node?.type === "array" ? node.items : node;
-  return Object.keys(shape?.properties ?? {}).sort();
+  return Object.keys(shapeOf(node)?.properties ?? {}).sort();
 }
 
 const ROOT = manifestSchema() as SchemaNode;
 
-// Every nested object in the manifest, and the interface that describes it. The pairing is spelled
-// out rather than derived: the schema names a field, the contract names a type, and nothing in
-// either connects the two, which is the whole reason this test exists.
+function nodeAt(path: string): SchemaNode | undefined {
+  let node: SchemaNode | undefined = ROOT;
+  for (const segment of path.split(".")) node = shapeOf(node)?.properties?.[segment];
+  return node;
+}
+
+// Every nested object in the manifest, by its path, and the interface that describes it. The pairing
+// is spelled out rather than derived: the schema names a field, the contract names a type, and
+// nothing in either connects the two, which is the whole reason this test exists.
 const NESTED: Array<{ field: string; iface: string }> = [
   { field: "services", iface: "ManifestServices" },
   { field: "commands", iface: "ManifestCommand" },
@@ -39,6 +49,20 @@ const NESTED: Array<{ field: string; iface: string }> = [
   { field: "lifecycle", iface: "ManifestLifecycle" },
   { field: "publish", iface: "ManifestPublish" },
   { field: "repo", iface: "RepoMeta" },
+  { field: "marketplace", iface: "ManifestMarketplace" },
+  { field: "marketplace.categories", iface: "MarketplaceCategory" },
+  { field: "marketplace.categories.match", iface: "MarketplaceMatch" },
+  { field: "app", iface: "AppDescriptor" },
+  { field: "app.home", iface: "AppHome" },
+  { field: "app.detect", iface: "AppDetect" },
+  { field: "app.loader", iface: "AppLoader" },
+  { field: "app.paths", iface: "AppPathNames" },
+  { field: "app.usage", iface: "AppUsage" },
+  { field: "app.npmPlugins", iface: "AppNpmPlugins" },
+  { field: "app.startupHook", iface: "AppStartupHook" },
+  { field: "app.discovery", iface: "AppDiscovery" },
+  { field: "app.projects", iface: "AppProjects" },
+  { field: "app.modelCatalog", iface: "AppModelCatalog" },
 ];
 
 it("describes the same manifest in the contract and in the validator", () => {
@@ -48,16 +72,32 @@ it("describes the same manifest in the contract and in the validator", () => {
 // Top-level parity alone let `publish` gain three fields and `repo` two in the contract while the
 // published schema still described one and four, which type-checked, validated and shipped.
 it.each(NESTED)("describes the same $field block in the contract and in the validator", ({ field, iface }) => {
-  expect(declaredFields(iface)).toEqual(schemaFields(ROOT.properties?.[field]));
+  expect(declaredFields(iface)).toEqual(schemaFields(nodeAt(field)));
 });
 
 // A nested object added to the schema with no entry above would otherwise be checked by nobody, so
-// the list itself is held to the schema rather than trusted.
-it("covers every nested object the schema declares", () => {
-  const nestedInSchema = Object.entries(ROOT.properties ?? {})
-    .filter(([, node]) => schemaFields(node).length > 0)
-    .map(([field]) => field)
-    .sort();
+// the list itself is held to the schema rather than trusted. Walked to any depth: `app` nests nine
+// objects of its own, so a one-level scan would have covered the block and none of its insides.
+function objectPaths(node: SchemaNode | undefined, prefix = ""): string[] {
+  const shape = shapeOf(node);
+  const out: string[] = [];
+  for (const [field, child] of Object.entries(shape?.properties ?? {})) {
+    if (schemaFields(child).length === 0) continue;
+    const path = prefix ? `${prefix}.${field}` : field;
+    out.push(path, ...objectPaths(child, path));
+  }
+  return out;
+}
 
-  expect(NESTED.map((entry) => entry.field).sort()).toEqual(nestedInSchema);
+it("covers every nested object the schema declares, at every depth", () => {
+  expect(NESTED.map((entry) => entry.field).sort()).toEqual(objectPaths(ROOT).sort());
+});
+
+// An `icons`-shaped map is described by additionalProperties rather than by properties, so the walk
+// above cannot see it and no interface pairs with it. Held here so it cannot silently become an
+// object with fields, which would then be a block nothing checks.
+it("keeps the keyed-map fields free-form on both sides", () => {
+  expect(declaredFields("PluginManifest")).toContain("icons");
+  expect(ROOT.properties?.icons?.additionalProperties?.type).toBe("string");
+  expect(ROOT.properties?.icons?.properties).toBeUndefined();
 });
