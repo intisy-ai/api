@@ -451,6 +451,18 @@ public class TsEmitProcessor extends AbstractProcessor {
         if ("java.util.function.BiConsumer".equals(qualified)) {
             return "((a: " + tsType(mapped.get(0)) + ", b: " + tsType(mapped.get(1)) + ") => void)";
         }
+        if ("java.util.function.Supplier".equals(qualified)) {
+            return "(() => " + tsType(mapped.get(0)) + ")";
+        }
+        if ("java.util.function.Predicate".equals(qualified)) {
+            return "((value: " + tsType(mapped.get(0)) + ") => boolean)";
+        }
+        if ("java.util.function.Function".equals(qualified)) {
+            return "((value: " + tsType(mapped.get(0)) + ") => " + tsType(mapped.get(1)) + ")";
+        }
+        if ("java.util.function.BiFunction".equals(qualified)) {
+            return "((a: " + tsType(mapped.get(0)) + ", b: " + tsType(mapped.get(1)) + ") => " + tsType(mapped.get(2)) + ")";
+        }
         StringBuilder out = new StringBuilder(element.getSimpleName().toString());
         List<? extends TypeMirror> args = type.getTypeArguments();
         if (!args.isEmpty()) {
