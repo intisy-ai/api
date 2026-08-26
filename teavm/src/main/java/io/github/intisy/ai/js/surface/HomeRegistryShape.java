@@ -12,6 +12,10 @@ import java.util.List;
  */
 @TsInterface
 public interface HomeRegistryShape {
-    /** Every registered home, whether or not each exists on disk. */
+    /**
+     * Every registered home, whether or not each exists on disk.
+     *
+     * @return the known homes, or empty when the host registered none
+     */
     List<HomeDescriptorShape> all();
 }
