@@ -23,7 +23,10 @@ public final class Diagnostics {
     private Diagnostics() {
     }
 
-    /** @return true when strict mode is on, either forced by {@link #setStrict} or read once from {@link #STRICT_ENV} */
+    /**
+     * @return true when strict mode is on, either forced by {@link #setStrict} or read once from
+     *         {@link #STRICT_ENV}, and false otherwise
+     */
     public static boolean isStrict() {
         if (strict == null) {
             strict = Boolean.valueOf("1".equals(System.getenv(STRICT_ENV)));

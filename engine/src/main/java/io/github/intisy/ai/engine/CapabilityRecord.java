@@ -16,7 +16,7 @@ public final class CapabilityRecord {
         return pluginId;
     }
 
-    /** @return the plugin's implementation object, which a caller casts to the capability's own interface */
+    /** @return the plugin's implementation object */
     public Object getImplementation() {
         return implementation;
     }

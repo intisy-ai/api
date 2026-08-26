@@ -57,7 +57,7 @@ public final class Pending<T> {
         handlers.add(handler);
     }
 
-    /** @return true once this instance has resolved or rejected */
+    /** @return true once this instance has resolved or rejected, false while it is still pending */
     public boolean isSettled() {
         return settled;
     }
