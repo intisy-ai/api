@@ -11,10 +11,12 @@ public final class CapabilityRecord {
         this.implementation = implementation;
     }
 
+    /** @return the id of the plugin that supplied this implementation */
     public String getPluginId() {
         return pluginId;
     }
 
+    /** @return the plugin's implementation object, which a caller casts to the capability's own interface */
     public Object getImplementation() {
         return implementation;
     }

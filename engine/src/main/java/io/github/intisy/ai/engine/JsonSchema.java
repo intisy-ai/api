@@ -32,88 +32,115 @@ public final class JsonSchema {
         this.type = type;
     }
 
+    /**
+     * @param type the JSON Schema type keyword this schema checks against, for example "string" or "object"
+     * @return a new schema of that type, with every other keyword unset
+     */
     public static JsonSchema ofType(String type) {
         return new JsonSchema(type);
     }
 
+    /** @return the JSON Schema type keyword this schema checks against */
     public String getType() {
         return type;
     }
 
+    /** @return this schema's title, or null when unset */
     public String getTitle() {
         return title;
     }
 
+    /** @param value this schema's title */
     public void setTitle(String value) {
         this.title = value;
     }
 
+    /** @return this schema's description, or null when unset */
     public String getDescription() {
         return description;
     }
 
+    /** @param value this schema's description */
     public void setDescription(String value) {
         this.description = value;
     }
 
+    /** @return this object schema's named properties, keyed by property name, or null when it has none */
     public Map<String, JsonSchema> getProperties() {
         return properties;
     }
 
+    /** @param value this object schema's named properties, keyed by property name */
     public void setProperties(Map<String, JsonSchema> value) {
         this.properties = value;
     }
 
+    /** @return the property names required on a matching object, or null when none are required */
     public List<String> getRequired() {
         return required;
     }
 
+    /** @param value the property names required on a matching object */
     public void setRequired(List<String> value) {
         this.required = value;
     }
 
+    /** @return the schema every element of a matching array must satisfy, or null when this is not an array schema */
     public JsonSchema getItems() {
         return items;
     }
 
+    /** @param value the schema every element of a matching array must satisfy */
     public void setItems(JsonSchema value) {
         this.items = value;
     }
 
+    /** @return the schema an object's undeclared properties must satisfy, or null when they are ignored instead */
     public JsonSchema getAdditionalProperties() {
         return additionalProperties;
     }
 
+    /** @param value the schema an object's undeclared properties must satisfy */
     public void setAdditionalProperties(JsonSchema value) {
         this.additionalProperties = value;
     }
 
+    /** @return the regular expression a matching string must contain a match for, or null when unset */
     public String getPattern() {
         return pattern;
     }
 
+    /** @param value the regular expression a matching string must contain a match for */
     public void setPattern(String value) {
         this.pattern = value;
     }
 
+    /** @return the lowest value a matching number may hold, or null when unset */
     public Integer getMinimum() {
         return minimum;
     }
 
+    /** @param value the lowest value a matching number may hold */
     public void setMinimum(Integer value) {
         this.minimum = value;
     }
 
-    /** Named enumValues because enum is a Java keyword. */
+    /**
+     * Named enumValues because enum is a Java keyword.
+     *
+     * @return the exact values a matching string must be one of, or null when unset
+     */
     public List<String> getEnumValues() {
         return enumValues;
     }
 
+    /** @param value the exact values a matching string must be one of */
     public void setEnumValues(List<String> value) {
         this.enumValues = value;
     }
 
     /**
+     * @return the fix instruction to report when a value fails this schema, or null when unset
      * @implNote Not a JSON Schema keyword. Validators ignore unknown keywords, so carrying the fix
      * beside the rule keeps errors-that-teach a property of the data rather than of the reporter.
      */
@@ -121,24 +148,35 @@ public final class JsonSchema {
         return fix;
     }
 
+    /** @param value the fix instruction to report when a value fails this schema */
     public void setFix(String value) {
         this.fix = value;
     }
 
-    /** Draft this schema is written against, emitted as $schema and otherwise unused. */
+    /**
+     * Draft this schema is written against, emitted as $schema and otherwise unused.
+     *
+     * @return the draft URI, or null when unset
+     */
     public String getSchemaDraft() {
         return schemaDraft;
     }
 
+    /** @param value the draft URI to emit as $schema */
     public void setSchemaDraft(String value) {
         this.schemaDraft = value;
     }
 
-    /** Canonical URL this schema is published at, emitted as $id and otherwise unused. */
+    /**
+     * Canonical URL this schema is published at, emitted as $id and otherwise unused.
+     *
+     * @return the canonical URL, or null when unset
+     */
     public String getSchemaId() {
         return schemaId;
     }
 
+    /** @param value the canonical URL to emit as $id */
     public void setSchemaId(String value) {
         this.schemaId = value;
     }
@@ -146,6 +184,7 @@ public final class JsonSchema {
     /**
      * This schema as the plain tree a JSON writer or a JavaScript caller consumes.
      *
+     * @return a map of JSON Schema keyword names to their values, omitting every keyword left unset
      * @implNote One key order for every object, taken from this class's field order, because the
      * published file is regenerated and compared as text. Per-object hand-chosen orders cannot
      * survive a serializer, so pinning one order here is what makes the comparison stable. Absent

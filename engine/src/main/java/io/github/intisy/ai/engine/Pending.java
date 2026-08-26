@@ -19,8 +19,10 @@ public final class Pending<T> {
 
     /** Both outcomes on one interface, which is the shape a promise's then and a future's whenComplete both take. */
     public interface Settlement<T> {
+        /** @param value the value the {@link Pending} resolved with */
         void value(T value);
 
+        /** @param reason the failure the {@link Pending} was rejected with */
         void failure(PluginException reason);
     }
 
@@ -29,7 +31,13 @@ public final class Pending<T> {
     private T value;
     private PluginException failure;
 
-    /** One already carrying its value, for the answer a caller could have had synchronously. */
+    /**
+     * One already carrying its value, for the answer a caller could have had synchronously.
+     *
+     * @param <T> the type of the value
+     * @param value the value the returned instance is already settled with
+     * @return a new instance that is already settled with {@code value}
+     */
     public static <T> Pending<T> of(T value) {
         Pending<T> ready = new Pending<T>();
         ready.resolve(value);
@@ -37,6 +45,7 @@ public final class Pending<T> {
     }
 
     /**
+     * @param handler called with the value or the failure once this instance settles
      * @implNote Runs immediately when the outcome already happened, so a handler attached late never
      * waits for something that will not come again.
      */
@@ -48,6 +57,7 @@ public final class Pending<T> {
         handlers.add(handler);
     }
 
+    /** @return true once this instance has resolved or rejected */
     public boolean isSettled() {
         return settled;
     }

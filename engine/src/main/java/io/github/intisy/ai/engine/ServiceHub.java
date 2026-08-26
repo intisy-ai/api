@@ -19,28 +19,64 @@ public final class ServiceHub {
 
     /** Where the host records who provides and who consumes what. */
     public interface Recorder {
+        /**
+         * @param pluginId the plugin that registered the service
+         * @param serviceId the service id it registered
+         */
         void provided(String pluginId, String serviceId);
 
+        /**
+         * @param pluginId the plugin that consumed the service
+         * @param serviceId the service id it consumed
+         */
         void consumed(String pluginId, String serviceId);
     }
 
     /** Called when a watched service arrives or goes away. */
     public interface Listener {
+        /**
+         * @param service the service that was registered, or null when {@code registered} is false
+         * @param registered true when the service was just registered, false when it was just unregistered
+         */
         void changed(Object service, boolean registered);
     }
 
     /** One plugin's view of the registry, which is what stamps and enforces its namespace. */
     public interface Registry {
+        /**
+         * @param id the service id to look up
+         * @return the registered service, or null when nothing provides it
+         */
         Object get(String id);
 
+        /**
+         * @param id the service id to await
+         * @return a value that settles once the service is registered; never times out
+         */
         Pending<Object> want(String id);
 
+        /**
+         * @param id the service id to await
+         * @param timeoutMillis how long to wait before rejecting, in milliseconds
+         * @return a value that settles once the service is registered, or rejects when the timeout elapses first
+         */
         Pending<Object> want(String id, long timeoutMillis);
 
+        /**
+         * @param id the service id to watch
+         * @param listener called each time the service is registered or unregistered
+         * @return a handle that stops the watch when cancelled
+         */
         Scheduler.Cancellable watch(String id, Listener listener);
 
+        /**
+         * @param id the service id to register, which must be namespaced to this plugin unless it is a well-known id
+         * @param service this plugin's implementation to register
+         * @return a handle that unregisters the service when cancelled
+         */
         Scheduler.Cancellable register(String id, Object service);
 
+        /** @return every currently registered service id */
         List<String> ids();
     }
 
@@ -77,6 +113,10 @@ public final class ServiceHub {
     // service out of every per-plugin sweep.
     private static final String HOST_OWNER = "";
 
+    /**
+     * @param scheduler the timer source used to expire an unmet {@code want}; null falls back to {@link Scheduler#NEVER}
+     * @param recorder where registrations and consumptions are reported, or null to report nowhere
+     */
     public ServiceHub(Scheduler scheduler, Recorder recorder) {
         this.scheduler = scheduler == null ? Scheduler.NEVER : scheduler;
         this.recorder = recorder;
@@ -86,6 +126,7 @@ public final class ServiceHub {
      * The bare ids any plugin may register, because they name a CONTRACT rather than one plugin's own
      * offering.
      *
+     * @param ids the bare service ids any plugin may register, replacing any set previously; null or empty means none
      * @implNote Set by the host rather than held as a constant, because this package mints no
      * vocabulary. A hub told nothing treats every bare id as squatting.
      */
@@ -93,6 +134,10 @@ public final class ServiceHub {
         this.wellKnown = ids == null ? new ArrayList<String>() : new ArrayList<String>(ids);
     }
 
+    /**
+     * @param pluginId the plugin the returned registry is scoped to
+     * @return a registry that attributes this plugin's own registrations, reads and consumptions to it
+     */
     public Registry forPlugin(final String pluginId) {
         return new Registry() {
             @Override
@@ -132,6 +177,8 @@ public final class ServiceHub {
     /**
      * Registers a service the HOST supplies rather than a plugin.
      *
+     * @param id the service id to register it under
+     * @param service the host's own service implementation
      * @implNote Owned by no plugin, so quarantining or deactivating one never takes it away, and it
      * is exempt from the namespacing rule a plugin registration is held to: the ids a host offers
      * are ones it defines rather than ones it is claiming from a shared space. Registering the same
@@ -151,12 +198,18 @@ public final class ServiceHub {
         notifyWatchers(id, service, true);
     }
 
-    /** The service now, or null, without attributing the read to a plugin. */
+    /**
+     * The service now, or null, without attributing the read to a plugin.
+     *
+     * @param id the service id to look up
+     * @return the registered service, or null when nothing provides it
+     */
     public Object get(String id) {
         Entry entry = entries.get(id);
         return entry == null ? null : entry.service;
     }
 
+    /** @return every currently registered service id */
     public List<String> ids() {
         return new ArrayList<String>(entries.keySet());
     }
@@ -164,6 +217,8 @@ public final class ServiceHub {
     /**
      * Unregisters everything a plugin registered, stops the watchers it installed, and rejects the
      * want calls it is still waiting on, so a deactivated or quarantined plugin is inert.
+     *
+     * @param pluginId the plugin to release
      */
     public void releasePlugin(String pluginId) {
         List<Scheduler.Cancellable> owned = watching.get(pluginId);

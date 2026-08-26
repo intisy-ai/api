@@ -30,10 +30,23 @@ public final class PluginHost {
     private final Set<String> revoked = new HashSet<String>();
     private List<String> known = new ArrayList<String>();
 
+    /**
+     * Creates a host whose {@link ServiceHub} never expires a pending want; see the four-argument constructor.
+     *
+     * @param app the id of the app this host belongs to
+     * @param api the api version this host implements
+     * @param surfaces the UI surface ids this host renders
+     */
     public PluginHost(String app, int api, List<String> surfaces) {
         this(app, api, surfaces, Scheduler.NEVER);
     }
 
+    /**
+     * @param app the id of the app this host belongs to
+     * @param api the api version this host implements
+     * @param surfaces the UI surface ids this host renders
+     * @param scheduler the timer source used to expire an unmet service want
+     */
     public PluginHost(String app, int api, List<String> surfaces, Scheduler scheduler) {
         this.app = app;
         this.api = api;
@@ -51,33 +64,51 @@ public final class PluginHost {
         });
     }
 
+    /** @return the id of the app this host belongs to */
     public String getApp() {
         return app;
     }
 
+    /** @return the api version this host implements */
     public int getApi() {
         return api;
     }
 
+    /** @return the UI surface ids this host renders */
     public List<String> getSurfaces() {
         return Collections.unmodifiableList(surfaces);
     }
 
+    /** @return this host's ledger of plugin activity */
     public PluginLedger getLedger() {
         return ledger;
     }
 
-    /** The capability ids this host understands. Told none, it verifies none and reports none. */
+    /**
+     * The capability ids this host understands. Told none, it verifies none and reports none.
+     *
+     * @param ids the capability ids this host recognises, replacing any set previously; null or empty means none
+     */
     public void knownCapabilities(List<String> ids) {
         this.known = ids == null ? new ArrayList<String>() : new ArrayList<String>(ids);
     }
 
-    /** The bare service ids any plugin may register, forwarded to the registry. */
+    /**
+     * The bare service ids any plugin may register, forwarded to the registry.
+     *
+     * @param ids the bare service ids any plugin may register
+     */
     public void wellKnownServices(List<String> ids) {
         hub.wellKnown(ids);
     }
 
-    /** Null when this host can load the plugin, or the failure explaining why it cannot. */
+    /**
+     * Null when this host can load the plugin, or the failure explaining why it cannot.
+     *
+     * @param pluginId the plugin's id, used only to build the failure message
+     * @param pluginApi the api version the plugin declares it needs
+     * @return null when {@code pluginApi} is at or below this host's api, otherwise the failure explaining the mismatch
+     */
     public PluginException supports(String pluginId, int pluginApi) {
         if (pluginApi <= api) {
             return null;
@@ -87,7 +118,13 @@ public final class PluginHost {
                 "update the app to a version that implements api " + pluginApi + " or later");
     }
 
-    /** Opens the session one plugin's activation runs against, lifting any fence it was under. */
+    /**
+     * Opens the session one plugin's activation runs against, lifting any fence it was under.
+     *
+     * @param facts the plugin's manifest facts, whose id identifies the session
+     * @param bus the host's event bus, wrapped so subscriptions made through it are tracked and released with the plugin
+     * @return a new session scoped to this plugin
+     */
     public PluginSession sessionFor(ManifestFacts facts, EventBus bus) {
         String pluginId = facts.getId();
         revoked.remove(pluginId);
@@ -98,6 +135,9 @@ public final class PluginHost {
     /**
      * Checks a finished activation against what its manifest declared, marking the plugin active
      * when the two agree and returning the failure to quarantine it with when they do not.
+     *
+     * @param facts the plugin's manifest facts, whose declared capabilities are checked
+     * @return null when every declared capability was provided and nothing extra was, otherwise the mismatch to quarantine the plugin with
      */
     public PluginException verifyActivation(ManifestFacts facts) {
         String pluginId = facts.getId();
@@ -121,13 +161,23 @@ public final class PluginHost {
         return null;
     }
 
-    /** Every implementation of a capability, in activation order. */
+    /**
+     * Every implementation of a capability, in activation order.
+     *
+     * @param id the capability id to look up
+     * @return the plugins providing it, in activation order, or empty when none provide it
+     */
     public List<CapabilityRecord> capability(String id) {
         List<CapabilityRecord> records = capabilities.get(id);
         return records == null ? new ArrayList<CapabilityRecord>() : new ArrayList<CapabilityRecord>(records);
     }
 
-    /** One service, or null when nothing provides it. */
+    /**
+     * One service, or null when nothing provides it.
+     *
+     * @param id the service id to look up
+     * @return the registered service, or null when nothing provides it
+     */
     public Object service(String id) {
         return hub.get(id);
     }
@@ -135,6 +185,8 @@ public final class PluginHost {
     /**
      * Offers a service the host itself implements, for every plugin to reach.
      *
+     * @param id the service id to register it under
+     * @param service the host's own service implementation
      * @implNote How a plugin gets behaviour that belongs to a library it may not link: the host
      * links it once and hands a typed handle over, rather than every plugin carrying its own copy.
      * Owned by no plugin, so no quarantine takes it away.
@@ -146,6 +198,8 @@ public final class PluginHost {
     /**
      * Quarantines a plugin: its capabilities, services and subscriptions go, the host stays up.
      *
+     * @param pluginId the plugin to quarantine
+     * @param error the failure recorded as the reason, whose detail and fix the ledger stores
      * @implNote Its session is fenced too, so an activation that finishes after the host stopped
      * waiting cannot register itself back in. Opening a session again lifts the fence.
      */
@@ -154,7 +208,11 @@ public final class PluginHost {
         ledger.recordStatus(pluginId, PluginStatus.BROKEN, error.getDetail(), error.getFix());
     }
 
-    /** Releases everything a plugin provided and every subscription it holds, and fences its session. */
+    /**
+     * Releases everything a plugin provided and every subscription it holds, and fences its session.
+     *
+     * @param pluginId the plugin to release
+     */
     public void release(String pluginId) {
         strip(pluginId);
         ledger.recordStatus(pluginId, PluginStatus.STOPPED, null, null);

@@ -19,8 +19,15 @@ public final class SchemaValidator {
     }
 
     /**
+     * Checks {@code value} against {@code schema}, collecting every problem rather than stopping at
+     * the first.
+     *
+     * @param value the parsed JSON value to check
+     * @param schema the schema to check it against
+     * @param path the dotted path to prefix every issue's location with; null is treated as "(root)"
      * @param source who supplied the value, for the diagnostic an ignored unknown field produces;
      * null ignores silently
+     * @return every issue found, or empty when {@code value} matches {@code schema}
      */
     public static List<SchemaIssue> validate(Object value, JsonSchema schema, String path, String source) {
         List<SchemaIssue> issues = new ArrayList<SchemaIssue>();

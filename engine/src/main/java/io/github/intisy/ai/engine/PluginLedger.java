@@ -16,7 +16,11 @@ public final class PluginLedger {
 
     private final Map<String, LedgerEntry> entries = new LinkedHashMap<String, LedgerEntry>();
 
-    /** Every entry, as copies a caller may keep. */
+    /**
+     * Every entry, as copies a caller may keep.
+     *
+     * @return every plugin's entry, or empty when the host has seen no plugin yet
+     */
     public List<LedgerEntry> entries() {
         List<LedgerEntry> copies = new ArrayList<LedgerEntry>();
         for (LedgerEntry entry : entries.values()) {
@@ -25,7 +29,12 @@ public final class PluginLedger {
         return copies;
     }
 
-    /** One plugin's entry as a copy, or null when the host never saw it. */
+    /**
+     * One plugin's entry as a copy, or null when the host never saw it.
+     *
+     * @param pluginId the plugin to look up
+     * @return a copy of the plugin's entry, or null when the host never saw it
+     */
     public LedgerEntry entry(String pluginId) {
         LedgerEntry found = entries.get(pluginId);
         return found == null ? null : found.copy();
@@ -34,6 +43,9 @@ public final class PluginLedger {
     /**
      * Opens an entry at status activating.
      *
+     * @param pluginId the plugin whose entry to open
+     * @param capabilities the capability ids the plugin's manifest declares, or null for none
+     * @param permissions the permission ids the plugin's manifest declares, or null for none
      * @implNote Every relationship an entry holds belongs to ONE activation, so this resets them: a
      * plugin that stops and activates again is described by what it does this time, not by the union
      * of every cycle it has ever run.
@@ -53,23 +65,46 @@ public final class PluginLedger {
         }
     }
 
+    /**
+     * @param pluginId the plugin that provided the capability
+     * @param capabilityId the capability id it provided
+     */
     public void recordCapabilityProvided(String pluginId, String capabilityId) {
         ensure(pluginId).addCapabilityProvided(capabilityId);
     }
 
+    /**
+     * @param pluginId the plugin that registered the service
+     * @param serviceId the service id it registered
+     */
     public void recordServiceProvided(String pluginId, String serviceId) {
         ensure(pluginId).addServiceProvided(serviceId);
     }
 
+    /**
+     * @param pluginId the plugin that consumed the service
+     * @param serviceId the service id it consumed
+     */
     public void recordServiceConsumed(String pluginId, String serviceId) {
         ensure(pluginId).addServiceConsumed(serviceId);
     }
 
+    /**
+     * @param pluginId the plugin that subscribed
+     * @param topic the event topic it subscribed to
+     */
     public void recordTopic(String pluginId, String topic) {
         ensure(pluginId).addTopic(topic);
     }
 
-    /** Moves a plugin to a status, with the error that put it there, or null to clear it. */
+    /**
+     * Moves a plugin to a status, with the error that put it there, or null to clear it.
+     *
+     * @param pluginId the plugin whose status changed
+     * @param status the status to move it to
+     * @param detail what went wrong, or null when the new status is not {@link PluginStatus#BROKEN}
+     * @param fix what to do about it, or null when the new status is not {@link PluginStatus#BROKEN}
+     */
     public void recordStatus(String pluginId, PluginStatus status, String detail, String fix) {
         LedgerEntry entry = ensure(pluginId);
         entry.setStatus(status);
