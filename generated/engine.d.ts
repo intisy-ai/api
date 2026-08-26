@@ -186,17 +186,9 @@ export interface HostSurface {
    * @returns the context the plugin's activate receives
    */
   contextFor(manifest: unknown, runtime: PluginRuntimeShape): ContextSurface;
-  /**
-   * What every plugin is told about this host.
-   *
-   * @returns the host's descriptor
-   */
+  /** What every plugin is told about this host. */
   readonly descriptor: HostDescriptorShape;
-  /**
-   * The record of what each plugin declared and provided.
-   *
-   * @returns the ledger
-   */
+  /** The record of what each plugin declared and provided. */
   readonly ledger: LedgerFacadeShape;
   /**
    * Quarantines a plugin, dropping its registrations and recording why.
@@ -247,141 +239,61 @@ export interface HostSurface {
 
 /** How long a plugin is willing to wait for a service that has not arrived yet. */
 export interface WantOptionsShape {
-  /**
-   * How long to wait before giving up.
-   *
-   * @returns the timeout in milliseconds, or absent to use the registry's default deadline
-   */
+  /** How long to wait before giving up. */
   timeoutMs?: number;
 }
 
 /** One app home the host knows about, as the host supplies it. */
 export interface HomeDescriptorShape {
-  /**
-   * The app id, for example `claude` or `opencode`.
-   *
-   * @returns the app id
-   */
+  /** The app id, for example `claude` or `opencode`. */
   app: string;
-  /**
-   * The name a surface shows instead of the id.
-   *
-   * @returns the display label
-   */
+  /** The name a surface shows instead of the id. */
   label: string;
-  /**
-   * The id of the plugin this app is reached through, absent when it has none.
-   *
-   * @returns the loader plugin's id, or absent when this app is reached with no loader
-   */
+  /** The id of the plugin this app is reached through, absent when it has none. */
   loader?: string;
-  /**
-   * This home's storage directories.
-   *
-   * @returns the storage paths
-   */
+  /** This home's storage directories. */
   paths: PluginPathsShape;
-  /**
-   * Whether this home exists on disk.
-   *
-   * @returns true when the home's directory exists, false when it does not
-   */
+  /** Whether this home exists on disk. */
   present: boolean;
 }
 
 /** One plugin's implementation of a capability, with the plugin it came from. */
 export interface CapabilityRecordShape {
-  /**
-   * What the plugin passed to `provide`.
-   *
-   * @returns the implementation value, opaque to this surface
-   */
+  /** What the plugin passed to `provide`. */
   implementation: unknown;
-  /**
-   * The plugin that provided this implementation.
-   *
-   * @returns the providing plugin's id
-   */
+  /** The plugin that provided this implementation. */
   pluginId: string;
 }
 
 /** One plugin's row in the ledger a host keeps. */
 export interface LedgerRowShape {
-  /**
-   * Capability ids its manifest declared.
-   *
-   * @returns the declared capability ids, or empty when it declared none
-   */
+  /** Capability ids its manifest declared. */
   capabilitiesDeclared: string[];
-  /**
-   * Capability ids it actually provided.
-   *
-   * @returns the provided capability ids, or empty when it has provided none
-   */
+  /** Capability ids it actually provided. */
   capabilitiesProvided: string[];
-  /**
-   * Why it is broken, when it is.
-   *
-   * @returns the failure detail and fix, or absent when the plugin is not broken
-   */
+  /** Why it is broken, when it is. */
   error?: LedgerErrorShape;
-  /**
-   * Permissions its manifest declares.
-   *
-   * @returns the declared permissions, or empty when it declares none
-   */
+  /** Permissions its manifest declares. */
   permissions: string[];
-  /**
-   * The plugin this row describes.
-   *
-   * @returns the plugin's id
-   */
+  /** The plugin this row describes. */
   pluginId: string;
-  /**
-   * Service ids it asked for, answered or not.
-   *
-   * @returns the requested service ids, or empty when it has asked for none
-   */
+  /** Service ids it asked for, answered or not. */
   servicesConsumed: string[];
-  /**
-   * Service ids it registered.
-   *
-   * @returns the registered service ids, or empty when it has registered none
-   */
+  /** Service ids it registered. */
   servicesProvided: string[];
-  /**
-   * Where the plugin stands: activating, active, broken or stopped.
-   *
-   * @returns the status string
-   */
+  /** Where the plugin stands: activating, active, broken or stopped. */
   status: string;
-  /**
-   * Event topics it subscribed to.
-   *
-   * @returns the subscribed topics, or empty when it has subscribed to none
-   */
+  /** Event topics it subscribed to. */
   topics: string[];
 }
 
 /** One thing wrong with a manifest, located, explained, and paired with its remedy. */
 export interface ValidationIssueShape {
-  /**
-   * How to put it right.
-   *
-   * @returns the fix instructions
-   */
+  /** How to put it right. */
   fix: string;
-  /**
-   * What is wrong with it.
-   *
-   * @returns the problem description
-   */
+  /** What is wrong with it. */
   message: string;
-  /**
-   * The manifest field the issue is about.
-   *
-   * @returns the field path
-   */
+  /** The manifest field the issue is about. */
   path: string;
 }
 
@@ -416,17 +328,9 @@ export interface ContextSurface {
    * @returns the typed key
    */
   capability(id: string): unknown;
-  /**
-   * The plugin's resolved configuration, as the runtime supplied it.
-   *
-   * @returns the configuration value, opaque to this surface
-   */
+  /** The plugin's resolved configuration, as the runtime supplied it. */
   readonly config: unknown;
-  /**
-   * Publish and subscribe, attributed to this plugin.
-   *
-   * @returns the event bus
-   */
+  /** Publish and subscribe, attributed to this plugin. */
   readonly events: EventBusShape;
   /**
    * Every app home the host knows about, asked fresh on each call.
@@ -434,29 +338,13 @@ export interface ContextSurface {
    * @returns the known homes, or empty when the host declared none
    */
   homes(): HomeDescriptorShape[];
-  /**
-   * What the plugin may know about the host.
-   *
-   * @returns the host's app id, api version and declared surfaces
-   */
+  /** What the plugin may know about the host. */
   readonly host: HostDescriptorShape;
-  /**
-   * The plugin's logger, as the runtime supplied it.
-   *
-   * @returns the logger value, opaque to this surface
-   */
+  /** The plugin's logger, as the runtime supplied it. */
   readonly log: unknown;
-  /**
-   * The plugin's own manifest, by identity, as it was parsed.
-   *
-   * @returns the parsed plugin.json tree
-   */
+  /** The plugin's own manifest, by identity, as it was parsed. */
   readonly manifest: unknown;
-  /**
-   * The storage directories of the home the plugin runs in.
-   *
-   * @returns the plugin's storage paths
-   */
+  /** The storage directories of the home the plugin runs in. */
   readonly paths: PluginPathsShape;
   /**
    * Registers the plugin's implementation of a capability.
@@ -480,11 +368,7 @@ export interface ContextSurface {
    * @returns the typed key
    */
   service(id: string): unknown;
-  /**
-   * The service registry, fenced to this plugin's namespace.
-   *
-   * @returns the registry
-   */
+  /** The service registry, fenced to this plugin's namespace. */
   readonly services: ServiceRegistryShape;
   /**
    * The typed key for an event topic id.
@@ -520,191 +404,83 @@ export interface LedgerFacadeShape {
 
 /** The shape `JsErrors.mint` actually attaches to a marked JavaScript `Error`. */
 export interface PluginErrorShape {
-  /**
-   * What went wrong.
-   *
-   * @returns the failure detail
-   */
+  /** What went wrong. */
   readonly detail: string;
-  /**
-   * How to put it right.
-   *
-   * @returns the fix instructions
-   */
+  /** How to put it right. */
   readonly fix: string;
-  /**
-   * The detail and the fix, composed for a reader.
-   *
-   * @returns the composed message
-   */
+  /** The detail and the fix, composed for a reader. */
   readonly message: string;
-  /**
-   * Always `PluginError`, which is how the boundary recognises one.
-   *
-   * @returns the marker string
-   */
+  /** Always `PluginError`, which is how the boundary recognises one. */
   readonly name: string;
-  /**
-   * The plugin the failure is attributed to.
-   *
-   * @returns the plugin's id
-   */
+  /** The plugin the failure is attributed to. */
   readonly pluginId: string;
 }
 
 /** The shape `activationOrder` returns: providers before consumers, and the cycles that could not be ordered. */
 export interface ActivationPlanShape {
-  /**
-   * One entry per dependency cycle, naming its members.
-   *
-   * @returns the dependency cycles found, or empty when the plugins have no such cycle
-   */
+  /** One entry per dependency cycle, naming its members. */
   cycles: string[][];
-  /**
-   * Plugin ids in the order they may be activated.
-   *
-   * @returns the resolvable plugin ids in order, excluding any plugin a cycle left out
-   */
+  /** Plugin ids in the order they may be activated. */
   order: string[];
 }
 
 /** The storage directories of the home a plugin runs in. */
 export interface PluginPathsShape {
-  /**
-   * Where cached downloads live.
-   *
-   * @returns the cache directory path
-   */
+  /** Where cached downloads live. */
   cache: string;
-  /**
-   * Where configuration files live.
-   *
-   * @returns the config directory path
-   */
+  /** Where configuration files live. */
   config: string;
-  /**
-   * The app home directory.
-   *
-   * @returns the home directory path
-   */
+  /** The app home directory. */
   home: string;
-  /**
-   * Where deployed bundles and their manifest sidecars live.
-   *
-   * @returns the plugin directory path
-   */
+  /** Where deployed bundles and their manifest sidecars live. */
   plugin: string;
-  /**
-   * Where plugin checkouts live.
-   *
-   * @returns the repos directory path
-   */
+  /** Where plugin checkouts live. */
   repos: string;
 }
 
 /** What a host says about itself when it builds its plugin host, the `createPluginHost` argument. */
 export interface PluginHostOptionsShape {
-  /**
-   * The API major version to claim. Defaults to this package's own.
-   *
-   * @returns the api version to claim, or absent to use this package's own
-   */
+  /** The API major version to claim. Defaults to this package's own. */
   api?: number;
-  /**
-   * The app id plugins see on the host descriptor.
-   *
-   * @returns the app id
-   */
+  /** The app id plugins see on the host descriptor. */
   app: string;
-  /**
-   * Surface ids this host renders.
-   *
-   * @returns the rendered surface ids, or absent when the host renders none
-   */
+  /** Surface ids this host renders. */
   surfaces?: string[];
-  /**
-   * Capability ids this host understands. Absent means unverifiable, not empty.
-   *
-   * @returns the known capability ids, or absent to skip capability verification
-   */
+  /** Capability ids this host understands. Absent means unverifiable, not empty. */
   vocabulary?: string[];
-  /**
-   * Bare service ids any plugin may register. Absent means none exist.
-   *
-   * @returns the bare service ids this host accepts, or absent when it accepts none
-   */
+  /** Bare service ids any plugin may register. Absent means none exist. */
   wellKnownServices?: string[];
 }
 
 /** What a host supplies per plugin, the second argument to `contextFor`. */
 export interface PluginRuntimeShape {
-  /**
-   * The plugin's resolved configuration.
-   *
-   * @returns the configuration value, opaque to this surface
-   */
+  /** The plugin's resolved configuration. */
   config: unknown;
-  /**
-   * The event bus, scoped to this plugin as its source.
-   *
-   * @returns the event bus
-   */
+  /** The event bus, scoped to this plugin as its source. */
   events: EventBusShape;
-  /**
-   * Every app home the host knows about. Absent means this host knows of none but its own.
-   *
-   * @returns the home registry, or absent when this host knows of no home but its own
-   */
+  /** Every app home the host knows about. Absent means this host knows of none but its own. */
   homes?: HomeRegistryShape;
-  /**
-   * The plugin's logger.
-   *
-   * @returns the logger value, opaque to this surface
-   */
+  /** The plugin's logger. */
   log: unknown;
-  /**
-   * The storage directories of the home the plugin runs in.
-   *
-   * @returns the storage paths
-   */
+  /** The storage directories of the home the plugin runs in. */
   paths: PluginPathsShape;
 }
 
 /** What a host tells a plugin about itself. */
 export interface HostDescriptorShape {
-  /**
-   * The API major version this host implements.
-   *
-   * @returns the api version number
-   */
+  /** The API major version this host implements. */
   api: number;
-  /**
-   * The app id, for example `claude` or `opencode`.
-   *
-   * @returns the app id
-   */
+  /** The app id, for example `claude` or `opencode`. */
   app: string;
-  /**
-   * Surface ids this host renders.
-   *
-   * @returns the rendered surface ids, or empty when the host renders none
-   */
+  /** Surface ids this host renders. */
   surfaces: string[];
 }
 
 /** Why a broken plugin's ledger row says it is broken. */
 export interface LedgerErrorShape {
-  /**
-   * What went wrong.
-   *
-   * @returns the failure detail
-   */
+  /** What went wrong. */
   detail: string;
-  /**
-   * How to put it right.
-   *
-   * @returns the fix instructions
-   */
+  /** How to put it right. */
   fix: string;
 }
 

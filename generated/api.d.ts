@@ -10,11 +10,7 @@
 export interface CapabilityType<T> {
   /** Never present at run time. It exists so two keys parameterised differently cannot be interchanged. */
   readonly __phantom?: T;
-  /**
-   * The id itself, which is what crosses the boundary at run time.
-   *
-   * @returns the capability id
-   */
+  /** The id itself, which is what crosses the boundary at run time. */
   readonly id: string;
 }
 
@@ -27,11 +23,7 @@ export interface CapabilityType<T> {
  * minting vocabulary, and the api mints none.
  */
 export interface ManifestConfig {
-  /**
-   * Every setting this plugin has, and what it is worth until a home changes it.
-   *
-   * @returns the setting keys mapped to their default values
-   */
+  /** Every setting this plugin has, and what it is worth until a home changes it. */
   defaults: Record<string, unknown>;
   /**
    * The file these settings live in, `config/<name>.json`, when that is not the plugin's id.
@@ -40,7 +32,6 @@ export interface ManifestConfig {
    * Absent means the id, which is the case for all but a plugin whose settings file
    * predates its repository name. Stated rather than assumed, because a surface that guesses
    * writes to a file the plugin never reads.
-   * @returns the settings file name, or absent when it is the plugin's id
    */
   name?: string;
 }
@@ -53,29 +44,13 @@ export interface ManifestConfig {
  * npm section and no npm install method rather than offering ones that cannot work.
  */
 export interface AppNpmPlugins {
-  /**
-   * Config files to look in, in order, for the plugin list.
-   *
-   * @returns the candidate config file paths, tried in order
-   */
+  /** Config files to look in, in order, for the plugin list. */
   configFiles: string[];
-  /**
-   * Where the app caches the packages it installed.
-   *
-   * @returns the package cache path, or absent when this app has none
-   */
+  /** Where the app caches the packages it installed. */
   packageCache?: string;
-  /**
-   * The key inside those files holding the plugin list.
-   *
-   * @returns the config key holding the plugin list
-   */
+  /** The key inside those files holding the plugin list. */
   pluginsKey: string;
-  /**
-   * The app's config schema, for an editor's completion.
-   *
-   * @returns the schema URL, or absent when this app publishes none
-   */
+  /** The app's config schema, for an editor's completion. */
   schemaUrl?: string;
 }
 
@@ -101,17 +76,9 @@ export interface PluginContext {
    * @returns the typed key for that id
    */
   capability<T>(id: string): CapabilityType<T>;
-  /**
-   * This plugin's resolved configuration.
-   *
-   * @returns this plugin's config
-   */
+  /** This plugin's resolved configuration. */
   readonly config: PluginConfig;
-  /**
-   * How this plugin says something happened, and hears that something did.
-   *
-   * @returns this plugin's events handle
-   */
+  /** How this plugin says something happened, and hears that something did. */
   readonly events: Events;
   /**
    * Every app home the host knows about, whether or not each exists on disk.
@@ -122,29 +89,13 @@ export interface PluginContext {
    * @returns every app home the host knows about
    */
   homes(): HomeDescriptor[];
-  /**
-   * What this plugin may know about the host.
-   *
-   * @returns this plugin's host descriptor
-   */
+  /** What this plugin may know about the host. */
   readonly host: HostDescriptor;
-  /**
-   * This plugin's logger.
-   *
-   * @returns this plugin's logger
-   */
+  /** This plugin's logger. */
   readonly log: Logger;
-  /**
-   * This plugin's own manifest, as the host validated it.
-   *
-   * @returns this plugin's manifest
-   */
+  /** This plugin's own manifest, as the host validated it. */
   readonly manifest: PluginManifest;
-  /**
-   * The storage directories of the home this plugin runs in.
-   *
-   * @returns this plugin's storage paths
-   */
+  /** The storage directories of the home this plugin runs in. */
   readonly paths: PluginPaths;
   /**
    * Supplies the implementation behind a capability the manifest declares.
@@ -170,11 +121,7 @@ export interface PluginContext {
    * @returns the typed key for that id
    */
   service<T>(id: string): ServiceType<T>;
-  /**
-   * How this plugin reaches another plugin's API, and offers its own.
-   *
-   * @returns this plugin's services handle
-   */
+  /** How this plugin reaches another plugin's API, and offers its own. */
   readonly services: Services;
   /**
    * The typed key for an event topic, so a plugin can publish or subscribe without linking the
@@ -290,23 +237,11 @@ export interface Events {
  * nothing rather than being special-cased by a host.
  */
 export interface AppStartupHook {
-  /**
-   * A JSON template whose strings have the `{plugin}` placeholder replaced with the plugin's name.
-   *
-   * @returns the JSON template to join into the array
-   */
+  /** A JSON template whose strings have the `{plugin}` placeholder replaced with the plugin's name. */
   entry: unknown;
-  /**
-   * The file to write, relative to the app home.
-   *
-   * @returns the file path, relative to the app home
-   */
+  /** The file to write, relative to the app home. */
   file: string;
-  /**
-   * The key path to the array the entry joins.
-   *
-   * @returns the key path segments, from the file's root object down to the target array
-   */
+  /** The key path to the array the entry joins. */
   path: string[];
 }
 
@@ -378,74 +313,29 @@ export interface AppDescriptor {
    * @remarks
    * Presentation data beside `icon`. Absent means a consumer uses its own neutral
    * default rather than inventing one per app.
-   * @returns the accent colour hex string, or absent when the app has none
    */
   accent?: string;
-  /**
-   * The subdirectory inside the app home holding its slash commands.
-   *
-   * @returns the commands subdirectory
-   */
+  /** The subdirectory inside the app home holding its slash commands. */
   commandsSubdir: string;
-  /**
-   * How to tell whether this app is installed.
-   *
-   * @returns the install-detection rule
-   */
+  /** How to tell whether this app is installed. */
   detect: AppDetect;
-  /**
-   * Where a marketplace looks for this app's community plugins.
-   *
-   * @returns the discovery descriptor, or absent when this app declares no discovery sources
-   */
+  /** Where a marketplace looks for this app's community plugins. */
   discovery?: AppDiscovery;
-  /**
-   * Where this app keeps its home directory.
-   *
-   * @returns the home-directory resolution rule
-   */
+  /** Where this app keeps its home directory. */
   home: AppHome;
-  /**
-   * Self-contained SVG mark for the app, rendered by dashboards. Data, not code.
-   *
-   * @returns the SVG markup, or absent when the app has no mark
-   */
+  /** Self-contained SVG mark for the app, rendered by dashboards. Data, not code. */
   icon?: string;
-  /**
-   * The app's permanent id, for example `claude` or `opencode`.
-   *
-   * @returns the app id
-   */
+  /** The app's permanent id, for example `claude` or `opencode`. */
   id: string;
-  /**
-   * How this app reaches the local API.
-   *
-   * @returns the integration rule
-   */
+  /** How this app reaches the local API. */
   integration: "env-baseurl" | "native";
-  /**
-   * The name a surface shows instead of the id.
-   *
-   * @returns the display label
-   */
+  /** The name a surface shows instead of the id. */
   label: string;
-  /**
-   * The plugin this app is reached through. Absent means the app has no loader.
-   *
-   * @returns the loader plugin descriptor, or absent when this app has no loader
-   */
+  /** The plugin this app is reached through. Absent means the app has no loader. */
   loader?: AppLoader;
-  /**
-   * The app config file a model catalog is merged into.
-   *
-   * @returns the model-catalog descriptor, or absent when nothing is merged
-   */
+  /** The app config file a model catalog is merged into. */
   modelCatalog?: AppModelCatalog;
-  /**
-   * This app's own npm-plugin mechanism. Absent means it has none.
-   *
-   * @returns the npm-plugin descriptor, or absent when this app has no npm-plugin mechanism
-   */
+  /** This app's own npm-plugin mechanism. Absent means it has none. */
   npmPlugins?: AppNpmPlugins;
   /**
    * The names of the storage subdirectories inside this app's home.
@@ -453,45 +343,23 @@ export interface AppDescriptor {
    * @remarks
    * Optional because a declaration rarely states them: a reader resolves each name from
    * the declaration, then an environment override, then the ecosystem default.
-   * @returns the storage subdirectory names, or absent when the declaration states none
    */
   paths?: AppPathNames;
-  /**
-   * Where this app records the projects a user has worked in.
-   *
-   * @returns the project-history descriptor, or absent when this app records none
-   */
+  /** Where this app records the projects a user has worked in. */
   projects?: AppProjects;
-  /**
-   * The port this app's proxy listens on, or 0 when it needs none.
-   *
-   * @returns the proxy port, or 0 when this app runs no proxy
-   */
+  /** The port this app's proxy listens on, or 0 when it needs none. */
   proxyPort: number;
-  /**
-   * How this app runs a plugin at startup when it has no npm-plugin list of its own.
-   *
-   * @returns the startup-hook descriptor, or absent when this app has none
-   */
+  /** How this app runs a plugin at startup when it has no npm-plugin list of its own. */
   startupHook?: AppStartupHook;
-  /**
-   * Session-storage formats this app writes, for usage readers. Absent means no usage data.
-   *
-   * @returns the usage-format descriptor, or absent when this app records no usage data
-   */
+  /** Session-storage formats this app writes, for usage readers. Absent means no usage data. */
   usage?: AppUsage;
-  /**
-   * The wire format this app speaks, for example `anthropic`.
-   *
-   * @returns the wire-format id
-   */
+  /** The wire format this app speaks, for example `anthropic`. */
   wireFormat: string;
   /**
    * The command a user types to launch this app through its loader's wrapper.
    *
    * @remarks
    * Absent means the app is launched by its own binary, so nothing writes a wrapper.
-   * @returns the wrapper command, or absent when this app is launched by its own binary
    */
   wrapperCommand?: string;
 }
@@ -505,35 +373,15 @@ export interface AppDescriptor {
  * registry's shape.
  */
 export interface HomeDescriptor {
-  /**
-   * The app id, for example `claude` or `opencode`.
-   *
-   * @returns the app id
-   */
+  /** The app id, for example `claude` or `opencode`. */
   app: string;
-  /**
-   * The name a surface shows instead of the id.
-   *
-   * @returns the display label
-   */
+  /** The name a surface shows instead of the id. */
   label: string;
-  /**
-   * The id of the plugin this app is reached through, absent when it has none.
-   *
-   * @returns the loader plugin's id, or absent when this app is reached with no loader
-   */
+  /** The id of the plugin this app is reached through, absent when it has none. */
   loader?: string;
-  /**
-   * This home's storage directories.
-   *
-   * @returns the storage paths
-   */
+  /** This home's storage directories. */
   paths: PluginPaths;
-  /**
-   * Whether this home exists on disk. An absent home means that app is not installed.
-   *
-   * @returns true when this home's directory exists, false when it does not
-   */
+  /** Whether this home exists on disk. An absent home means that app is not installed. */
   present: boolean;
 }
 
@@ -545,35 +393,15 @@ export interface HomeDescriptor {
  * lets the command files exist before the plugin has ever activated.
  */
 export interface ManifestCommand {
-  /**
-   * The argument shape a picker hints at, such as `list | get <key>`.
-   *
-   * @returns the argument hint, or absent when this command declares none
-   */
+  /** The argument shape a picker hints at, such as `list | get <key>`. */
   argumentHint?: string;
-  /**
-   * Markdown the model is shown, after any shell output.
-   *
-   * @returns the command body, or absent when this command runs shell output only
-   */
+  /** Markdown the model is shown, after any shell output. */
   body?: string;
-  /**
-   * What a command picker shows beside the name.
-   *
-   * @returns the command description
-   */
+  /** What a command picker shows beside the name. */
   description: string;
-  /**
-   * The command's name, which is also the file it is written to.
-   *
-   * @returns the command name
-   */
+  /** The command's name, which is also the file it is written to. */
   name: string;
-  /**
-   * A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.
-   *
-   * @returns the shell line, or absent when this command runs no shell step
-   */
+  /** A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}. */
   shell?: string;
 }
 
@@ -585,35 +413,15 @@ export interface ManifestCommand {
  * directory takes effect everywhere at once.
  */
 export interface PluginPaths {
-  /**
-   * Where cached downloads live.
-   *
-   * @returns the absolute cache directory path
-   */
+  /** Where cached downloads live. */
   cache: string;
-  /**
-   * Where configuration files live.
-   *
-   * @returns the absolute config directory path
-   */
+  /** Where configuration files live. */
   config: string;
-  /**
-   * The app home directory.
-   *
-   * @returns the absolute home directory path
-   */
+  /** The app home directory. */
   home: string;
-  /**
-   * Where deployed plugin bundles and their manifest sidecars live.
-   *
-   * @returns the absolute plugin directory path
-   */
+  /** Where deployed plugin bundles and their manifest sidecars live. */
   plugin: string;
-  /**
-   * Where plugin checkouts live.
-   *
-   * @returns the absolute repos directory path
-   */
+  /** Where plugin checkouts live. */
   repos: string;
 }
 
@@ -625,17 +433,9 @@ export interface PluginPaths {
  * cache directly.
  */
 export interface AppModelCatalog {
-  /**
-   * Environment variable naming the config file outright.
-   *
-   * @returns the environment variable name, or absent when this app has none
-   */
+  /** Environment variable naming the config file outright. */
   envOverride?: string;
-  /**
-   * Files to try in order, relative to the app home.
-   *
-   * @returns the candidate file paths, tried in order
-   */
+  /** Files to try in order, relative to the app home. */
   files: string[];
   /**
    * The key inside that file holding the catalog.
@@ -643,14 +443,9 @@ export interface AppModelCatalog {
    * @remarks
    * Named after the app's OWN config key, which is data this package quotes rather than
    * a category it serves: it never reads what the key contains.
-   * @returns the config key holding the catalog
    */
   providerKey: string;
-  /**
-   * The app's config schema, for an editor's completion.
-   *
-   * @returns the schema URL, or absent when this app publishes none
-   */
+  /** The app's config schema, for an editor's completion. */
   schemaUrl?: string;
 }
 
@@ -670,14 +465,9 @@ export interface PluginManifest {
    * Declared although nothing reads it, because every manifest in the ecosystem carries
    * it and the published schema accepts it: without it an author writing a manifest literal in
    * TypeScript could not include a field their own plugin.json has.
-   * @returns the schema URL, or absent when this manifest declares none
    */
   $schema?: string;
-  /**
-   * The lowest API major version this plugin needs. A floor, not a build tag.
-   *
-   * @returns the minimum API major version this plugin needs
-   */
+  /** The lowest API major version this plugin needs. A floor, not a build tag. */
   api: number;
   /**
    * The app this repo is the loader for, declared by the app's own project.
@@ -685,50 +475,21 @@ export interface PluginManifest {
    * @remarks
    * Present only on a repo that IS an app's loader, which is what makes "whose loader is
    * this" answerable from the manifest alone, with no consumer naming a plugin.
-   * @returns the app this repo is the loader for, or absent when it is not an app's loader
    */
   app?: AppDescriptor;
-  /**
-   * Host-facing abilities this plugin provides at activation, declared statically so a host can answer what it can do without executing it.
-   *
-   * @returns the capability ids this plugin provides, or absent when it provides none
-   */
+  /** Host-facing abilities this plugin provides at activation, declared statically so a host can answer what it can do without executing it. */
   capabilities?: string[];
-  /**
-   * Slash commands this plugin contributes, which a host deploys without importing it.
-   *
-   * @returns the commands this plugin contributes, or absent when it contributes none
-   */
+  /** Slash commands this plugin contributes, which a host deploys without importing it. */
   commands?: ManifestCommand[];
-  /**
-   * This plugin's settings as it ships them.
-   *
-   * @returns the plugin's config declaration, or absent when it has no settings
-   */
+  /** This plugin's settings as it ships them. */
   config?: ManifestConfig;
-  /**
-   * Where this plugin keeps state that is not named after it.
-   *
-   * @returns the plugin's data paths, or absent when it declares none
-   */
+  /** Where this plugin keeps state that is not named after it. */
   data?: ManifestData;
-  /**
-   * The name a surface shows instead of the id.
-   *
-   * @returns the display name, or absent when the id is shown instead
-   */
+  /** The name a surface shows instead of the id. */
   displayName?: string;
-  /**
-   * The built module a host imports. Required once `capabilities` is non-empty.
-   *
-   * @returns the entry module path, or absent when this plugin declares no capabilities
-   */
+  /** The built module a host imports. Required once `capabilities` is non-empty. */
   entry?: string;
-  /**
-   * Path to a square-viewBox SVG mark, relative to the repo root.
-   *
-   * @returns the icon path, or absent when this plugin has no mark
-   */
+  /** Path to a square-viewBox SVG mark, relative to the repo root. */
   icon?: string;
   /**
    * Further marks this repo ships, each keyed by the id of the thing it belongs to.
@@ -737,50 +498,21 @@ export interface PluginManifest {
    * One repo can contribute several named things, and a single repo-level `icon`
    * cannot serve them. Keyed by id rather than by kind, so this package carries the marks without
    * learning what any of the ids name.
-   * @returns the ids mapped to their mark paths, or absent when this plugin ships only its own icon
    */
   icons?: Record<string, string>;
-  /**
-   * The plugin's permanent identity, matching its repository name.
-   *
-   * @returns the plugin id
-   */
+  /** The plugin's permanent identity, matching its repository name. */
   id: string;
-  /**
-   * Which optional lifecycle hooks the entry exports.
-   *
-   * @returns the lifecycle declaration, or absent when this plugin exports no optional hook
-   */
+  /** Which optional lifecycle hooks the entry exports. */
   lifecycle?: ManifestLifecycle;
-  /**
-   * What this plugin contributes to a host's catalog of installable things.
-   *
-   * @returns the marketplace declaration, or absent when this plugin contributes none
-   */
+  /** What this plugin contributes to a host's catalog of installable things. */
   marketplace?: ManifestMarketplace;
-  /**
-   * Declared permissions, surfaced at install and in dashboards. Not sandbox-enforced.
-   *
-   * @returns the declared permission ids, or absent when this plugin declares none
-   */
+  /** Declared permissions, surfaced at install and in dashboards. Not sandbox-enforced. */
   permissions?: string[];
-  /**
-   * How the repo is published to npm.
-   *
-   * @returns the publish declaration, or absent when this plugin uses the ecosystem default
-   */
+  /** How the repo is published to npm. */
   publish?: ManifestPublish;
-  /**
-   * Repository metadata.
-   *
-   * @returns the repo metadata, or absent when this manifest declares none
-   */
+  /** Repository metadata. */
   repo?: RepoMeta;
-  /**
-   * The inter-plugin contract.
-   *
-   * @returns the services this plugin provides and consumes, or absent when it declares none
-   */
+  /** The inter-plugin contract. */
   services?: ManifestServices;
 }
 
@@ -793,29 +525,13 @@ export interface PluginManifest {
  * rather than joining the literal names.
  */
 export interface AppPathNames {
-  /**
-   * Where cached downloads live.
-   *
-   * @returns the cache subdirectory name
-   */
+  /** Where cached downloads live. */
   cache: string;
-  /**
-   * Where configuration files live.
-   *
-   * @returns the config subdirectory name
-   */
+  /** Where configuration files live. */
   config: string;
-  /**
-   * Where deployed plugin bundles and their manifest sidecars live.
-   *
-   * @returns the plugin subdirectory name
-   */
+  /** Where deployed plugin bundles and their manifest sidecars live. */
   plugin: string;
-  /**
-   * Where plugin checkouts live.
-   *
-   * @returns the repos subdirectory name
-   */
+  /** Where plugin checkouts live. */
   repos: string;
 }
 
@@ -827,17 +543,9 @@ export interface AppPathNames {
  * loader is renamed or rehosted needs no consumer change.
  */
 export interface AppLoader {
-  /**
-   * The loader plugin's id.
-   *
-   * @returns the loader plugin id
-   */
+  /** The loader plugin's id. */
   id: string;
-  /**
-   * Where the loader is cloned from, as `owner/repo` or a full URL.
-   *
-   * @returns the clone source
-   */
+  /** Where the loader is cloned from, as `owner/repo` or a full URL. */
   url: string;
 }
 
@@ -849,23 +557,11 @@ export interface AppLoader {
  * which app it happens to be in.
  */
 export interface HostDescriptor {
-  /**
-   * The API major version this host implements.
-   *
-   * @returns the API major version
-   */
+  /** The API major version this host implements. */
   api: number;
-  /**
-   * The app id, for example `claude` or `opencode`.
-   *
-   * @returns the app id
-   */
+  /** The app id, for example `claude` or `opencode`. */
   app: string;
-  /**
-   * Surface ids this host renders, for example `tui` or `gui`. An unknown id is ignored.
-   *
-   * @returns the surface ids this host renders
-   */
+  /** Surface ids this host renders, for example `tui` or `gui`. An unknown id is ignored. */
   surfaces: string[];
 }
 
@@ -947,23 +643,11 @@ export interface Logger {
  * Absent on the descriptor means a consumer offers only its own verified list.
  */
 export interface AppDiscovery {
-  /**
-   * A curated list to read, as a raw URL.
-   *
-   * @returns the raw URL of the curated list, or absent when this app has none
-   */
+  /** A curated list to read, as a raw URL. */
   awesomeList?: string;
-  /**
-   * A free-text search to run where the topic alone under-reports.
-   *
-   * @returns the search query, or absent when none is needed
-   */
+  /** A free-text search to run where the topic alone under-reports. */
   searchQuery?: string;
-  /**
-   * The repository topic a community plugin carries.
-   *
-   * @returns the topic string, or absent when this app has no topic convention
-   */
+  /** The repository topic a community plugin carries. */
   topic?: string;
 }
 
@@ -976,11 +660,7 @@ export interface AppDiscovery {
  * it most is an uninstall, where the plugin is on its way out and may not be running at all.
  */
 export interface ManifestData {
-  /**
-   * Paths this plugin writes to, relative to the home it runs in.
-   *
-   * @returns the plugin's data paths
-   */
+  /** Paths this plugin writes to, relative to the home it runs in. */
   paths: string[];
 }
 
@@ -992,23 +672,11 @@ export interface ManifestData {
  * location.
  */
 export interface AppProjects {
-  /**
-   * A history file inside the app home.
-   *
-   * @returns the history file path, or absent when this app keeps none
-   */
+  /** A history file inside the app home. */
   historyFile?: string;
-  /**
-   * The file the app writes inside a project's git directory to record the project id.
-   *
-   * @returns the marker file name, or absent when this app writes none
-   */
+  /** The file the app writes inside a project's git directory to record the project id. */
   markerFile?: string;
-  /**
-   * Session databases to try in order, absolute or relative to the app home.
-   *
-   * @returns the candidate database paths, or absent when this app keeps none
-   */
+  /** Session databases to try in order, absolute or relative to the app home. */
   sessionDb?: string[];
 }
 
@@ -1021,17 +689,9 @@ export interface AppProjects {
  * category, and no plugin code runs when the catalog is read.
  */
 export interface MarketplaceMatch {
-  /**
-   * The catalog kind an entry must be, as the reading host names its kinds.
-   *
-   * @returns the required kind, or absent when this match places no kind requirement
-   */
+  /** The catalog kind an entry must be, as the reading host names its kinds. */
   kind?: string;
-  /**
-   * Repository topics an entry must carry.
-   *
-   * @returns the required topics, or absent when this match places no topic requirement
-   */
+  /** Repository topics an entry must carry. */
   topics?: string[];
 }
 
@@ -1039,11 +699,7 @@ export interface MarketplaceMatch {
 export interface ServiceType<T> {
   /** Never present at run time. It exists so two keys parameterised differently cannot be interchanged. */
   readonly __phantom?: T;
-  /**
-   * The id itself, which is what crosses the boundary at run time.
-   *
-   * @returns the service id
-   */
+  /** The id itself, which is what crosses the boundary at run time. */
   readonly id: string;
 }
 
@@ -1051,31 +707,19 @@ export interface ServiceType<T> {
 export interface TopicType<T> {
   /** Never present at run time. It exists so two keys parameterised differently cannot be interchanged. */
   readonly __phantom?: T;
-  /**
-   * The id itself, which is what crosses the boundary at run time.
-   *
-   * @returns the topic id
-   */
+  /** The id itself, which is what crosses the boundary at run time. */
   readonly id: string;
 }
 
 /** How long a plugin is willing to wait for a service that is not registered yet. */
 export interface WantOptions {
-  /**
-   * Milliseconds to wait before giving up. Absent takes the host's own default.
-   *
-   * @returns the timeout in milliseconds, or absent to use the host's own default
-   */
+  /** Milliseconds to wait before giving up. Absent takes the host's own default. */
   timeoutMs?: number;
 }
 
 /** How the repo is published, to npm and as Java release assets. */
 export interface ManifestPublish {
-  /**
-   * The README is rendered at build time, so the release promotes it rather than testing it.
-   *
-   * @returns true when the README is generated at build time, false when it is hand-maintained
-   */
+  /** The README is rendered at build time, so the release promotes it rather than testing it. */
   generatedReadme?: boolean;
   /**
    * The Gradle modules whose jars ship as release assets, each named by its own classifier.
@@ -1084,58 +728,29 @@ export interface ManifestPublish {
    * A list rather than one name because a consumer resolves each module separately: they
    * serve different Gradle configurations, and one shaded jar would put every module on every
    * consumer's runtime classpath.
-   * @returns the module names, or absent when this repo ships no jar release asset
    */
   jarModule?: string[];
-  /**
-   * Run the Gradle build before the tests, because a test needs its jar installed first.
-   *
-   * @returns true when the Gradle build runs before the tests, false when it does not
-   */
+  /** Run the Gradle build before the tests, because a test needs its jar installed first. */
   jarPretest?: boolean;
-  /**
-   * Publish only as `@intisy-ai/<name>`, because the unscoped name is unavailable.
-   *
-   * @returns true when only the scoped name is published, false when the unscoped name publishes too
-   */
+  /** Publish only as `@intisy-ai/<name>`, because the unscoped name is unavailable. */
   scopedOnly?: boolean;
 }
 
 /** How to tell whether an app is installed. */
 export interface AppDetect {
-  /**
-   * The executable a user launches, looked up on the path.
-   *
-   * @returns the executable name to look up on the path
-   */
+  /** The executable a user launches, looked up on the path. */
   binary: string;
-  /**
-   * The npm package the app ships as, for a global-install check.
-   *
-   * @returns the npm package name
-   */
+  /** The npm package the app ships as, for a global-install check. */
   pkg: string;
 }
 
 /** One category a plugin adds to a host's catalog of installable things. */
 export interface MarketplaceCategory {
-  /**
-   * The category's id, unique across every plugin declaring one.
-   *
-   * @returns the category id
-   */
+  /** The category's id, unique across every plugin declaring one. */
   id: string;
-  /**
-   * The name a surface shows. Absent means the id is shown.
-   *
-   * @returns the display label, or absent when the id is shown instead
-   */
+  /** The name a surface shows. Absent means the id is shown. */
   label?: string;
-  /**
-   * Which entries this category holds.
-   *
-   * @returns the match rule for this category's entries
-   */
+  /** Which entries this category holds. */
   match: MarketplaceMatch;
 }
 
@@ -1170,23 +785,11 @@ export interface PluginConfig {
 
 /** Repository metadata, from which the GitHub description and topic set are derived. */
 export interface RepoMeta {
-  /**
-   * The single category topic, for example `core-library` or `dashboard`.
-   *
-   * @returns the category topic
-   */
+  /** The single category topic, for example `core-library` or `dashboard`. */
   category: string;
-  /**
-   * Domain topics, for example `claude` or `gemini`.
-   *
-   * @returns the domain topics, or absent when this repo has none
-   */
+  /** Domain topics, for example `claude` or `gemini`. */
   domains?: string[];
-  /**
-   * The role phrase, capitalized, without the fixed ecosystem suffix.
-   *
-   * @returns the role phrase
-   */
+  /** The role phrase, capitalized, without the fixed ecosystem suffix. */
   role: string;
   /**
    * The tech topics, for example `typescript`, `java` or `svelte`.
@@ -1194,94 +797,49 @@ export interface RepoMeta {
    * @remarks
    * A list rather than one primary topic, because a repo carrying a Java engine behind a
    * TypeScript package is both and describing it as either is wrong.
-   * @returns the tech topics
    */
   tech: string[];
-  /**
-   * Topics this repo needs that no other rule derives, for example `github-actions`.
-   *
-   * @returns the extra topics, or absent when this repo needs none
-   */
+  /** Topics this repo needs that no other rule derives, for example `github-actions`. */
   topics?: string[];
 }
 
 /** The session-storage formats an app writes, for a usage reader. */
 export interface AppUsage {
-  /**
-   * Format ids, each of which a consumer maps to a parser of its own.
-   *
-   * @returns the session-storage format ids this app writes
-   */
+  /** Format ids, each of which a consumer maps to a parser of its own. */
   formats: string[];
 }
 
 /** What a plugin offers other plugins, and what it asks of them. */
 export interface ManifestServices {
-  /**
-   * Service ids this plugin asks for, used for activation ordering.
-   *
-   * @returns the service ids this plugin consumes, or absent when it consumes none
-   */
+  /** Service ids this plugin asks for, used for activation ordering. */
   consumes?: string[];
-  /**
-   * Service ids this plugin registers, each namespaced by its own id or a well-known bare id.
-   *
-   * @returns the service ids this plugin provides, or absent when it provides none
-   */
+  /** Service ids this plugin registers, each namespaced by its own id or a well-known bare id. */
   provides?: string[];
 }
 
 /** What this plugin contributes to a host's catalog of installable things. */
 export interface ManifestMarketplace {
-  /**
-   * Categories this plugin adds.
-   *
-   * @returns the marketplace categories this plugin contributes
-   */
+  /** Categories this plugin adds. */
   categories: MarketplaceCategory[];
 }
 
 /** Where an app keeps its home directory, in the order a resolver tries. */
 export interface AppHome {
-  /**
-   * Paths to try in order, each with a leading `~` for the user home.
-   *
-   * @returns the candidate home paths, tried in order
-   */
+  /** Paths to try in order, each with a leading `~` for the user home. */
   candidates: string[];
-  /**
-   * Environment variable that overrides every candidate, set by a host driving this app.
-   *
-   * @returns the environment variable name, or absent when no host override applies
-   */
+  /** Environment variable that overrides every candidate, set by a host driving this app. */
   envOverride?: string;
-  /**
-   * The app's OWN environment variable for its config directory, which it reads itself.
-   *
-   * @returns the environment variable name, or absent when this app has none
-   */
+  /** The app's OWN environment variable for its config directory, which it reads itself. */
   nativeEnv?: string;
-  /**
-   * Subdirectory under the XDG config directory, when the app follows that layout.
-   *
-   * @returns the XDG subdirectory name, or absent when this app does not follow that layout
-   */
+  /** Subdirectory under the XDG config directory, when the app follows that layout. */
   xdgSubdir?: string;
 }
 
 /** Which optional lifecycle hooks the entry module exports. */
 export interface ManifestLifecycle {
-  /**
-   * The entry exports `install(ctx)`, run once after the first deploy.
-   *
-   * @returns true when the entry exports `install`, false when it does not
-   */
+  /** The entry exports `install(ctx)`, run once after the first deploy. */
   install?: boolean;
-  /**
-   * The entry exports `repair(ctx)`, run on demand from a host.
-   *
-   * @returns true when the entry exports `repair`, false when it does not
-   */
+  /** The entry exports `repair(ctx)`, run on demand from a host. */
   repair?: boolean;
 }
 

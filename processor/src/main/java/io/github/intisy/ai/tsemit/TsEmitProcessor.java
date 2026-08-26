@@ -138,7 +138,20 @@ public class TsEmitProcessor extends AbstractProcessor {
      * whether a target is an emitted type is only known once every round is over.
      */
     private String docBlock(Element element, String indent) {
+        return docBlock(element, indent, false);
+    }
+
+    /**
+     * @implNote {@code asProperty} mirrors the same callable-vs-property decision the caller already
+     * made for the declaration itself: TSDoc has no {@code @returns} for a property, and the javadoc
+     * this is rendered from carries {@code @return} on every accessor regardless, so a property must
+     * drop the tag that a callable keeps.
+     */
+    private String docBlock(Element element, String indent, boolean asProperty) {
         List<String> lines = tsdoc(processingEnv.getElementUtils().getDocComment(element));
+        if (asProperty) {
+            lines = withoutReturns(lines);
+        }
         if (lines.isEmpty()) {
             return "";
         }
@@ -150,6 +163,19 @@ public class TsEmitProcessor extends AbstractProcessor {
             out.append(indent).append(line.isEmpty() ? " *" : " * " + line).append("\n");
         }
         return out.append(indent).append(" */\n").toString();
+    }
+
+    private static List<String> withoutReturns(List<String> lines) {
+        List<String> out = new ArrayList<String>();
+        for (String line : lines) {
+            if (!line.startsWith("@returns")) {
+                out.add(line);
+            }
+        }
+        while (!out.isEmpty() && out.get(out.size() - 1).isEmpty()) {
+            out.remove(out.size() - 1);
+        }
+        return out;
     }
 
     /**
@@ -284,7 +310,7 @@ public class TsEmitProcessor extends AbstractProcessor {
     private String method(ExecutableElement method, TsInterface spec) {
         TsProperty asProperty = method.getAnnotation(TsProperty.class);
         boolean property = method.getParameters().isEmpty() && (asProperty != null || spec.data());
-        StringBuilder out = new StringBuilder(docBlock(method, "  "));
+        StringBuilder out = new StringBuilder(docBlock(method, "  ", property));
         out.append("  ");
         if (property && asProperty != null && asProperty.readOnly()) {
             out.append("readonly ");
@@ -308,7 +334,7 @@ public class TsEmitProcessor extends AbstractProcessor {
      * a value that is either present or Java-null, never an omitted argument.
      */
     private String field(VariableElement field) {
-        StringBuilder out = new StringBuilder(docBlock(field, "  "));
+        StringBuilder out = new StringBuilder(docBlock(field, "  ", true));
         out.append("  ");
         if (field.getModifiers().contains(Modifier.FINAL)) {
             out.append("readonly ");
