@@ -16,6 +16,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface TsUnion {
+    /** @return the type names to join into the emitted union, in order */
     String[] value();
 
     /**
@@ -27,6 +28,8 @@ public @interface TsUnion {
      * to the portable signature. Without this the only way to emit the wrapper would be to make the
      * Java return a {@code CompletionStage}, which would put an async type in an SPI that has no use
      * for one.
+     *
+     * @return true to wrap the union in a promise, false to emit it as a plain synchronous type
      */
     boolean async() default false;
 }

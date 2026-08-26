@@ -16,5 +16,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
 public @interface TsNullable {
+    /**
+     * @return true to append a null arm instead of an undefined arm on a method's return type; has
+     *     no effect on a parameter or field, which always append a null arm
+     */
     boolean asNull() default false;
 }

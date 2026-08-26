@@ -10,6 +10,7 @@ import io.github.intisy.ai.api.seam.Logger;
  */
 public final class NoopLogger implements Logger {
 
+    /** The single shared instance; the class has no state to distinguish two of them. */
     public static final Logger INSTANCE = new NoopLogger();
 
     private NoopLogger() {

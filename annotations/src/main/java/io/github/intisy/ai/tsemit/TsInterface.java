@@ -5,12 +5,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/** Emit a TypeScript interface declaration for the annotated interface or data class. */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface TsInterface {
     /**
      * Emit every zero-argument method as a property rather than a method, and permit the annotation
      * on a class, whose public instance fields then emit as properties too.
+     *
+     * @return true to treat the annotated class as a data carrier, false to emit only its methods
      */
     boolean data() default false;
 }

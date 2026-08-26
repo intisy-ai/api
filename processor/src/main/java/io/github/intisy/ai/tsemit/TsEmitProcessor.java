@@ -30,6 +30,10 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.StandardLocation;
 
+/**
+ * An annotation processor that renders {@link TsInterface}, {@link TsEnum}, {@link TsModule} and
+ * {@link TsConstant} declarations into a single generated TypeScript source file.
+ */
 @SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant", "io.github.intisy.ai.tsemit.TsEnum"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedOptions({"tsemit.name", "tsemit.ext", "tsemit.keys", "tsemit.imports", "tsemit.reexport"})

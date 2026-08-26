@@ -51,11 +51,18 @@ public class FileStore implements Store {
 
     private final Path configFolder;
 
+    /**
+     * @param configFolder the explicit base directory this store reads/writes under, never null
+     */
     public FileStore(Path configFolder) {
         this.configFolder = configFolder;
     }
 
-    /** The explicit base directory this store reads/writes under. */
+    /**
+     * The explicit base directory this store reads/writes under.
+     *
+     * @return the directory passed to the constructor, never null
+     */
     public Path configFolder() {
         return configFolder;
     }
@@ -65,6 +72,8 @@ public class FileStore implements Store {
      * is set, else {@code <user.home>/.ai-java/config}. The env-based dir is a CONVENIENCE,
      * not the primary path; servers should prefer {@link #FileStore(Path)} with an explicit
      * directory.
+     *
+     * @return a new store rooted at the resolved config directory
      */
     public static FileStore fromEnv() {
         return new FileStore(defaultConfigFolder());

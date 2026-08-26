@@ -15,5 +15,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface TsPhantom {
+    /** @return the emitted TypeScript type of the marker property */
     String value();
 }
