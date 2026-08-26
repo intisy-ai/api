@@ -24,6 +24,10 @@
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "default": "./dist/testing/index.js"
+    },
+    "./testing/predicates": {
+      "types": "./dist/testing/predicates.d.ts",
+      "default": "./dist/testing/predicates.js"
     }
   },
   "bin": {

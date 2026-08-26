@@ -8,7 +8,7 @@ const repo = fileURLToPath(new URL("../..", import.meta.url));
 const NODE_BUILTINS = ["fs", "path", "os", "process", "child_process", "url", "crypto", "util", "events", "stream"];
 
 /** Subpaths that are Node-only by design, so a builtin in one of them is correct rather than a leak. */
-const NODE_ALLOWED = ["./host", "./testing"];
+const NODE_ALLOWED = ["./host", "./testing", "./testing/predicates"];
 
 interface Served {
   subpath: string;
@@ -116,4 +116,10 @@ it("detects a node import when one is present", () => {
 it("the host subpath is Node-only by design, and its graph proves it", () => {
   expect(NODE_ALLOWED).toContain("./host");
   expect(nodeImportsFrom(join(repo, "dist/host/index.js")).length).toBeGreaterThan(0);
+});
+
+it("the testing subpaths are Node-only by design, and their graph proves it", () => {
+  expect(NODE_ALLOWED).toContain("./testing");
+  expect(NODE_ALLOWED).toContain("./testing/predicates");
+  expect(nodeImportsFrom(join(repo, "dist/testing/predicates.js")).length).toBeGreaterThan(0);
 });
