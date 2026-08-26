@@ -9,8 +9,9 @@ import java.util.Map;
  *
  * @implNote No object declares additionalProperties as absent-meaning-closed: an unknown field is
  * ignored, which is what lets a manifest written against a later version of this package load on
- * today's host. The presentation block is deliberately absent, because its only field is an icon
- * path per provider id and that names a category this package must not know.
+ * today's host. Marks beyond the repo's own live in {@code icons}, keyed by the id of whatever wears
+ * them, so this package carries them without learning what any id names: a block keyed by CATEGORY
+ * would name one, which is what it must not do.
  */
 public final class ManifestSchema {
 
@@ -45,6 +46,12 @@ public final class ManifestSchema {
         properties.put("displayName", described(JsonSchema.ofType("string"), "The name a surface shows instead of the id."));
         properties.put("icon", described(JsonSchema.ofType("string"), "Path to a square-viewBox SVG mark, relative to the repo root."));
 
+        JsonSchema icons = described(JsonSchema.ofType("object"),
+                "Further marks this repo ships, each keyed by the id of the thing it belongs to.");
+        icons.setAdditionalProperties(described(JsonSchema.ofType("string"),
+                "Path to a square-viewBox SVG mark, relative to the repo root."));
+        properties.put("icons", icons);
+
         JsonSchema capabilities = described(JsonSchema.ofType("array"), "Host-facing abilities this plugin provides at activation.");
         capabilities.setItems(JsonSchema.ofType("string"));
         capabilities.setFix("list capability ids as strings, for example [\"provider\", \"screens\"]");
@@ -62,6 +69,8 @@ public final class ManifestSchema {
         properties.put("lifecycle", lifecycle());
         properties.put("publish", publish());
         properties.put("repo", repo());
+        properties.put("marketplace", marketplace());
+        properties.put("app", app());
 
         JsonSchema root = described(JsonSchema.ofType("object"), "The single machine-readable description of a repo in the intisy-ai ecosystem.");
         root.setSchemaDraft(DRAFT);
@@ -143,7 +152,16 @@ public final class ManifestSchema {
         Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
         properties.put("scopedOnly", described(JsonSchema.ofType("boolean"),
                 "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable."));
-        JsonSchema publish = described(JsonSchema.ofType("object"), "How the repo is published to npm.");
+        JsonSchema jarModule = described(JsonSchema.ofType("array"),
+                "The Gradle modules whose jars ship as release assets, each named by its own classifier.");
+        jarModule.setItems(JsonSchema.ofType("string"));
+        properties.put("jarModule", jarModule);
+        properties.put("generatedReadme", described(JsonSchema.ofType("boolean"),
+                "The README is rendered at build time, so the release promotes it rather than testing it."));
+        properties.put("jarPretest", described(JsonSchema.ofType("boolean"),
+                "Run the Gradle build before the tests, because a test needs its jar installed first."));
+        JsonSchema publish = described(JsonSchema.ofType("object"),
+                "How the repo is published, to npm and as Java release assets.");
         publish.setProperties(properties);
         return publish;
     }
@@ -157,12 +175,247 @@ public final class ManifestSchema {
         JsonSchema domains = described(JsonSchema.ofType("array"), "Domain topics, for example claude or gemini.");
         domains.setItems(JsonSchema.ofType("string"));
         properties.put("domains", domains);
-        properties.put("tech", described(JsonSchema.ofType("string"), "The primary tech topic, typescript or java."));
+        JsonSchema tech = described(JsonSchema.ofType("array"),
+                "The tech topics, for example typescript, java or svelte.");
+        tech.setItems(JsonSchema.ofType("string"));
+        properties.put("tech", tech);
+        JsonSchema topics = described(JsonSchema.ofType("array"),
+                "Topics this repo needs that no other rule derives, for example github-actions.");
+        topics.setItems(JsonSchema.ofType("string"));
+        properties.put("topics", topics);
         JsonSchema repo = described(JsonSchema.ofType("object"),
                 "Repository metadata: the GitHub description and topic set are derived from it.");
         repo.setRequired(Arrays.asList("role", "category", "tech"));
         repo.setProperties(properties);
         return repo;
+    }
+
+    private static JsonSchema marketplace() {
+        Map<String, JsonSchema> matchProperties = new LinkedHashMap<String, JsonSchema>();
+        JsonSchema topics = described(JsonSchema.ofType("array"), "Repository topics an entry must carry.");
+        topics.setItems(JsonSchema.ofType("string"));
+        matchProperties.put("topics", topics);
+        matchProperties.put("kind", described(JsonSchema.ofType("string"),
+                "The catalog kind an entry must be, as the reading host names its kinds."));
+        JsonSchema match = described(JsonSchema.ofType("object"), "Which entries this category holds.");
+        match.setProperties(matchProperties);
+
+        Map<String, JsonSchema> categoryProperties = new LinkedHashMap<String, JsonSchema>();
+        categoryProperties.put("id", described(JsonSchema.ofType("string"),
+                "The category's id, unique across every plugin declaring one."));
+        categoryProperties.put("label", described(JsonSchema.ofType("string"),
+                "The name a surface shows. Absent means the id is shown."));
+        categoryProperties.put("match", match);
+        JsonSchema category = described(JsonSchema.ofType("object"),
+                "One category a plugin adds to a host's catalog of installable things.");
+        category.setRequired(Arrays.asList("id", "match"));
+        category.setProperties(categoryProperties);
+
+        JsonSchema categories = described(JsonSchema.ofType("array"), "Categories this plugin adds.");
+        categories.setItems(category);
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("categories", categories);
+        JsonSchema marketplace = described(JsonSchema.ofType("object"),
+                "What this plugin contributes to a host's catalog of installable things.");
+        marketplace.setRequired(Arrays.asList("categories"));
+        marketplace.setProperties(properties);
+        return marketplace;
+    }
+
+    /**
+     * The app this repo is the loader for.
+     *
+     * @implNote Only id, label and home are required, although the contract's AppDescriptor marks
+     * more than that non-optional: the interface describes a RESOLVED descriptor and this schema
+     * validates a DECLARATION. A reader fills what a declaration omits, so requiring those fields
+     * here would reject a valid app whose project left them to the defaults.
+     */
+    private static JsonSchema app() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("id", described(JsonSchema.ofType("string"),
+                "The app's permanent id, for example claude or opencode."));
+        properties.put("label", described(JsonSchema.ofType("string"), "The name a surface shows instead of the id."));
+        properties.put("icon", described(JsonSchema.ofType("string"),
+                "Path to a square-viewBox SVG mark for the app, relative to the repo root."));
+        properties.put("home", appHome());
+        properties.put("detect", appDetect());
+        properties.put("loader", appLoader());
+        properties.put("commandsSubdir", described(JsonSchema.ofType("string"),
+                "The subdirectory inside the app home holding its slash commands."));
+        properties.put("paths", appPathNames());
+        properties.put("proxyPort", described(JsonSchema.ofType("integer"),
+                "The port this app's proxy listens on, or 0 when it needs none."));
+        JsonSchema integration = described(JsonSchema.ofType("string"), "How this app reaches the local API.");
+        integration.setEnumValues(Arrays.asList("env-baseurl", "native"));
+        integration.setFix("set \"integration\" to \"env-baseurl\" when the app is pointed at the proxy by an environment variable, or \"native\" when it loads the plugin itself");
+        properties.put("integration", integration);
+        properties.put("wireFormat", described(JsonSchema.ofType("string"),
+                "The wire format this app speaks, for example anthropic."));
+        properties.put("usage", appUsage());
+        properties.put("accent", described(JsonSchema.ofType("string"),
+                "Accent colour for this app's surfaces, as a #rrggbb hex string."));
+        properties.put("wrapperCommand", described(JsonSchema.ofType("string"),
+                "The command a user types to launch this app through its loader's wrapper."));
+        properties.put("npmPlugins", appNpmPlugins());
+        properties.put("startupHook", appStartupHook());
+        properties.put("discovery", appDiscovery());
+        properties.put("projects", appProjects());
+        properties.put("modelCatalog", appModelCatalog());
+
+        JsonSchema app = described(JsonSchema.ofType("object"),
+                "The app this repo is the loader for, declared by the app's own project.");
+        app.setRequired(Arrays.asList("id", "label", "home"));
+        app.setProperties(properties);
+        return app;
+    }
+
+    private static JsonSchema appHome() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("envOverride", described(JsonSchema.ofType("string"),
+                "Environment variable that overrides every candidate, set by a host driving this app."));
+        properties.put("nativeEnv", described(JsonSchema.ofType("string"),
+                "The app's OWN environment variable for its config directory, which it reads itself."));
+        properties.put("xdgSubdir", described(JsonSchema.ofType("string"),
+                "Subdirectory under the XDG config directory, when the app follows that layout."));
+        JsonSchema candidates = described(JsonSchema.ofType("array"),
+                "Paths to try in order, each with a leading ~ for the user home.");
+        candidates.setItems(JsonSchema.ofType("string"));
+        properties.put("candidates", candidates);
+        JsonSchema home = described(JsonSchema.ofType("object"),
+                "Where this app keeps its home directory, in the order a resolver tries.");
+        home.setRequired(Arrays.asList("candidates"));
+        home.setProperties(properties);
+        return home;
+    }
+
+    private static JsonSchema appDetect() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("binary", described(JsonSchema.ofType("string"),
+                "The executable a user launches, looked up on the path."));
+        properties.put("pkg", described(JsonSchema.ofType("string"),
+                "The npm package the app ships as, for a global-install check."));
+        JsonSchema detect = described(JsonSchema.ofType("object"), "How to tell whether this app is installed.");
+        detect.setProperties(properties);
+        return detect;
+    }
+
+    private static JsonSchema appLoader() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("id", described(JsonSchema.ofType("string"), "The loader plugin's id."));
+        properties.put("url", described(JsonSchema.ofType("string"),
+                "Where the loader is cloned from, as owner/repo or a full URL."));
+        JsonSchema loader = described(JsonSchema.ofType("object"),
+                "The plugin this app is reached through. Absent means the app has no loader.");
+        loader.setRequired(Arrays.asList("id", "url"));
+        loader.setProperties(properties);
+        return loader;
+    }
+
+    private static JsonSchema appPathNames() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("repos", described(JsonSchema.ofType("string"), "Where plugin checkouts live."));
+        properties.put("plugin", described(JsonSchema.ofType("string"),
+                "Where deployed plugin bundles and their manifest sidecars live."));
+        properties.put("cache", described(JsonSchema.ofType("string"), "Where cached downloads live."));
+        properties.put("config", described(JsonSchema.ofType("string"), "Where configuration files live."));
+        JsonSchema paths = described(JsonSchema.ofType("object"),
+                "The names of the storage subdirectories inside this app's home.");
+        paths.setProperties(properties);
+        return paths;
+    }
+
+    private static JsonSchema appUsage() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        JsonSchema formats = described(JsonSchema.ofType("array"),
+                "Format ids, each of which a consumer maps to a parser of its own.");
+        formats.setItems(JsonSchema.ofType("string"));
+        properties.put("formats", formats);
+        JsonSchema usage = described(JsonSchema.ofType("object"),
+                "Session-storage formats this app writes, for usage readers.");
+        usage.setRequired(Arrays.asList("formats"));
+        usage.setProperties(properties);
+        return usage;
+    }
+
+    private static JsonSchema appNpmPlugins() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        JsonSchema configFiles = described(JsonSchema.ofType("array"),
+                "Config files to look in, in order, for the plugin list.");
+        configFiles.setItems(JsonSchema.ofType("string"));
+        properties.put("configFiles", configFiles);
+        properties.put("pluginsKey", described(JsonSchema.ofType("string"),
+                "The key inside those files holding the plugin list."));
+        properties.put("packageCache", described(JsonSchema.ofType("string"),
+                "Where the app caches the packages it installed."));
+        properties.put("schemaUrl", described(JsonSchema.ofType("string"),
+                "The app's config schema, for an editor's completion."));
+        JsonSchema npmPlugins = described(JsonSchema.ofType("object"),
+                "This app's own npm-plugin mechanism. Absent means it has none.");
+        npmPlugins.setRequired(Arrays.asList("configFiles", "pluginsKey"));
+        npmPlugins.setProperties(properties);
+        return npmPlugins;
+    }
+
+    private static JsonSchema appStartupHook() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("file", described(JsonSchema.ofType("string"), "The file to write, relative to the app home."));
+        JsonSchema path = described(JsonSchema.ofType("array"), "The key path to the array the entry joins.");
+        path.setItems(JsonSchema.ofType("string"));
+        properties.put("path", path);
+        properties.put("entry", described(JsonSchema.ofType("object"),
+                "A JSON template whose strings have the {plugin} placeholder replaced with the plugin's name."));
+        JsonSchema startupHook = described(JsonSchema.ofType("object"),
+                "How this app runs a plugin at startup when it has no npm-plugin list of its own.");
+        startupHook.setRequired(Arrays.asList("file", "path", "entry"));
+        startupHook.setProperties(properties);
+        return startupHook;
+    }
+
+    private static JsonSchema appDiscovery() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("topic", described(JsonSchema.ofType("string"),
+                "The repository topic a community plugin carries."));
+        properties.put("searchQuery", described(JsonSchema.ofType("string"),
+                "A free-text search to run where the topic alone under-reports."));
+        properties.put("awesomeList", described(JsonSchema.ofType("string"),
+                "A curated list to read, as a raw URL."));
+        JsonSchema discovery = described(JsonSchema.ofType("object"),
+                "Where a marketplace looks for this app's community plugins.");
+        discovery.setProperties(properties);
+        return discovery;
+    }
+
+    private static JsonSchema appProjects() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        properties.put("historyFile", described(JsonSchema.ofType("string"), "A history file inside the app home."));
+        JsonSchema sessionDb = described(JsonSchema.ofType("array"),
+                "Session databases to try in order, absolute or relative to the app home.");
+        sessionDb.setItems(JsonSchema.ofType("string"));
+        properties.put("sessionDb", sessionDb);
+        properties.put("markerFile", described(JsonSchema.ofType("string"),
+                "The file the app writes inside a project's git directory to record the project id."));
+        JsonSchema projects = described(JsonSchema.ofType("object"),
+                "Where this app records the projects a user has worked in.");
+        projects.setProperties(properties);
+        return projects;
+    }
+
+    private static JsonSchema appModelCatalog() {
+        Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
+        JsonSchema files = described(JsonSchema.ofType("array"), "Files to try in order, relative to the app home.");
+        files.setItems(JsonSchema.ofType("string"));
+        properties.put("files", files);
+        properties.put("envOverride", described(JsonSchema.ofType("string"),
+                "Environment variable naming the config file outright."));
+        properties.put("schemaUrl", described(JsonSchema.ofType("string"),
+                "The app's config schema, for an editor's completion."));
+        properties.put("providerKey", described(JsonSchema.ofType("string"),
+                "The key inside that file holding the catalog, named after the app's own config key."));
+        JsonSchema modelCatalog = described(JsonSchema.ofType("object"),
+                "The app config file a model catalog is merged into.");
+        modelCatalog.setRequired(Arrays.asList("files", "providerKey"));
+        modelCatalog.setProperties(properties);
+        return modelCatalog;
     }
 
     private static JsonSchema described(JsonSchema schema, String description) {

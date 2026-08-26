@@ -4,11 +4,22 @@
   "api": 1,
   "displayName": "Plugin API",
   "publish": {
-    "scopedOnly": true
+    "scopedOnly": true,
+    "jarModule": [
+      "annotations",
+      "processor",
+      "contract",
+      "seam",
+      "js-base",
+      "jvm-seam"
+    ]
   },
   "repo": {
     "role": "Plugin API contract and service registry",
     "category": "core-library",
-    "tech": "typescript"
+    "tech": [
+      "typescript",
+      "java"
+    ]
   }
 }
