@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, it } from "vitest";
-import { sourceFiles, suppressions, undocumented } from "./predicates.js";
+import { sourceFiles, suppressions, undocumented, undocumentedMembers } from "./predicates.js";
 
 export * from "./predicates.js";
 
@@ -44,6 +44,36 @@ export function guardNoSuppressions(options: GuardOptions): void {
     const offenders = sourceFiles(root, options.skipFiles)
       .map((file) => ({ file: relative(root, file), found: suppressions(readFileSync(file, "utf8")) }))
       .filter((entry) => entry.found.length > 0);
+    expect(offenders).toEqual([]);
+  });
+}
+
+/** Where a generated-surface guard looks. */
+export interface GeneratedGuardOptions {
+  /** The emitted declaration files to check, as absolute paths or file URLs. */
+  files: Array<string | URL>;
+}
+
+/**
+ * Registers the guard asserting every declaration and member of each named, emitted file carries
+ * TSDoc.
+ *
+ * @remarks
+ * Unlike {@link guardDocumentation}, this also checks members with {@link undocumentedMembers},
+ * which is safe only against emitted declaration files, never hand-written source. Point it at the
+ * files a `tsemit` build produces (`.d.ts`, and the generated `.keys.ts`), not at `src`.
+ *
+ * @param options the emitted files to check
+ */
+export function guardGeneratedSurface(options: GeneratedGuardOptions): void {
+  it("documents every declaration and member of the generated surface", () => {
+    const offenders = options.files
+      .map((file) => {
+        const path = typeof file === "string" ? file : fileURLToPath(file);
+        const source = readFileSync(path, "utf8");
+        return { file: path, missing: [...undocumented(source), ...undocumentedMembers(source)] };
+      })
+      .filter((entry) => entry.missing.length > 0);
     expect(offenders).toEqual([]);
   });
 }
