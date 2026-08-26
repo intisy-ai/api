@@ -71,6 +71,9 @@ export interface PluginContext {
    * The id is data the manifest already states, and the payload type comes from a
    * type-only import, which erases at build time. That pair is what makes a plugin's only runtime
    * dependency this package.
+   * @param <T> - the capability's implementation type
+   * @param id - the capability id, as the manifest declares it
+   * @returns the typed key for that id
    */
   capability<T>(id: string): CapabilityType<T>;
   /** This plugin's resolved configuration. */
@@ -83,6 +86,7 @@ export interface PluginContext {
    * @remarks
    * Asked rather than held, because a home can appear, and can be installed, while a
    * plugin is running. `paths` is this plugin's own home; this is every home there is.
+   * @returns every app home the host knows about
    */
   homes(): HomeDescriptor[];
   /** What this plugin may know about the host. */
@@ -99,6 +103,9 @@ export interface PluginContext {
    * @remarks
    * One signature, never a plain-string overload beside it: the pair would let a wrong
    * payload compile through the string side.
+   * @param <T> - the capability's implementation type
+   * @param type - the capability key, from `capability(String)`
+   * @param implementation - this plugin's implementation of that capability
    */
   provide<T>(type: CapabilityType<T>, implementation: T): void;
   /**
@@ -109,6 +116,9 @@ export interface PluginContext {
    * The counterpart of `capability(String)` for the ids a manifest states under
    * `services`. Without it a plugin would have to write the key literal itself, which is the
    * plugin minting vocabulary rather than naming an id it already declares.
+   * @param <T> - the service's API type
+   * @param id - the service id, as the manifest declares it
+   * @returns the typed key for that id
    */
   service<T>(id: string): ServiceType<T>;
   /** How this plugin reaches another plugin's API, and offers its own. */
@@ -120,6 +130,9 @@ export interface PluginContext {
    * @remarks
    * Same reason as `service(String)`: a topic is an id, and a plugin that had to
    * build the key by hand would be minting the vocabulary instead of naming it.
+   * @param <T> - the topic's payload type
+   * @param id - the topic id, as the manifest declares it
+   * @returns the typed key for that id
    */
   topic<T>(id: string): TopicType<T>;
 }
@@ -133,15 +146,45 @@ export interface PluginContext {
  * a host needs no import of anything it drives.
  */
 export interface Services {
-  /** What is registered under this id right now, or absent when nothing is. */
+  /**
+   * What is registered under this id right now, or absent when nothing is.
+   *
+   * @param <T> - the service's API type
+   * @param type - the service key, from {@link PluginContext.service(String)}
+   * @returns the current registration, or `null` when none is registered
+   */
   get<T>(type: ServiceType<T>): T | undefined;
-  /** Every service id registered right now. */
+  /**
+   * Every service id registered right now.
+   *
+   * @returns the registered service ids
+   */
   ids(): string[];
-  /** Offers an implementation under this id, until the returned function is called. */
+  /**
+   * Offers an implementation under this id, until the returned function is called.
+   *
+   * @param <T> - the service's API type
+   * @param type - the service key, from {@link PluginContext.service(String)}
+   * @param implementation - this plugin's implementation of the service
+   * @returns a function that withdraws the registration when called
+   */
   register<T>(type: ServiceType<T>, implementation: T): () => void;
-  /** Waits for the id to be registered, for a host default the implementation chooses. */
+  /**
+   * Waits for the id to be registered, for a host default the implementation chooses.
+   *
+   * @param <T> - the service's API type
+   * @param type - the service key, from {@link PluginContext.service(String)}
+   * @returns a stage that completes with the registration once one appears
+   */
   want<T>(type: ServiceType<T>): Promise<T>;
-  /** Waits for the id to be registered, giving up after the stated time. */
+  /**
+   * Waits for the id to be registered, giving up after the stated time.
+   *
+   * @param <T> - the service's API type
+   * @param type - the service key, from {@link PluginContext.service(String)}
+   * @param options - how long to wait before giving up
+   * @returns a stage that completes with the registration, or fails once the wait times out
+   */
   want<T>(type: ServiceType<T>, options: WantOptions): Promise<T>;
   /**
    * Reports every registration and removal of this id until the returned function is called. The
@@ -151,6 +194,10 @@ export interface Services {
    * @remarks
    * Distinct from `want`, which answers once: a service can be replaced while a
    * consumer is still holding the old one, and only a watcher sees that.
+   * @param <T> - the service's API type
+   * @param type - the service key, from {@link PluginContext.service(String)}
+   * @param listener - called with the current registration (or absent) and the event kind
+   * @returns a function that stops the watch when called
    */
   watch<T>(type: ServiceType<T>, listener: ((a: T, b: string) => void)): () => void;
 }
@@ -163,9 +210,22 @@ export interface Services {
  * cannot disagree about the shape without the compiler saying so.
  */
 export interface Events {
-  /** Says a topic carried this payload, to whoever is listening and to nobody in particular. */
+  /**
+   * Says a topic carried this payload, to whoever is listening and to nobody in particular.
+   *
+   * @param <T> - the topic's payload type
+   * @param topic - the topic to publish on
+   * @param payload - the event payload
+   */
   publish<T>(topic: TopicType<T>, payload: T): void;
-  /** Hears this topic until the returned function is called. */
+  /**
+   * Hears this topic until the returned function is called.
+   *
+   * @param <T> - the topic's payload type
+   * @param topic - the topic to listen on
+   * @param listener - called with each payload published on `topic`
+   * @returns a function that stops the subscription when called
+   */
   subscribe<T>(topic: TopicType<T>, listener: ((value: T) => void)): () => void;
 }
 
@@ -194,19 +254,46 @@ export interface AppStartupHook {
  * know, and became visible to that gate the moment this interface started emitting TypeScript.
  */
 export interface Store {
-  /** Removes `key`, and does nothing when it holds nothing. */
+  /**
+   * Removes `key`, and does nothing when it holds nothing.
+   *
+   * @param key - the entry's name
+   */
   delete(key: string): void;
-  /** Whether anything is stored under `key`. */
+  /**
+   * Whether anything is stored under `key`.
+   *
+   * @param key - the entry's name
+   * @returns true when an entry is stored under `key`, false when there is none
+   */
   exists(key: string): boolean;
-  /** The value stored under `key`, or `null` when nothing is stored there. */
+  /**
+   * The value stored under `key`, or `null` when nothing is stored there.
+   *
+   * @param key - the entry's name
+   * @returns the stored value, or `null` when nothing is stored under `key`
+   */
   get(key: string): string;
-  /** Every key beginning with `prefix`, in the order the store holds them. */
+  /**
+   * Every key beginning with `prefix`, in the order the store holds them.
+   *
+   * @param prefix - the key prefix to match, or an empty string to match every key
+   * @returns the matching keys, or an empty list when none match
+   */
   listKeys(prefix: string): string[];
-  /** Stores `value` under `key`, replacing whatever was there. */
+  /**
+   * Stores `value` under `key`, replacing whatever was there.
+   *
+   * @param key - the entry's name
+   * @param value - the value to store
+   */
   put(key: string, value: string): void;
   /**
    * Replaces `key`'s value with what `mutator` returns, reading and writing as one
    * step, and hands the mutator `null` when the key holds nothing yet.
+   *
+   * @param key - the entry's name
+   * @param mutator - computes the new value from the current one
    */
   update(key: string, mutator: ((value: string) => string)): void;
 }
@@ -306,7 +393,7 @@ export interface HomeDescriptor {
  * lets the command files exist before the plugin has ever activated.
  */
 export interface ManifestCommand {
-  /** The argument shape a picker hints at, such as "list | get <key>". */
+  /** The argument shape a picker hints at, such as `list | get <key>`. */
   argumentHint?: string;
   /** Markdown the model is shown, after any shell output. */
   body?: string;
@@ -486,13 +573,25 @@ export interface HostDescriptor {
  * throws or hangs is quarantined on its own rather than taking a host or a sibling with it.
  */
 export interface Plugin {
-  /** Supplies the implementation behind every capability the manifest declares. */
+  /**
+   * Supplies the implementation behind every capability the manifest declares.
+   *
+   * @param context - this activation's host-supplied services and metadata
+   */
   activate(context: PluginContext): void | Promise<void>;
   /** Releases whatever `activate` took: timers, watchers, child processes. */
   deactivate(): void | Promise<void>;
-  /** Runs once after the first deploy. */
+  /**
+   * Runs once after the first deploy.
+   *
+   * @param context - this activation's host-supplied services and metadata
+   */
   install?(context: PluginContext): void | Promise<void>;
-  /** Runs on demand from a host, to put a broken installation right. */
+  /**
+   * Runs on demand from a host, to put a broken installation right.
+   *
+   * @param context - this activation's host-supplied services and metadata
+   */
   repair?(context: PluginContext): void | Promise<void>;
 }
 
@@ -504,15 +603,36 @@ export interface Plugin {
  * attributed, so a component never opens a log file itself.
  */
 export interface Logger {
-  /** Detail only useful while debugging. */
+  /**
+   * Detail only useful while debugging.
+   *
+   * @param message - the line to log
+   */
   debug(message: string): void;
-  /** Something that failed. */
+  /**
+   * Something that failed.
+   *
+   * @param message - the line to log
+   */
   error(message: string): void;
-  /** Something that failed, with the cause. */
+  /**
+   * Something that failed, with the cause.
+   *
+   * @param message - the line to log
+   * @param cause - the failure, logged alongside the message
+   */
   error(message: string, cause: unknown): void;
-  /** Normal operation. */
+  /**
+   * Normal operation.
+   *
+   * @param message - the line to log
+   */
   info(message: string): void;
-  /** Something unexpected that did not stop the operation. */
+  /**
+   * Something unexpected that did not stop the operation.
+   *
+   * @param message - the line to log
+   */
   warn(message: string): void;
 }
 
@@ -636,9 +756,19 @@ export interface MarketplaceCategory {
 
 /** One plugin's configuration, already resolved by the host. */
 export interface PluginConfig {
-  /** Every setting, defaults merged with what is on disk. */
+  /**
+   * Every setting, defaults merged with what is on disk.
+   *
+   * @returns the setting keys mapped to their effective values
+   */
   all(): Record<string, unknown>;
-  /** One setting, absent when it is neither set nor defaulted. */
+  /**
+   * One setting, absent when it is neither set nor defaulted.
+   *
+   * @param <T> - the setting's expected value type
+   * @param key - the setting's name
+   * @returns the setting's effective value, or `null` when it is neither set nor defaulted
+   */
   get<T>(key: string): T | undefined;
   /**
    * Writes one setting.
@@ -646,6 +776,9 @@ export interface PluginConfig {
    * @remarks
    * Asynchronous even where a host implements it synchronously, because the seam has to
    * survive a host that runs the plugin out of process.
+   * @param key - the setting's name
+   * @param value - the value to write
+   * @returns a stage that completes once the setting is written
    */
   set(key: string, value: unknown): Promise<void>;
 }

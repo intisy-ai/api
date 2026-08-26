@@ -13,11 +13,19 @@ import java.util.List;
  */
 @TsInterface(data = true)
 public interface MarketplaceMatch {
-    /** Repository topics an entry must carry. */
+    /**
+     * Repository topics an entry must carry.
+     *
+     * @return the required topics, or absent when this match places no topic requirement
+     */
     @TsOptional
     List<String> topics();
 
-    /** The catalog kind an entry must be, as the reading host names its kinds. */
+    /**
+     * The catalog kind an entry must be, as the reading host names its kinds.
+     *
+     * @return the required kind, or absent when this match places no kind requirement
+     */
     @TsOptional
     String kind();
 }

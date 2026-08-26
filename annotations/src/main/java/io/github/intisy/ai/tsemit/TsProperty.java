@@ -14,5 +14,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface TsProperty {
+    /** @return true to emit the property with {@code readonly}, false to leave it mutable */
     boolean readOnly() default false;
 }

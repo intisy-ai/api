@@ -11,9 +11,15 @@ public interface Scheduler {
 
     /** A scheduled task that has not run yet. */
     interface Cancellable {
+        /** Prevents the scheduled task from running, if it has not run already. */
         void cancel();
     }
 
+    /**
+     * @param task the work to run once {@code delayMillis} elapses
+     * @param delayMillis how long to wait before running {@code task}, in milliseconds
+     * @return a handle that cancels the scheduled run
+     */
     Cancellable schedule(Runnable task, long delayMillis);
 
     /** Accepts work and never runs it, for a host that wants no timeouts at all. */

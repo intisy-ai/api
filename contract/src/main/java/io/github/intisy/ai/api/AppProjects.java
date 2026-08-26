@@ -12,15 +12,27 @@ import java.util.List;
  */
 @TsInterface(data = true)
 public interface AppProjects {
-    /** A history file inside the app home. */
+    /**
+     * A history file inside the app home.
+     *
+     * @return the history file path, or absent when this app keeps none
+     */
     @TsOptional
     String historyFile();
 
-    /** Session databases to try in order, absolute or relative to the app home. */
+    /**
+     * Session databases to try in order, absolute or relative to the app home.
+     *
+     * @return the candidate database paths, or absent when this app keeps none
+     */
     @TsOptional
     List<String> sessionDb();
 
-    /** The file the app writes inside a project's git directory to record the project id. */
+    /**
+     * The file the app writes inside a project's git directory to record the project id.
+     *
+     * @return the marker file name, or absent when this app writes none
+     */
     @TsOptional
     String markerFile();
 }

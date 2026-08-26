@@ -12,17 +12,33 @@ import java.util.List;
  */
 @TsInterface(data = true)
 public interface AppNpmPlugins {
-    /** Config files to look in, in order, for the plugin list. */
+    /**
+     * Config files to look in, in order, for the plugin list.
+     *
+     * @return the candidate config file paths, tried in order
+     */
     List<String> configFiles();
 
-    /** The key inside those files holding the plugin list. */
+    /**
+     * The key inside those files holding the plugin list.
+     *
+     * @return the config key holding the plugin list
+     */
     String pluginsKey();
 
-    /** Where the app caches the packages it installed. */
+    /**
+     * Where the app caches the packages it installed.
+     *
+     * @return the package cache path, or absent when this app has none
+     */
     @TsOptional
     String packageCache();
 
-    /** The app's config schema, for an editor's completion. */
+    /**
+     * The app's config schema, for an editor's completion.
+     *
+     * @return the schema URL, or absent when this app publishes none
+     */
     @TsOptional
     String schemaUrl();
 }

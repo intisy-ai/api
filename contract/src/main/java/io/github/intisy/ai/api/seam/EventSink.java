@@ -9,7 +9,11 @@ package io.github.intisy.ai.api.seam;
  */
 public interface EventSink {
 
-    /** Delivers one event. */
+    /**
+     * Delivers one event.
+     *
+     * @param event the event payload
+     */
     void emit(String event);
 
     /**

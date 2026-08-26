@@ -8,7 +8,11 @@ import io.github.intisy.ai.tsemit.TsProperty;
 @TsInterface
 @TsPhantom("T")
 public interface TopicType<T> {
-    /** The id itself, which is what crosses the boundary at run time. */
+    /**
+     * The id itself, which is what crosses the boundary at run time.
+     *
+     * @return the topic id
+     */
     @TsProperty(readOnly = true)
     String id();
 }

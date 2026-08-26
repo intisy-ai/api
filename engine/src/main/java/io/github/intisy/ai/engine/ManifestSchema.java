@@ -12,6 +12,9 @@ import java.util.Map;
  * today's host. Marks beyond the repo's own live in {@code icons}, keyed by the id of whatever wears
  * them, so this package carries them without learning what any id names: a block keyed by CATEGORY
  * would name one, which is what it must not do.
+ * @implNote This is the second home of every manifest field. The first is the contract interface an
+ * author writes against; a field added to one and not the other passes its own repo's build and
+ * fails the validator, which is what {@code manifest-contract-drift} exists to catch.
  */
 public final class ManifestSchema {
 
@@ -24,6 +27,7 @@ public final class ManifestSchema {
     private ManifestSchema() {
     }
 
+    /** @return the schema every parsed manifest is checked against */
     public static JsonSchema get() {
         Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
         properties.put("$schema", described(JsonSchema.ofType("string"),

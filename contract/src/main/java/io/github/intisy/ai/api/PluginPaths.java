@@ -10,18 +10,38 @@ import io.github.intisy.ai.tsemit.TsInterface;
  */
 @TsInterface(data = true)
 public interface PluginPaths {
-    /** The app home directory. */
+    /**
+     * The app home directory.
+     *
+     * @return the absolute home directory path
+     */
     String home();
 
-    /** Where plugin checkouts live. */
+    /**
+     * Where plugin checkouts live.
+     *
+     * @return the absolute repos directory path
+     */
     String repos();
 
-    /** Where deployed plugin bundles and their manifest sidecars live. */
+    /**
+     * Where deployed plugin bundles and their manifest sidecars live.
+     *
+     * @return the absolute plugin directory path
+     */
     String plugin();
 
-    /** Where cached downloads live. */
+    /**
+     * Where cached downloads live.
+     *
+     * @return the absolute cache directory path
+     */
     String cache();
 
-    /** Where configuration files live. */
+    /**
+     * Where configuration files live.
+     *
+     * @return the absolute config directory path
+     */
     String config();
 }

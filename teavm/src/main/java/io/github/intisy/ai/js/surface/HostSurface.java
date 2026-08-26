@@ -17,29 +17,63 @@ import java.util.List;
  */
 @TsInterface
 public interface HostSurface {
-    /** What every plugin is told about this host. */
+    /**
+     * What every plugin is told about this host.
+     *
+     * @return the host's descriptor
+     */
     @TsProperty(readOnly = true)
     HostDescriptorShape descriptor();
 
-    /** The record of what each plugin declared and provided. */
+    /**
+     * The record of what each plugin declared and provided.
+     *
+     * @return the ledger
+     */
     @TsProperty(readOnly = true)
     LedgerFacadeShape ledger();
 
-    /** Why this host cannot load the manifest, or null when it can. */
+    /**
+     * Why this host cannot load the manifest, or null when it can.
+     *
+     * @param manifest the parsed plugin.json object to check
+     * @return the problem found, or null when the host can load this manifest
+     */
     @TsNullable(asNull = true)
     PluginErrorShape supports(Object manifest);
 
-    /** Opens one plugin's context, fenced to its own namespace. */
+    /**
+     * Opens one plugin's context, fenced to its own namespace.
+     *
+     * @param manifest the parsed plugin.json object of the plugin being activated
+     * @param runtime the host-supplied runtime object for this plugin
+     * @return the context the plugin's activate receives
+     */
     ContextSurface contextFor(Object manifest, PluginRuntimeShape runtime);
 
-    /** Why what the plugin provided disagrees with what it declared, or null when they agree. */
+    /**
+     * Why what the plugin provided disagrees with what it declared, or null when they agree.
+     *
+     * @param manifest the parsed plugin.json object of the plugin being verified
+     * @return the disagreement found, or null when the plugin honored its declaration
+     */
     @TsNullable(asNull = true)
     PluginErrorShape verifyActivation(Object manifest);
 
-    /** Every implementation of one capability, in activation order. */
+    /**
+     * Every implementation of one capability, in activation order.
+     *
+     * @param id the capability id to look up
+     * @return the providing plugins' records, or empty when no plugin provides it
+     */
     List<CapabilityRecordShape> capability(String id);
 
-    /** The service registered under an id, or undefined when nothing is. */
+    /**
+     * The service registered under an id, or undefined when nothing is.
+     *
+     * @param id the service id to look up
+     * @return the registered service, or undefined when none is registered
+     */
     @TsNullable
     Object service(String id);
 
@@ -49,12 +83,23 @@ public interface HostSurface {
      * @implNote How a plugin gets behaviour belonging to a library it may not link: the host links
      * it once and hands over a typed handle, rather than every plugin carrying a private copy. Call
      * it before starting plugins, so a plugin asking during activate finds it.
+     * @param id the service id to register under
+     * @param service the value every plugin's {@code context.services.get(id)} then receives
      */
     void provideService(String id, Object service);
 
-    /** Quarantines a plugin, dropping its registrations and recording why. */
+    /**
+     * Quarantines a plugin, dropping its registrations and recording why.
+     *
+     * @param pluginId the id of the plugin to quarantine
+     * @param error the problem that caused the quarantine
+     */
     void markBroken(String pluginId, PluginErrorShape error);
 
-    /** Drops a stopped plugin's registrations without marking it broken. */
+    /**
+     * Drops a stopped plugin's registrations without marking it broken.
+     *
+     * @param pluginId the id of the plugin to release
+     */
     void release(String pluginId);
 }

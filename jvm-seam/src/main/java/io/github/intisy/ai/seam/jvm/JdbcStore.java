@@ -99,10 +99,17 @@ public class JdbcStore implements Store {
     // no atomicity there. Detected once at construction, same pattern as valueColumnType.
     private final boolean supportsRowLocking;
 
+    /**
+     * @param dataSource the connection pool to run against; the store never closes it
+     */
     public JdbcStore(DataSource dataSource) {
         this(dataSource, DEFAULT_TABLE);
     }
 
+    /**
+     * @param dataSource the connection pool to run against; the store never closes it
+     * @param table the key/value table name, created if absent; must match {@code [A-Za-z_][A-Za-z0-9_]*}
+     */
     public JdbcStore(DataSource dataSource, String table) {
         this.dataSource = dataSource;
         this.table = validateTableName(table);

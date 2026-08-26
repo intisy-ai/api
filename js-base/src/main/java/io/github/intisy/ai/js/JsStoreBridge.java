@@ -13,7 +13,7 @@ import java.util.function.UnaryOperator;
 
 /**
  * A live {@link Store} that delegates every call straight through to a JS-provided store object,
- * instead of {@link InMemoryStore}'s one-shot snapshot. Any mutation the routing logic makes during a
+ * instead of the in-memory store's one-shot snapshot. Any mutation the routing logic makes during a
  * call lands directly on the JS object the caller supplied, so it is visible to the next call that
  * reuses the same JS store instance: live rather than snapshot.
  */
@@ -35,21 +35,59 @@ public final class JsStoreBridge implements Store {
      * at the explicit {@code JSString.valueOf}/{@code .stringValue()} edges below.
      */
     public interface JsStore extends JSObject {
-        /** Returns the stored JSON string for {@code key}, or {@code null}/{@code undefined} when absent. */
+        /**
+         * Returns the stored JSON string for {@code key}. Called from Java by
+         * {@link JsStoreBridge#get}; the implementation lives in the JS store object.
+         *
+         * @param key the store key, already converted to a JS string
+         * @return the stored value, or a JS null/undefined when the key is absent
+         */
         JSString get(JSString key);
 
+        /**
+         * Stores {@code value} under {@code key}, overwriting any existing entry. Called from
+         * Java by {@link JsStoreBridge#put}; the implementation lives in the JS store object.
+         *
+         * @param key   the store key, already converted to a JS string
+         * @param value the value to store, already converted to a JS string
+         */
         void put(JSString key, JSString value);
 
+        /**
+         * Reports whether {@code key} has a stored value. Called from Java by
+         * {@link JsStoreBridge#exists}; the implementation lives in the JS store object.
+         *
+         * @param key the store key, already converted to a JS string
+         * @return {@code true} when a value is stored for the key, {@code false} otherwise
+         */
         boolean exists(JSString key);
 
+        /**
+         * Removes any stored value for {@code key}. Called from Java by
+         * {@link JsStoreBridge#delete}; the implementation lives in the JS store object.
+         *
+         * @param key the store key, already converted to a JS string
+         */
         void delete(JSString key);
 
-        /** Returns every key starting with {@code prefix} as a plain JS array of strings. */
+        /**
+         * Returns every key starting with {@code prefix}. Called from Java by
+         * {@link JsStoreBridge#listKeys}; the implementation lives in the JS store object.
+         *
+         * @param prefix the key prefix to match, already converted to a JS string
+         * @return every matching key as a plain JS array of strings, or a JS null or undefined,
+         *         which {@link JsStoreBridge#listKeys} treats as no matches
+         */
         JSArrayReader<JSString> listKeys(JSString prefix);
     }
 
     private final JsStore jsStore;
 
+    /**
+     * Wraps a JS-supplied live store object behind the {@link Store} contract.
+     *
+     * @param jsStore the JS store object backing every call
+     */
     public JsStoreBridge(JsStore jsStore) {
         this.jsStore = jsStore;
     }

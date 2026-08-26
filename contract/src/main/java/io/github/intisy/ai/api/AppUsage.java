@@ -6,6 +6,10 @@ import java.util.List;
 /** The session-storage formats an app writes, for a usage reader. */
 @TsInterface(data = true)
 public interface AppUsage {
-    /** Format ids, each of which a consumer maps to a parser of its own. */
+    /**
+     * Format ids, each of which a consumer maps to a parser of its own.
+     *
+     * @return the session-storage format ids this app writes
+     */
     List<String> formats();
 }

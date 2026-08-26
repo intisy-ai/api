@@ -22,44 +22,60 @@ public final class LedgerEntry {
         this.pluginId = pluginId;
     }
 
+    /** @return the id of the plugin this entry is about */
     public String getPluginId() {
         return pluginId;
     }
 
+    /** @return the plugin's current status */
     public PluginStatus getStatus() {
         return status;
     }
 
+    /** @return the capability ids the plugin's manifest declares, or empty when it declares none */
     public List<String> getCapabilitiesDeclared() {
         return Collections.unmodifiableList(capabilitiesDeclared);
     }
 
+    /** @return the capability ids the plugin has actually provided so far, or empty when it has provided none */
     public List<String> getCapabilitiesProvided() {
         return Collections.unmodifiableList(capabilitiesProvided);
     }
 
+    /** @return the service ids the plugin has registered, or empty when it has registered none */
     public List<String> getServicesProvided() {
         return Collections.unmodifiableList(servicesProvided);
     }
 
+    /** @return the service ids the plugin has consumed, or empty when it has consumed none */
     public List<String> getServicesConsumed() {
         return Collections.unmodifiableList(servicesConsumed);
     }
 
+    /** @return the event topics the plugin has subscribed to, or empty when it has subscribed to none */
     public List<String> getTopics() {
         return Collections.unmodifiableList(topics);
     }
 
+    /** @return the permissions the plugin's manifest declares, or empty when it declares none */
     public List<String> getPermissions() {
         return Collections.unmodifiableList(permissions);
     }
 
-    /** What went wrong, when the plugin is broken. */
+    /**
+     * What went wrong, when the plugin is broken.
+     *
+     * @return the failure detail, or null when the plugin is not broken
+     */
     public String getErrorDetail() {
         return errorDetail;
     }
 
-    /** How to fix it, when the plugin is broken. */
+    /**
+     * How to fix it, when the plugin is broken.
+     *
+     * @return the fix instruction, or null when the plugin is not broken
+     */
     public String getErrorFix() {
         return errorFix;
     }

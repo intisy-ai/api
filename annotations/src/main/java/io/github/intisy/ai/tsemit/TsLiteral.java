@@ -15,5 +15,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface TsLiteral {
+    /** @return the string literal to emit in place of the constant's name */
     String value();
 }

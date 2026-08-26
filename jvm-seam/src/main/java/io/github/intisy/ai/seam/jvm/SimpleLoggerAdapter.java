@@ -12,10 +12,14 @@ import java.util.logging.Level;
 public class SimpleLoggerAdapter implements Logger {
     private final java.util.logging.Logger logger;
 
+    /** Logs through a JUL logger named after this class. */
     public SimpleLoggerAdapter() {
         this(java.util.logging.Logger.getLogger(SimpleLoggerAdapter.class.getName()));
     }
 
+    /**
+     * @param logger the JUL logger to route every call to, never null
+     */
     public SimpleLoggerAdapter(java.util.logging.Logger logger) {
         this.logger = logger;
     }

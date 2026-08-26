@@ -8,6 +8,8 @@ package io.github.intisy.ai.js.surface;
  * used that way as the literal union of its constant names.
  */
 public enum ServiceEvent {
+    /** The service became available under the watched id. */
     register,
+    /** The service was withdrawn from the watched id. */
     unregister
 }

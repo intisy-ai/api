@@ -11,10 +11,20 @@ public interface EventBus {
 
     /** What a subscriber is handed when its topic carries a payload. */
     interface Listener {
+        /** @param payload the value the publisher sent on the subscribed topic */
         void received(Object payload);
     }
 
+    /**
+     * @param topic the topic to publish on
+     * @param payload the value delivered to every current subscriber of {@code topic}
+     */
     void publish(String topic, Object payload);
 
+    /**
+     * @param topic the topic to subscribe to
+     * @param listener called with each payload published on {@code topic} until cancelled
+     * @return a handle that ends the subscription when cancelled
+     */
     Scheduler.Cancellable subscribe(String topic, Listener listener);
 }

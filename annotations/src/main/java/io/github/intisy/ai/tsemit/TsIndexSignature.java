@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface TsIndexSignature {
+    /** @return the emitted index parameter's name */
     String key();
 
+    /** @return the emitted TypeScript type of the indexed value */
     String value();
 }

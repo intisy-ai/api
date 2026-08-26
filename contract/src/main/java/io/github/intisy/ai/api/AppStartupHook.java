@@ -11,12 +11,24 @@ import java.util.List;
  */
 @TsInterface(data = true)
 public interface AppStartupHook {
-    /** The file to write, relative to the app home. */
+    /**
+     * The file to write, relative to the app home.
+     *
+     * @return the file path, relative to the app home
+     */
     String file();
 
-    /** The key path to the array the entry joins. */
+    /**
+     * The key path to the array the entry joins.
+     *
+     * @return the key path segments, from the file's root object down to the target array
+     */
     List<String> path();
 
-    /** A JSON template whose strings have the `{plugin}` placeholder replaced with the plugin's name. */
+    /**
+     * A JSON template whose strings have the `{plugin}` placeholder replaced with the plugin's name.
+     *
+     * @return the JSON template to join into the array
+     */
     Object entry();
 }

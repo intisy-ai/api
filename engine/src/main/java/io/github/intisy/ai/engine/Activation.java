@@ -23,6 +23,12 @@ public final class Activation {
     }
 
     /**
+     * Computes an activation order for a set of plugin ids from what each provides and consumes.
+     *
+     * @param ids the plugin ids to order
+     * @param provides service ids each plugin id provides, keyed by plugin id
+     * @param consumes service ids each plugin id consumes, keyed by plugin id
+     * @return the resulting order, plus the dependency cycles that were left out of it
      * @implNote A consumed service nobody provides draws no edge: the consumer activates anyway and
      * resolves later or times out, because at ecosystem scale providers appear and disappear and a
      * hard order fails the moment one is disabled.

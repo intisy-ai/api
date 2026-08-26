@@ -13,10 +13,15 @@ import java.security.SecureRandom;
 public class SecureRandomAdapter implements Random {
     private final java.util.Random random;
 
+    /** Uses a freshly constructed {@link SecureRandom} as the source. */
     public SecureRandomAdapter() {
         this(new SecureRandom());
     }
 
+    /**
+     * @param random the source to draw from; passing a plain {@link java.util.Random} trades
+     *     cryptographic strength for determinism in tests
+     */
     public SecureRandomAdapter(java.util.Random random) {
         this.random = random;
     }

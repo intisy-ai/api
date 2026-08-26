@@ -25,6 +25,10 @@ public final class ManifestValidator {
     }
 
     /**
+     * @param value the parsed plugin.json to check
+     * @param wellKnownServices the bare service ids any plugin may register, empty for none, or null to skip
+     *                          the provided-service check entirely
+     * @return every issue found, or empty when the manifest is valid
      * @implNote Structural issues are reported alone. Once a field has the wrong type there is
      * nothing trustworthy left to cross-check, and a cascade of derived complaints buries the real
      * one.
@@ -48,6 +52,9 @@ public final class ManifestValidator {
     }
 
     /**
+     * @param value the parsed plugin.json to check
+     * @param wellKnownServices the bare service ids any plugin may register, empty for none, or null to skip
+     *                          the provided-service check entirely
      * @return the manifest when it is valid
      * @throws PluginException naming the plugin, the first problem, and its fix when it is not
      */

@@ -6,7 +6,19 @@ package io.github.intisy.ai.api.seam;
  * matching what gson and JS {@code JSON.parse} both naturally produce.
  */
 public interface JsonCodec {
+    /**
+     * Parses a JSON string into the plain-object tree described above.
+     *
+     * @param json the JSON text
+     * @return the parsed tree, or {@code null} when {@code json} is null, empty, or blank
+     */
     Object parse(String json);
 
+    /**
+     * Renders a plain-object tree back to JSON text.
+     *
+     * @param value a tree of {@code Map}/{@code List}/{@code String}/{@code Number}/{@code Boolean}/{@code null}
+     * @return the JSON text
+     */
     String stringify(Object value);
 }

@@ -15,10 +15,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface TsConstant {
+    /** @return the emitted TypeScript type of the constant */
     String type();
 
+    /** @return the key's id string, embedded in the emitted typed-key object */
     String id() default "";
 
-    /** Emitted verbatim as the value. Empty emits the typed-key object instead. */
+    /**
+     * Emitted verbatim as the value. Empty emits the typed-key object instead.
+     *
+     * @return the literal source text to emit, or empty to emit the typed-key object built from {@link #id}
+     */
     String literal() default "";
 }

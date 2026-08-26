@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Plugin API contract and service registry for the intisy-ai AI-proxy ecosystem.",
   "type": "module",
   "main": "generated/api.keys.js",
@@ -20,6 +20,14 @@
     "./host": {
       "types": "./dist/host/index.d.ts",
       "default": "./dist/host/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "default": "./dist/testing/index.js"
+    },
+    "./testing/predicates": {
+      "types": "./dist/testing/predicates.d.ts",
+      "default": "./dist/testing/predicates.js"
     }
   },
   "bin": {
