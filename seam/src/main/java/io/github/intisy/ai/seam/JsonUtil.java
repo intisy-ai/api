@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Narrowing helpers over the {@code JsonCodec} parsed shape ({@code Map}/{@code List}/
  * {@code String}/{@code Number}/{@code Boolean}/{@code null}). No reflection, no gson: every store
- * in this ecosystem hand-rolls its {@code Map<String,Object>} to-POJO conversion through these
+ * in this ecosystem hand-rolls its conversion between {@code Map<String,Object>} and POJOs through these
  * helpers so the code stays transpilable.
  *
  * @implNote In layer 1 rather than beside either caller, because both the account store and the
