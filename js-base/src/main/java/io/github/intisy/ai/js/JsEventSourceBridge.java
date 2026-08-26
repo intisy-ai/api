@@ -29,12 +29,23 @@ public final class JsEventSourceBridge implements EventSource {
      *  JS string leaks into Java code expecting a {@code jl_String}. */
     @JSFunctor
     public interface JsStreamNext extends JSObject {
+        /**
+         * Pulls the next event from the JS side. Called from Java by {@link #awaitNext}; the
+         * implementation lives in JS.
+         *
+         * @return a promise resolving to the next event, or a JS null once the source is drained
+         */
         JSPromise<JSString> next();
     }
 
     private final JsStreamNext jsNext;
     private boolean drained;
 
+    /**
+     * Wraps a JS-supplied async pull function behind the {@link EventSource} contract.
+     *
+     * @param jsNext JS callback invoked to pull the next event
+     */
     public JsEventSourceBridge(JsStreamNext jsNext) {
         this.jsNext = jsNext;
     }

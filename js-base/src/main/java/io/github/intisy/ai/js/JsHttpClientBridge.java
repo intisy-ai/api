@@ -47,12 +47,25 @@ public final class JsHttpClientBridge implements HttpClient {
      *  {@code JSString.valueOf}/{@code .stringValue()}. */
     @JSFunctor
     public interface JsHttpSend extends JSObject {
+        /**
+         * Sends one request to the JS-side transport. Called from Java by {@link #awaitSend}; the
+         * implementation lives in JS (a {@code fetch}-backed call in production).
+         *
+         * @param requestJson the request, serialized as JSON
+         * @return a promise resolving to the JSON-serialized response
+         */
         JSPromise<JSString> send(JSString requestJson);
     }
 
     private final JsHttpSend jsSend;
     private final JsonCodec json;
 
+    /**
+     * Wraps a JS-supplied async transport and a codec behind the {@link HttpClient} contract.
+     *
+     * @param jsSend JS callback invoked to send one request
+     * @param json   codec used to serialize the request and parse the response
+     */
     public JsHttpClientBridge(JsHttpSend jsSend, JsonCodec json) {
         this.jsSend = jsSend;
         this.json = json;

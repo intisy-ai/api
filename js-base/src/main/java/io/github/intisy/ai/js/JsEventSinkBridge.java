@@ -22,18 +22,36 @@ public final class JsEventSinkBridge implements EventSink {
      *  {@code .d.ts} still claims a function. */
     @JSFunctor
     public interface JsStreamEmit extends JSObject {
+        /**
+         * Pushes one event to the JS-side listener. Called from Java by
+         * {@link JsEventSinkBridge#emit(String)}; the implementation lives in JS.
+         *
+         * @param event the event text, already converted to a JS string
+         */
         void emit(JSString event);
     }
 
     /** JS-provided completion: {@code (error: string | null) => void}. */
     @JSFunctor
     public interface JsStreamClose extends JSObject {
+        /**
+         * Signals the JS-side listener that the stream ended. Called from Java by
+         * {@link JsEventSinkBridge#close(String)}; the implementation lives in JS.
+         *
+         * @param error a JS null when the stream ended cleanly, otherwise the error message as a JS string
+         */
         void close(JSString error);
     }
 
     private final JsStreamEmit jsEmit;
     private final JsStreamClose jsClose;
 
+    /**
+     * Wraps the JS-supplied push and completion callbacks behind the {@link EventSink} contract.
+     *
+     * @param jsEmit  JS callback invoked once per event
+     * @param jsClose JS callback invoked once, when the stream ends
+     */
     public JsEventSinkBridge(JsStreamEmit jsEmit, JsStreamClose jsClose) {
         this.jsEmit = jsEmit;
         this.jsClose = jsClose;
