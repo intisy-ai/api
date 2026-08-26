@@ -58,6 +58,32 @@ class TypeMappingTest {
     }
 
     @Test
+    void mapsTheValueReturningFunctionalInterfaces() throws IOException {
+        String emitted = EmitFixtureTest.emit("fixture.Transport", String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import java.util.concurrent.CompletionStage;",
+                "import java.util.function.BiFunction;",
+                "import java.util.function.Function;",
+                "import java.util.function.Predicate;",
+                "import java.util.function.Supplier;",
+                "@TsInterface",
+                "public interface Transport {",
+                "  void send(Function<String, CompletionStage<String>> call);",
+                "  void merge(BiFunction<String, String, Object> combine);",
+                "  void open(Supplier<String> token);",
+                "  void filter(Predicate<String> accept);",
+                "}"));
+        assertEquals(String.join("\n",
+                "export interface Transport {",
+                "  filter(accept: ((value: string) => boolean)): void;",
+                "  merge(combine: ((a: string, b: string) => unknown)): void;",
+                "  open(token: (() => string)): void;",
+                "  send(call: ((value: string) => Promise<string>)): void;",
+                "}") + "\n", emitted.substring(emitted.indexOf("export interface")).trim() + "\n");
+    }
+
+    @Test
     void emitsJavaOverloadsAsTypescriptOverloads() throws IOException {
         String emitted = EmitFixtureTest.emit("fixture.Log", String.join("\n",
                 "package fixture;",
