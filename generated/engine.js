@@ -16920,24 +16920,34 @@ igiae_ManifestSchema_lifecycle = () => {
     return $lifecycle;
 },
 igiae_ManifestSchema_publish = () => {
-    let $properties, $publish;
+    let $properties, $jarModule, $publish;
     $properties = ju_LinkedHashMap__init_();
     $properties.$put($rt_s(448), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(449)));
-    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(450));
+    $jarModule = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(450));
+    igiae_JsonSchema_setItems($jarModule, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(451), $jarModule);
+    $properties.$put($rt_s(452), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(453)));
+    $properties.$put($rt_s(454), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(262)), $rt_s(455)));
+    $publish = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(456));
     igiae_JsonSchema_setProperties($publish, $properties);
     return $publish;
 },
 igiae_ManifestSchema_repo = () => {
-    let $properties, $domains, $repo;
+    let $properties, $domains, $tech, $topics, $repo;
     $properties = ju_LinkedHashMap__init_();
-    $properties.$put($rt_s(451), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(452)));
-    $properties.$put($rt_s(453), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(454)));
-    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(455));
-    igiae_JsonSchema_setItems($domains, igiae_JsonSchema_ofType($rt_s(260)));
-    $properties.$put($rt_s(456), $domains);
     $properties.$put($rt_s(457), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(458)));
-    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(459));
-    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(451), $rt_s(453), $rt_s(457)])));
+    $properties.$put($rt_s(459), igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(260)), $rt_s(460)));
+    $domains = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(461));
+    igiae_JsonSchema_setItems($domains, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(462), $domains);
+    $tech = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(463));
+    igiae_JsonSchema_setItems($tech, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(464), $tech);
+    $topics = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(375)), $rt_s(465));
+    igiae_JsonSchema_setItems($topics, igiae_JsonSchema_ofType($rt_s(260)));
+    $properties.$put($rt_s(466), $topics);
+    $repo = igiae_ManifestSchema_described(igiae_JsonSchema_ofType($rt_s(329)), $rt_s(467));
+    igiae_JsonSchema_setRequired($repo, ju_Arrays_asList($rt_wrapArray(jl_String, [$rt_s(457), $rt_s(459), $rt_s(464)])));
     igiae_JsonSchema_setProperties($repo, $properties);
     return $repo;
 },
@@ -17552,8 +17562,9 @@ $rt_stringPool(["String is null", "String is empty", "String contains invalid di
 "icon", "Path to a square-viewBox SVG mark, relative to the repo root.", "Host-facing abilities this plugin provides at activation.", "list capability ids as strings, for example [\"provider\", \"screens\"]", "commands", "config", "data", "Declared permissions, surfaced at install and in dashboards.", "lifecycle", "publish", "repo", "The single machine-readable description of a repo in the intisy-ai ecosystem.", "http://json-schema.org/draft-07/schema#", "https://intisy-ai.github.io/api/schema/plugin.schema.json",
 "intisy-ai plugin manifest", "Service ids this plugin registers, each namespaced by its own id or a well-known bare id.", "Service ids this plugin asks for.", "The inter-plugin contract: what this plugin offers other plugins, and what it asks of them.", "name", "The command\'s name, which is also the file it is written to.", "What a command picker shows beside the name.", "argumentHint", "The argument shape a picker hints at, such as \"list | get <key>\".", "body", "Markdown the model is shown, after any shell output.",
 "shell", "A shell line run before the body, which may use $ARGUMENTS and {{BUNDLE}}.", "One slash command this plugin contributes.", "Slash commands this plugin contributes, which a host deploys without importing it.", "Paths this plugin writes to, relative to the home it runs in.", "paths", "Where this plugin keeps state that is not named after it.", "The file these settings live in, config/<name>.json, when that is not the plugin\'s id.", "defaults", "Every setting this plugin has, and what it is worth until a home changes it.",
-"This plugin\'s settings as it ships them.", "install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.", "How the repo is published to npm.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.",
-"Domain topics, for example claude or gemini.", "domains", "tech", "The primary tech topic, typescript or java.", "Repository metadata: the GitHub description and topic set are derived from it."]);
+"This plugin\'s settings as it ships them.", "install", "The entry exports install(ctx), run once after first deploy.", "repair", "The entry exports repair(ctx), run on demand from a host.", "Which optional lifecycle hooks the entry module exports.", "scopedOnly", "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable.", "The Gradle modules whose jars ship as release assets, each named by its own classifier.", "jarModule", "generatedReadme", "The README is rendered at build time, so the release promotes it rather than testing it.",
+"jarPretest", "Run the Gradle build before the tests, because a test needs its jar installed first.", "How the repo is published, to npm and as Java release assets.", "role", "The role phrase, capitalized, without the fixed \"for the intisy-ai AI-proxy ecosystem.\" suffix.", "category", "The single category topic, for example core-library or ai-provider.", "Domain topics, for example claude or gemini.", "domains", "The tech topics, for example typescript, java or svelte.", "tech", "Topics this repo needs that no other rule derives, for example github-actions.",
+"topics", "Repository metadata: the GitHub description and topic set are derived from it."]);
 jl_String.prototype.toString = function() {
     return $rt_ustr(this);
 };

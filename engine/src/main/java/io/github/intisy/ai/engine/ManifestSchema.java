@@ -143,7 +143,16 @@ public final class ManifestSchema {
         Map<String, JsonSchema> properties = new LinkedHashMap<String, JsonSchema>();
         properties.put("scopedOnly", described(JsonSchema.ofType("boolean"),
                 "Publish only as @intisy-ai/<name>, because the unscoped name is unavailable."));
-        JsonSchema publish = described(JsonSchema.ofType("object"), "How the repo is published to npm.");
+        JsonSchema jarModule = described(JsonSchema.ofType("array"),
+                "The Gradle modules whose jars ship as release assets, each named by its own classifier.");
+        jarModule.setItems(JsonSchema.ofType("string"));
+        properties.put("jarModule", jarModule);
+        properties.put("generatedReadme", described(JsonSchema.ofType("boolean"),
+                "The README is rendered at build time, so the release promotes it rather than testing it."));
+        properties.put("jarPretest", described(JsonSchema.ofType("boolean"),
+                "Run the Gradle build before the tests, because a test needs its jar installed first."));
+        JsonSchema publish = described(JsonSchema.ofType("object"),
+                "How the repo is published, to npm and as Java release assets.");
         publish.setProperties(properties);
         return publish;
     }
@@ -157,7 +166,14 @@ public final class ManifestSchema {
         JsonSchema domains = described(JsonSchema.ofType("array"), "Domain topics, for example claude or gemini.");
         domains.setItems(JsonSchema.ofType("string"));
         properties.put("domains", domains);
-        properties.put("tech", described(JsonSchema.ofType("string"), "The primary tech topic, typescript or java."));
+        JsonSchema tech = described(JsonSchema.ofType("array"),
+                "The tech topics, for example typescript, java or svelte.");
+        tech.setItems(JsonSchema.ofType("string"));
+        properties.put("tech", tech);
+        JsonSchema topics = described(JsonSchema.ofType("array"),
+                "Topics this repo needs that no other rule derives, for example github-actions.");
+        topics.setItems(JsonSchema.ofType("string"));
+        properties.put("topics", topics);
         JsonSchema repo = described(JsonSchema.ofType("object"),
                 "Repository metadata: the GitHub description and topic set are derived from it.");
         repo.setRequired(Arrays.asList("role", "category", "tech"));

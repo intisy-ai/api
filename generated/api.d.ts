@@ -375,8 +375,21 @@ export interface WantOptions {
   timeoutMs?: number;
 }
 
-/** How the repo is published to npm. */
+/** How the repo is published, to npm and as Java release assets. */
 export interface ManifestPublish {
+  /** The README is rendered at build time, so the release promotes it rather than testing it. */
+  generatedReadme?: boolean;
+  /**
+   * The Gradle modules whose jars ship as release assets, each named by its own classifier.
+   *
+   * @remarks
+   * A list rather than one name because a consumer resolves each module separately: they
+   * serve different Gradle configurations, and one shaded jar would put every module on every
+   * consumer's runtime classpath.
+   */
+  jarModule?: string[];
+  /** Run the Gradle build before the tests, because a test needs its jar installed first. */
+  jarPretest?: boolean;
   /** Publish only as `@intisy-ai/<name>`, because the unscoped name is unavailable. */
   scopedOnly?: boolean;
 }
@@ -405,8 +418,16 @@ export interface RepoMeta {
   domains?: string[];
   /** The role phrase, capitalized, without the fixed ecosystem suffix. */
   role: string;
-  /** The primary tech topic, `typescript` or `java`. */
-  tech: string;
+  /**
+   * The tech topics, for example `typescript`, `java` or `svelte`.
+   *
+   * @remarks
+   * A list rather than one primary topic, because a repo carrying a Java engine behind a
+   * TypeScript package is both and describing it as either is wrong.
+   */
+  tech: string[];
+  /** Topics this repo needs that no other rule derives, for example `github-actions`. */
+  topics?: string[];
 }
 
 /** What a plugin offers other plugins, and what it asks of them. */

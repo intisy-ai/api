@@ -17,6 +17,15 @@ public interface RepoMeta {
     @TsOptional
     List<String> domains();
 
-    /** The primary tech topic, `typescript` or `java`. */
-    String tech();
+    /**
+     * The tech topics, for example `typescript`, `java` or `svelte`.
+     *
+     * @implNote A list rather than one primary topic, because a repo carrying a Java engine behind a
+     * TypeScript package is both and describing it as either is wrong.
+     */
+    List<String> tech();
+
+    /** Topics this repo needs that no other rule derives, for example `github-actions`. */
+    @TsOptional
+    List<String> topics();
 }
