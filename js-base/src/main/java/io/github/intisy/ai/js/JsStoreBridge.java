@@ -75,7 +75,8 @@ public final class JsStoreBridge implements Store {
          * {@link JsStoreBridge#listKeys}; the implementation lives in the JS store object.
          *
          * @param prefix the key prefix to match, already converted to a JS string
-         * @return every matching key as a plain JS array of strings, empty when none match
+         * @return every matching key as a plain JS array of strings, or a JS null or undefined,
+         *         which {@link JsStoreBridge#listKeys} treats as no matches
          */
         JSArrayReader<JSString> listKeys(JSString prefix);
     }
