@@ -17,7 +17,7 @@ public interface ManifestCommand {
     /** What a command picker shows beside the name. */
     String description();
 
-    /** The argument shape a picker hints at, such as "list | get <key>". */
+    /** The argument shape a picker hints at, such as {@code list | get <key>}. */
     @TsOptional
     String argumentHint();
 

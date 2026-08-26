@@ -24,7 +24,7 @@ import java.util.Map;
  * <p>{@link #send} looks synchronous to every caller up the shared call graph (Router.routeJson
  * -&gt; ProxyHandler.handle -&gt; this.send), but internally suspends on {@link #awaitSend}, a native
  * method marked {@code @Async}. TeaVM's whole-program CPS transform propagates the suspend all the
- * way up to whichever entrypoint triggered it; in {@link CoreProxyJs#routeJsonAsync} that entrypoint
+ * way up to whichever entrypoint triggered it; in the host's async routing entrypoint that entrypoint
  * runs inside {@code JSPromise.callAsync}, so the suspend/resume surfaces to JS as a normal
  * {@code Promise} that resolves once the JS side's fetch-backed send() resolves.
  */

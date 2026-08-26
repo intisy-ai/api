@@ -13,7 +13,7 @@ import java.util.function.UnaryOperator;
 
 /**
  * A live {@link Store} that delegates every call straight through to a JS-provided store object,
- * instead of {@link InMemoryStore}'s one-shot snapshot. Any mutation the routing logic makes during a
+ * instead of the in-memory store's one-shot snapshot. Any mutation the routing logic makes during a
  * call lands directly on the JS object the caller supplied, so it is visible to the next call that
  * reuses the same JS store instance: live rather than snapshot.
  */

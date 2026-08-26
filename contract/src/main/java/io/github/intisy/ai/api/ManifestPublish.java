@@ -7,7 +7,7 @@ import java.util.List;
 /** How the repo is published, to npm and as Java release assets. */
 @TsInterface(data = true)
 public interface ManifestPublish {
-    /** Publish only as `@intisy-ai/<name>`, because the unscoped name is unavailable. */
+    /** Publish only as {@code @intisy-ai/<name>}, because the unscoped name is unavailable. */
     @TsOptional
     boolean scopedOnly();
 

@@ -306,7 +306,7 @@ export interface HomeDescriptor {
  * lets the command files exist before the plugin has ever activated.
  */
 export interface ManifestCommand {
-  /** The argument shape a picker hints at, such as "list | get <key>". */
+  /** The argument shape a picker hints at, such as `list | get <key>`. */
   argumentHint?: string;
   /** Markdown the model is shown, after any shell output. */
   body?: string;
