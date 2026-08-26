@@ -20,6 +20,10 @@
     "./host": {
       "types": "./dist/host/index.d.ts",
       "default": "./dist/host/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "default": "./dist/testing/index.js"
     }
   },
   "bin": {

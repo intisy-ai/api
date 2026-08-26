@@ -8,7 +8,7 @@ const repo = fileURLToPath(new URL("../..", import.meta.url));
 const NODE_BUILTINS = ["fs", "path", "os", "process", "child_process", "url", "crypto", "util", "events", "stream"];
 
 /** Subpaths that are Node-only by design, so a builtin in one of them is correct rather than a leak. */
-const NODE_ALLOWED = ["./host"];
+const NODE_ALLOWED = ["./host", "./testing"];
 
 interface Served {
   subpath: string;

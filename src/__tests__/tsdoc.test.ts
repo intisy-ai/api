@@ -1,64 +1,12 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, it } from "vitest";
+import { sourceFiles, undocumented, undocumentedMembers } from "../testing/index.js";
 
 const REPO = fileURLToPath(new URL("../..", import.meta.url));
 const SRC = fileURLToPath(new URL("..", import.meta.url));
 const GENERATED = join(REPO, "generated");
-const DECLARATION = /^export\s+(?:default\s+)?(?:declare\s+)?(?:abstract\s+)?(?:async\s+)?(?:interface|type|class|function\*?|const|let|enum)\s/;
-const MEMBER = /^ {2}(?:readonly\s+)?[A-Za-z_$][\w$]*\??[(:<]/;
-const RE_EXPORT = /^export\s+(?:type\s+)?(?:\{|\*)/;
-
-function sourceFiles(dir: string, out: string[] = []): string[] {
-  for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
-    if (statSync(full).isDirectory()) {
-      if (entry === "__tests__") continue;
-      sourceFiles(full, out);
-      continue;
-    }
-    if (entry.endsWith(".ts") && !entry.endsWith(".test.ts") && entry !== "index.ts") out.push(full);
-  }
-  return out;
-}
-
-function documented(lines: string[], at: number): boolean {
-  let previous = at - 1;
-  while (previous >= 0 && lines[previous].trim() === "") previous--;
-  return previous >= 0 && lines[previous].trim().endsWith("*/");
-}
-
-/** Every exported declaration in a file that carries no doc comment. */
-export function undocumented(source: string): string[] {
-  const lines = source.split(/\r?\n/);
-  const missing: string[] = [];
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (RE_EXPORT.test(line) || !DECLARATION.test(line)) continue;
-    if (!documented(lines, i)) missing.push(line.trim());
-  }
-  return missing;
-}
-
-/**
- * Every interface MEMBER in a file that carries no doc comment.
- *
- * @remarks
- * Separate from {@link undocumented} because a member is what the generated surface is almost
- * entirely made of: the declarations are few and the properties are many, and typedoc fails the
- * docs build on either. Two-space indentation identifies a member, which is the only shape the
- * emitter produces.
- */
-export function undocumentedMembers(source: string): string[] {
-  const lines = source.split(/\r?\n/);
-  const missing: string[] = [];
-  for (let i = 0; i < lines.length; i++) {
-    if (!MEMBER.test(lines[i])) continue;
-    if (!documented(lines, i)) missing.push(lines[i].trim());
-  }
-  return missing;
-}
 
 it("documents every exported declaration under src", () => {
   const offenders = sourceFiles(SRC)
