@@ -2,10 +2,13 @@ package io.github.intisy.ai.tsemit;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -294,14 +297,34 @@ public class TsEmitProcessor extends AbstractProcessor {
      * methods alone rendered it as an empty interface. Merging the two into one sorted list rather
      * than emitting fields as a leading block keeps a mixed type readable, and the comparator is the
      * one methods already used, so a type with no fields emits exactly the bytes it did before.
+     * Inherited members are collected too, with the emitted type's own winning over one it
+     * redeclares, because a redeclaration in Java exists precisely to carry emission annotations the
+     * inherited one lacks.
+     *
+     * @param type the type being emitted.
+     * @param spec the annotation that decided how to emit it.
+     * @return the members to render, sorted by name.
+     * @implNote An overload set shares one name and must all be kept, so a method with parameters is
+     * identified by its whole signature and only a field or a zero-argument method by name alone. A
+     * zero-argument method cannot be overloaded, so two of them under one name are always an override.
      */
     private List<Member> sortedMembers(TypeElement type, TsInterface spec) {
         List<Member> members = new ArrayList<Member>();
-        for (VariableElement field : instanceFields(type)) {
-            members.add(new Member(field.getSimpleName().toString(), "", field(field)));
-        }
-        for (ExecutableElement method : sortedMethods(type)) {
-            members.add(new Member(method.getSimpleName().toString(), method.toString(), method(method, spec)));
+        Set<String> taken = new HashSet<String>();
+        for (TypeElement each : selfThenSupertypes(type)) {
+            for (VariableElement field : instanceFields(each)) {
+                String name = field.getSimpleName().toString();
+                if (taken.add(name)) {
+                    members.add(new Member(name, "", field(field)));
+                }
+            }
+            for (ExecutableElement method : sortedMethods(each)) {
+                String name = method.getSimpleName().toString();
+                String signature = method.toString();
+                if (taken.add(method.getParameters().isEmpty() ? name : signature)) {
+                    members.add(new Member(name, signature, method(method, spec)));
+                }
+            }
         }
         Collections.sort(members);
         return members;
@@ -375,6 +398,38 @@ public class TsEmitProcessor extends AbstractProcessor {
             }
         });
         return methods;
+    }
+
+    /**
+     * The type itself followed by every supertype it inherits members from, nearest first.
+     *
+     * @param type the emitted type to walk from.
+     * @return the walk, breadth-first, each type once, without {@code java.lang.Object}.
+     * @implNote Breadth-first rather than superclass-then-interfaces so a member declared on the
+     * nearest supertype wins over the same name reached by a longer path, which is the resolution
+     * order a reader of the Java expects.
+     */
+    private List<TypeElement> selfThenSupertypes(TypeElement type) {
+        List<String> seen = new ArrayList<String>();
+        List<TypeElement> walk = new ArrayList<TypeElement>();
+        Deque<TypeElement> pending = new ArrayDeque<TypeElement>();
+        pending.addLast(type);
+        while (!pending.isEmpty()) {
+            TypeElement each = pending.removeFirst();
+            String qualified = each.getQualifiedName().toString();
+            if ("java.lang.Object".equals(qualified) || seen.contains(qualified)) {
+                continue;
+            }
+            seen.add(qualified);
+            walk.add(each);
+            for (TypeMirror supertype : processingEnv.getTypeUtils().directSupertypes(each.asType())) {
+                Element element = processingEnv.getTypeUtils().asElement(supertype);
+                if (element instanceof TypeElement) {
+                    pending.addLast((TypeElement) element);
+                }
+            }
+        }
+        return walk;
     }
 
     private String joinVars(List<? extends TypeParameterElement> vars) {
