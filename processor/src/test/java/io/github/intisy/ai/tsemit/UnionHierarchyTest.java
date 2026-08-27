@@ -45,4 +45,54 @@ class UnionHierarchyTest {
                 "}"));
         assertTrue(errors.toString().contains("knid"), errors.toString());
     }
+
+    @Test
+    void aBaseEmitsAsTheUnionOfItsEmittedSubtypes() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import io.github.intisy.ai.tsemit.TsUnionType;",
+                "/** Any leaf. */",
+                "@TsUnionType",
+                "abstract class Base {",
+                "  public String kind;",
+                "}",
+                "@TsInterface(data = true)",
+                "class Zulu extends Base {",
+                "}",
+                "@TsInterface(data = true)",
+                "class Alpha extends Base {",
+                "}"));
+        assertTrue(emitted.contains(String.join("\n",
+                "/** Any leaf. */",
+                "export type Base = Alpha | Zulu;")), emitted);
+    }
+
+    @Test
+    void anUnannotatedSubtypeIsNotAnArm() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import io.github.intisy.ai.tsemit.TsUnionType;",
+                "@TsUnionType",
+                "abstract class Base {",
+                "}",
+                "@TsInterface(data = true)",
+                "class Kept extends Base {",
+                "}",
+                "class Skipped extends Base {",
+                "}"));
+        assertTrue(emitted.contains("export type Base = Kept;"), emitted);
+    }
+
+    @Test
+    void aBaseWithNoEmittedSubtypeIsRefused() {
+        List<String> errors = EmitHarness.errors("fixture.Unit", String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsUnionType;",
+                "@TsUnionType",
+                "abstract class Base {",
+                "}"));
+        assertTrue(errors.toString().contains("subtype"), errors.toString());
+    }
 }

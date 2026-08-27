@@ -38,7 +38,7 @@ import javax.tools.StandardLocation;
  * An annotation processor that renders {@link TsInterface}, {@link TsEnum}, {@link TsModule} and
  * {@link TsConstant} declarations into a single generated TypeScript source file.
  */
-@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant", "io.github.intisy.ai.tsemit.TsEnum", "io.github.intisy.ai.tsemit.TsStringUnion"})
+@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant", "io.github.intisy.ai.tsemit.TsEnum", "io.github.intisy.ai.tsemit.TsStringUnion", "io.github.intisy.ai.tsemit.TsUnionType"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedOptions({"tsemit.name", "tsemit.ext", "tsemit.keys", "tsemit.imports", "tsemit.reexport"})
 public class TsEmitProcessor extends AbstractProcessor {
@@ -90,6 +90,29 @@ public class TsEmitProcessor extends AbstractProcessor {
             }
             emittedTypes.add(type.getSimpleName().toString());
             chunks.add(docBlock(type, "") + "export type " + type.getSimpleName() + " = " + union + ";\n");
+        }
+        for (Element element : round.getElementsAnnotatedWith(TsUnionType.class)) {
+            if (element.getKind() != ElementKind.CLASS && element.getKind() != ElementKind.INTERFACE) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsUnionType applies only to a class or interface", element);
+                continue;
+            }
+            TypeElement base = (TypeElement) element;
+            List<String> arms = armsOf(base, round);
+            if (arms.isEmpty()) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsUnionType needs at least one emitted subtype", element);
+                continue;
+            }
+            StringBuilder union = new StringBuilder();
+            for (int i = 0; i < arms.size(); i++) {
+                if (i > 0) {
+                    union.append(" | ");
+                }
+                union.append(arms.get(i));
+            }
+            emittedTypes.add(base.getSimpleName().toString());
+            chunks.add(docBlock(base, "") + "export type " + base.getSimpleName() + " = " + union + ";\n");
         }
         for (Element element : round.getElementsAnnotatedWith(TsModule.class)) {
             if (element.getKind() != ElementKind.INTERFACE) {
@@ -475,6 +498,31 @@ public class TsEmitProcessor extends AbstractProcessor {
             }
         }
         return walk;
+    }
+
+    /**
+     * Every emitted type that has the given base among its supertypes.
+     *
+     * @param base the type the union is named after.
+     * @param round the round to look for subtypes in.
+     * @return their simple names, alphabetical, the base itself excluded.
+     */
+    private List<String> armsOf(TypeElement base, RoundEnvironment round) {
+        String qualified = base.getQualifiedName().toString();
+        List<String> arms = new ArrayList<String>();
+        for (Element candidate : round.getElementsAnnotatedWith(TsInterface.class)) {
+            if (candidate.equals(base) || !emittable(candidate)) {
+                continue;
+            }
+            for (TypeElement supertype : selfThenSupertypes((TypeElement) candidate)) {
+                if (qualified.equals(supertype.getQualifiedName().toString())) {
+                    arms.add(candidate.getSimpleName().toString());
+                    break;
+                }
+            }
+        }
+        Collections.sort(arms);
+        return arms;
     }
 
     private String joinVars(List<? extends TypeParameterElement> vars) {
