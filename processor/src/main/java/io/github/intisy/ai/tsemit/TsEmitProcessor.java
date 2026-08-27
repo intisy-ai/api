@@ -28,6 +28,7 @@ import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
@@ -37,7 +38,7 @@ import javax.tools.StandardLocation;
  * An annotation processor that renders {@link TsInterface}, {@link TsEnum}, {@link TsModule} and
  * {@link TsConstant} declarations into a single generated TypeScript source file.
  */
-@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant", "io.github.intisy.ai.tsemit.TsEnum"})
+@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant", "io.github.intisy.ai.tsemit.TsEnum", "io.github.intisy.ai.tsemit.TsStringUnion"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedOptions({"tsemit.name", "tsemit.ext", "tsemit.keys", "tsemit.imports", "tsemit.reexport"})
 public class TsEmitProcessor extends AbstractProcessor {
@@ -73,6 +74,22 @@ public class TsEmitProcessor extends AbstractProcessor {
             TypeElement type = (TypeElement) element;
             emittedTypes.add(type.getSimpleName().toString());
             chunks.add(docBlock(type, "") + "export type " + type.getSimpleName() + " = " + enumUnion(type) + ";\n");
+        }
+        for (Element element : round.getElementsAnnotatedWith(TsStringUnion.class)) {
+            if (element.getKind() != ElementKind.CLASS) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsStringUnion applies only to a class of string constants", element);
+                continue;
+            }
+            TypeElement type = (TypeElement) element;
+            String union = stringConstantUnion(type);
+            if (union.isEmpty()) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsStringUnion needs at least one public static final String constant", element);
+                continue;
+            }
+            emittedTypes.add(type.getSimpleName().toString());
+            chunks.add(docBlock(type, "") + "export type " + type.getSimpleName() + " = " + union + ";\n");
         }
         for (Element element : round.getElementsAnnotatedWith(TsModule.class)) {
             if (element.getKind() != ElementKind.INTERFACE) {
@@ -249,6 +266,10 @@ public class TsEmitProcessor extends AbstractProcessor {
         if (raw != null) {
             rawEscapes++;
             return raw.value();
+        }
+        String vocabulary = vocabularyName(method);
+        if (vocabulary != null) {
+            return vocabulary;
         }
         TsUnion union = method.getAnnotation(TsUnion.class);
         if (union != null) {
@@ -464,7 +485,8 @@ public class TsEmitProcessor extends AbstractProcessor {
             rawEscapes++;
             return raw.value();
         }
-        String emitted = tsType(value.asType());
+        String vocabulary = vocabularyName(value);
+        String emitted = vocabulary != null ? vocabulary : tsType(value.asType());
         return value.getAnnotation(TsNullable.class) != null ? emitted + " | null" : emitted;
     }
 
@@ -592,6 +614,59 @@ public class TsEmitProcessor extends AbstractProcessor {
             union.append(" | (string & {})");
         }
         return union.toString();
+    }
+
+    /**
+     * One constant holder's values, rendered as the string-literal union they emit as.
+     *
+     * @param type the holder to read.
+     * @return the union body, or the empty string when the holder declares no string constant.
+     * @implNote Declaration order rather than sorted, because the order the constants are written in
+     * is the order a reader of the vocabulary already knows, and javac preserves it.
+     */
+    private String stringConstantUnion(TypeElement type) {
+        StringBuilder union = new StringBuilder();
+        for (Element member : type.getEnclosedElements()) {
+            if (member.getKind() != ElementKind.FIELD
+                    || !member.getModifiers().contains(Modifier.PUBLIC)
+                    || !member.getModifiers().contains(Modifier.STATIC)
+                    || !member.getModifiers().contains(Modifier.FINAL)) {
+                continue;
+            }
+            Object value = ((VariableElement) member).getConstantValue();
+            if (!(value instanceof String)) {
+                continue;
+            }
+            if (union.length() > 0) {
+                union.append(" | ");
+            }
+            union.append("\"").append(value).append("\"");
+        }
+        if (union.length() > 0 && type.getAnnotation(TsOpen.class) != null) {
+            union.append(" | (string & {})");
+        }
+        return union.toString();
+    }
+
+    /**
+     * The emitted union name a member points at, when it points at one.
+     *
+     * @param member the field, parameter or method to read.
+     * @return the holder's simple name, or null when the member names no vocabulary.
+     * @implNote Reading the class member of an annotation throws during processing, because the class
+     * is not loaded, so the type mirror the throw carries is the only way to reach the name.
+     */
+    private String vocabularyName(Element member) {
+        TsVocabulary vocabulary = member.getAnnotation(TsVocabulary.class);
+        if (vocabulary == null) {
+            return null;
+        }
+        try {
+            vocabulary.value();
+            return null;
+        } catch (MirroredTypeException mirrored) {
+            return processingEnv.getTypeUtils().asElement(mirrored.getTypeMirror()).getSimpleName().toString();
+        }
     }
 
     /**
