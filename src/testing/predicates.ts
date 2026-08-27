@@ -100,15 +100,16 @@ export function undocumentedMembers(source: string): string[] {
 }
 
 /** A line that IS a type-checking suppression directive, not one that merely names it in prose. */
-const SUPPRESSION = /^\s*(?:\/\/|\/\*)\s*@ts-(?:nocheck|ignore|expect-error)\b[\s*/]*$/;
+const SUPPRESSION = /^\s*(?:\/|\*)+\s*@ts-(?:nocheck|ignore|expect-error)\b/;
 
 /**
  * Every type-checking suppression directive in a file.
  *
  * @remarks
- * Anchored to the whole line on purpose. Two comments in `libs/core` explain the directive in prose,
- * and a scanner matching the bare string reports those as violations, which is how a guard earns a
- * reputation for crying wolf.
+ * The directive must open the comment, which is the same rule the TypeScript compiler applies: it
+ * accepts one behind any run of slashes or asterisks, so a block-comment continuation line counts,
+ * and it accepts trailing text, so a reason does not disarm it. Anything the directive does not
+ * begin is prose naming it, which a guard must let through or it earns a reputation for crying wolf.
  *
  * @param source the file's contents
  * @returns the offending lines, trimmed, in file order
