@@ -65,6 +65,35 @@ class InheritedMemberTest {
     }
 
     @Test
+    void aRedeclarationKeepsTheEmissionAnnotationsTheInheritedOneLacks() {
+        String emitted = EmitHarness.surface(String.join("\n",
+                "package fixture;",
+                "import io.github.intisy.ai.tsemit.TsInterface;",
+                "import io.github.intisy.ai.tsemit.TsProperty;",
+                "import io.github.intisy.ai.tsemit.TsUnion;",
+                "interface Super {",
+                "  String id();",
+                "  String serve(String request);",
+                "}",
+                "@TsInterface",
+                "interface Sub extends Super {",
+                "  /** The id. */",
+                "  @Override",
+                "  @TsProperty(readOnly = true)",
+                "  String id();",
+                "  @Override",
+                "  @TsUnion(value = {\"string\", \"number\"}, async = true)",
+                "  String serve(String request);",
+                "}"));
+        assertTrue(emitted.contains(String.join("\n",
+                "export interface Sub {",
+                "  /** The id. */",
+                "  readonly id: string;",
+                "  serve(request: string): Promise<string | number>;",
+                "}")), emitted);
+    }
+
+    @Test
     void anInheritedOverloadSetKeepsEveryArm() {
         String emitted = EmitHarness.surface(String.join("\n",
                 "package fixture;",
