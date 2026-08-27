@@ -2,10 +2,13 @@ package io.github.intisy.ai.tsemit;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -25,6 +28,7 @@ import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
@@ -34,7 +38,7 @@ import javax.tools.StandardLocation;
  * An annotation processor that renders {@link TsInterface}, {@link TsEnum}, {@link TsModule} and
  * {@link TsConstant} declarations into a single generated TypeScript source file.
  */
-@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant", "io.github.intisy.ai.tsemit.TsEnum"})
+@SupportedAnnotationTypes({"io.github.intisy.ai.tsemit.TsInterface", "io.github.intisy.ai.tsemit.TsModule", "io.github.intisy.ai.tsemit.TsConstant", "io.github.intisy.ai.tsemit.TsEnum", "io.github.intisy.ai.tsemit.TsStringUnion", "io.github.intisy.ai.tsemit.TsUnionType"})
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 @SupportedOptions({"tsemit.name", "tsemit.ext", "tsemit.keys", "tsemit.imports", "tsemit.reexport"})
 public class TsEmitProcessor extends AbstractProcessor {
@@ -71,6 +75,45 @@ public class TsEmitProcessor extends AbstractProcessor {
             emittedTypes.add(type.getSimpleName().toString());
             chunks.add(docBlock(type, "") + "export type " + type.getSimpleName() + " = " + enumUnion(type) + ";\n");
         }
+        for (Element element : round.getElementsAnnotatedWith(TsStringUnion.class)) {
+            if (element.getKind() != ElementKind.CLASS) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsStringUnion applies only to a class of string constants", element);
+                continue;
+            }
+            TypeElement type = (TypeElement) element;
+            String union = stringConstantUnion(type);
+            if (union.isEmpty()) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsStringUnion needs at least one public static final String constant", element);
+                continue;
+            }
+            emittedTypes.add(type.getSimpleName().toString());
+            chunks.add(docBlock(type, "") + "export type " + type.getSimpleName() + " = " + union + ";\n");
+        }
+        for (Element element : round.getElementsAnnotatedWith(TsUnionType.class)) {
+            if (element.getKind() != ElementKind.CLASS && element.getKind() != ElementKind.INTERFACE) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsUnionType applies only to a class or interface", element);
+                continue;
+            }
+            TypeElement base = (TypeElement) element;
+            List<String> arms = armsOf(base, round);
+            if (arms.isEmpty()) {
+                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                        "@TsUnionType needs at least one emitted subtype", element);
+                continue;
+            }
+            StringBuilder union = new StringBuilder();
+            for (int i = 0; i < arms.size(); i++) {
+                if (i > 0) {
+                    union.append(" | ");
+                }
+                union.append(arms.get(i));
+            }
+            emittedTypes.add(base.getSimpleName().toString());
+            chunks.add(docBlock(base, "") + "export type " + base.getSimpleName() + " = " + union + ";\n");
+        }
         for (Element element : round.getElementsAnnotatedWith(TsModule.class)) {
             if (element.getKind() != ElementKind.INTERFACE) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
@@ -102,7 +145,7 @@ public class TsEmitProcessor extends AbstractProcessor {
             out.append("  /** Never present at run time. It exists so two keys parameterised differently cannot be interchanged. */\n");
             out.append("  readonly __phantom?: ").append(phantom.value()).append(";\n");
         }
-        for (Member member : sortedMembers(type, spec)) {
+        for (Member member : sortedMembers(type, spec, type.getAnnotation(TsDiscriminant.class))) {
             out.append(member.text);
         }
         TsIndexSignature index = type.getAnnotation(TsIndexSignature.class);
@@ -247,6 +290,10 @@ public class TsEmitProcessor extends AbstractProcessor {
             rawEscapes++;
             return raw.value();
         }
+        String vocabulary = vocabularyName(method);
+        if (vocabulary != null) {
+            return vocabulary;
+        }
         TsUnion union = method.getAnnotation(TsUnion.class);
         if (union != null) {
             StringBuilder arms = new StringBuilder();
@@ -294,17 +341,56 @@ public class TsEmitProcessor extends AbstractProcessor {
      * methods alone rendered it as an empty interface. Merging the two into one sorted list rather
      * than emitting fields as a leading block keeps a mixed type readable, and the comparator is the
      * one methods already used, so a type with no fields emits exactly the bytes it did before.
+     * Inherited members are collected too, with the emitted type's own winning over one it
+     * redeclares, because a redeclaration in Java exists precisely to carry emission annotations the
+     * inherited one lacks.
+     *
+     * @param type the type being emitted.
+     * @param spec the annotation that decided how to emit it.
+     * @param discriminant the narrowing this type declares, or null when it declares none.
+     * @return the members to render, sorted by name.
+     * @implNote An overload set shares one name and must all be kept, so a method with parameters is
+     * identified by its whole signature and only a field or a zero-argument method by name alone. A
+     * zero-argument method cannot be overloaded, so two of them under one name are always an override.
      */
-    private List<Member> sortedMembers(TypeElement type, TsInterface spec) {
+    private List<Member> sortedMembers(TypeElement type, TsInterface spec, TsDiscriminant discriminant) {
         List<Member> members = new ArrayList<Member>();
-        for (VariableElement field : instanceFields(type)) {
-            members.add(new Member(field.getSimpleName().toString(), "", field(field)));
+        Set<String> taken = new HashSet<String>();
+        for (TypeElement each : selfThenSupertypes(type)) {
+            for (VariableElement field : instanceFields(each)) {
+                String name = field.getSimpleName().toString();
+                if (taken.add(name)) {
+                    members.add(new Member(name, "", field(field, literalFor(discriminant, name))));
+                }
+            }
+            for (ExecutableElement method : sortedMethods(each)) {
+                String name = method.getSimpleName().toString();
+                String signature = method.toString();
+                if (taken.add(method.getParameters().isEmpty() ? name : signature)) {
+                    members.add(new Member(name, signature, method(method, spec)));
+                }
+            }
         }
-        for (ExecutableElement method : sortedMethods(type)) {
-            members.add(new Member(method.getSimpleName().toString(), method.toString(), method(method, spec)));
+        if (discriminant != null && !taken.contains(discriminant.field())) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                    "@TsDiscriminant names no field of this type: " + discriminant.field(), type);
         }
         Collections.sort(members);
         return members;
+    }
+
+    /**
+     * The literal a discriminant narrows one field to.
+     *
+     * @param discriminant the type's narrowing, or null when it declares none.
+     * @param name the field being rendered.
+     * @return the quoted literal to emit as that field's type, or null to compute it as usual.
+     */
+    private String literalFor(TsDiscriminant discriminant, String name) {
+        if (discriminant == null || !discriminant.field().equals(name)) {
+            return null;
+        }
+        return "\"" + discriminant.value() + "\"";
     }
 
     private String method(ExecutableElement method, TsInterface spec) {
@@ -332,8 +418,12 @@ public class TsEmitProcessor extends AbstractProcessor {
      * @implNote {@code final} carries the {@code readonly}, so a field needs no annotation to say
      * what the Java already says, and {@link #valueType} is shared with parameters because both hold
      * a value that is either present or Java-null, never an omitted argument.
+     *
+     * @param field the field to render.
+     * @param literalType the type to emit verbatim, or null to compute it from the Java.
+     * @return the rendered member line.
      */
-    private String field(VariableElement field) {
+    private String field(VariableElement field, String literalType) {
         StringBuilder out = new StringBuilder(docBlock(field, "  ", true));
         out.append("  ");
         if (field.getModifiers().contains(Modifier.FINAL)) {
@@ -343,7 +433,8 @@ public class TsEmitProcessor extends AbstractProcessor {
         if (field.getAnnotation(TsOptional.class) != null) {
             out.append("?");
         }
-        return out.append(": ").append(valueType(field)).append(";\n").toString();
+        String emitted = literalType != null ? literalType : valueType(field);
+        return out.append(": ").append(emitted).append(";\n").toString();
     }
 
     private List<VariableElement> instanceFields(TypeElement type) {
@@ -375,6 +466,63 @@ public class TsEmitProcessor extends AbstractProcessor {
             }
         });
         return methods;
+    }
+
+    /**
+     * The type itself followed by every supertype it inherits members from, nearest first.
+     *
+     * @param type the emitted type to walk from.
+     * @return the walk, breadth-first, each type once, without {@code java.lang.Object}.
+     * @implNote Breadth-first rather than superclass-then-interfaces so a member declared on the
+     * nearest supertype wins over the same name reached by a longer path, which is the resolution
+     * order a reader of the Java expects.
+     */
+    private List<TypeElement> selfThenSupertypes(TypeElement type) {
+        List<String> seen = new ArrayList<String>();
+        List<TypeElement> walk = new ArrayList<TypeElement>();
+        Deque<TypeElement> pending = new ArrayDeque<TypeElement>();
+        pending.addLast(type);
+        while (!pending.isEmpty()) {
+            TypeElement each = pending.removeFirst();
+            String qualified = each.getQualifiedName().toString();
+            if ("java.lang.Object".equals(qualified) || seen.contains(qualified)) {
+                continue;
+            }
+            seen.add(qualified);
+            walk.add(each);
+            for (TypeMirror supertype : processingEnv.getTypeUtils().directSupertypes(each.asType())) {
+                Element element = processingEnv.getTypeUtils().asElement(supertype);
+                if (element instanceof TypeElement) {
+                    pending.addLast((TypeElement) element);
+                }
+            }
+        }
+        return walk;
+    }
+
+    /**
+     * Every emitted type that has the given base among its supertypes.
+     *
+     * @param base the type the union is named after.
+     * @param round the round to look for subtypes in.
+     * @return their simple names, alphabetical, the base itself excluded.
+     */
+    private List<String> armsOf(TypeElement base, RoundEnvironment round) {
+        String qualified = base.getQualifiedName().toString();
+        List<String> arms = new ArrayList<String>();
+        for (Element candidate : round.getElementsAnnotatedWith(TsInterface.class)) {
+            if (candidate.equals(base) || !emittable(candidate)) {
+                continue;
+            }
+            for (TypeElement supertype : selfThenSupertypes((TypeElement) candidate)) {
+                if (qualified.equals(supertype.getQualifiedName().toString())) {
+                    arms.add(candidate.getSimpleName().toString());
+                    break;
+                }
+            }
+        }
+        Collections.sort(arms);
+        return arms;
     }
 
     private String joinVars(List<? extends TypeParameterElement> vars) {
@@ -409,7 +557,8 @@ public class TsEmitProcessor extends AbstractProcessor {
             rawEscapes++;
             return raw.value();
         }
-        String emitted = tsType(value.asType());
+        String vocabulary = vocabularyName(value);
+        String emitted = vocabulary != null ? vocabulary : tsType(value.asType());
         return value.getAnnotation(TsNullable.class) != null ? emitted + " | null" : emitted;
     }
 
@@ -537,6 +686,59 @@ public class TsEmitProcessor extends AbstractProcessor {
             union.append(" | (string & {})");
         }
         return union.toString();
+    }
+
+    /**
+     * One constant holder's values, rendered as the string-literal union they emit as.
+     *
+     * @param type the holder to read.
+     * @return the union body, or the empty string when the holder declares no string constant.
+     * @implNote Declaration order rather than sorted, because the order the constants are written in
+     * is the order a reader of the vocabulary already knows, and javac preserves it.
+     */
+    private String stringConstantUnion(TypeElement type) {
+        StringBuilder union = new StringBuilder();
+        for (Element member : type.getEnclosedElements()) {
+            if (member.getKind() != ElementKind.FIELD
+                    || !member.getModifiers().contains(Modifier.PUBLIC)
+                    || !member.getModifiers().contains(Modifier.STATIC)
+                    || !member.getModifiers().contains(Modifier.FINAL)) {
+                continue;
+            }
+            Object value = ((VariableElement) member).getConstantValue();
+            if (!(value instanceof String)) {
+                continue;
+            }
+            if (union.length() > 0) {
+                union.append(" | ");
+            }
+            union.append("\"").append(value).append("\"");
+        }
+        if (union.length() > 0 && type.getAnnotation(TsOpen.class) != null) {
+            union.append(" | (string & {})");
+        }
+        return union.toString();
+    }
+
+    /**
+     * The emitted union name a member points at, when it points at one.
+     *
+     * @param member the field, parameter or method to read.
+     * @return the holder's simple name, or null when the member names no vocabulary.
+     * @implNote Reading the class member of an annotation throws during processing, because the class
+     * is not loaded, so the type mirror the throw carries is the only way to reach the name.
+     */
+    private String vocabularyName(Element member) {
+        TsVocabulary vocabulary = member.getAnnotation(TsVocabulary.class);
+        if (vocabulary == null) {
+            return null;
+        }
+        try {
+            vocabulary.value();
+            return null;
+        } catch (MirroredTypeException mirrored) {
+            return processingEnv.getTypeUtils().asElement(mirrored.getTypeMirror()).getSimpleName().toString();
+        }
     }
 
     /**
