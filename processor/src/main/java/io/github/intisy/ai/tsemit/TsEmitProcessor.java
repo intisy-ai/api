@@ -122,7 +122,7 @@ public class TsEmitProcessor extends AbstractProcessor {
             out.append("  /** Never present at run time. It exists so two keys parameterised differently cannot be interchanged. */\n");
             out.append("  readonly __phantom?: ").append(phantom.value()).append(";\n");
         }
-        for (Member member : sortedMembers(type, spec)) {
+        for (Member member : sortedMembers(type, spec, type.getAnnotation(TsDiscriminant.class))) {
             out.append(member.text);
         }
         TsIndexSignature index = type.getAnnotation(TsIndexSignature.class);
@@ -324,19 +324,20 @@ public class TsEmitProcessor extends AbstractProcessor {
      *
      * @param type the type being emitted.
      * @param spec the annotation that decided how to emit it.
+     * @param discriminant the narrowing this type declares, or null when it declares none.
      * @return the members to render, sorted by name.
      * @implNote An overload set shares one name and must all be kept, so a method with parameters is
      * identified by its whole signature and only a field or a zero-argument method by name alone. A
      * zero-argument method cannot be overloaded, so two of them under one name are always an override.
      */
-    private List<Member> sortedMembers(TypeElement type, TsInterface spec) {
+    private List<Member> sortedMembers(TypeElement type, TsInterface spec, TsDiscriminant discriminant) {
         List<Member> members = new ArrayList<Member>();
         Set<String> taken = new HashSet<String>();
         for (TypeElement each : selfThenSupertypes(type)) {
             for (VariableElement field : instanceFields(each)) {
                 String name = field.getSimpleName().toString();
                 if (taken.add(name)) {
-                    members.add(new Member(name, "", field(field)));
+                    members.add(new Member(name, "", field(field, literalFor(discriminant, name))));
                 }
             }
             for (ExecutableElement method : sortedMethods(each)) {
@@ -347,8 +348,26 @@ public class TsEmitProcessor extends AbstractProcessor {
                 }
             }
         }
+        if (discriminant != null && !taken.contains(discriminant.field())) {
+            processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR,
+                    "@TsDiscriminant names no field of this type: " + discriminant.field(), type);
+        }
         Collections.sort(members);
         return members;
+    }
+
+    /**
+     * The literal a discriminant narrows one field to.
+     *
+     * @param discriminant the type's narrowing, or null when it declares none.
+     * @param name the field being rendered.
+     * @return the quoted literal to emit as that field's type, or null to compute it as usual.
+     */
+    private String literalFor(TsDiscriminant discriminant, String name) {
+        if (discriminant == null || !discriminant.field().equals(name)) {
+            return null;
+        }
+        return "\"" + discriminant.value() + "\"";
     }
 
     private String method(ExecutableElement method, TsInterface spec) {
@@ -376,8 +395,12 @@ public class TsEmitProcessor extends AbstractProcessor {
      * @implNote {@code final} carries the {@code readonly}, so a field needs no annotation to say
      * what the Java already says, and {@link #valueType} is shared with parameters because both hold
      * a value that is either present or Java-null, never an omitted argument.
+     *
+     * @param field the field to render.
+     * @param literalType the type to emit verbatim, or null to compute it from the Java.
+     * @return the rendered member line.
      */
-    private String field(VariableElement field) {
+    private String field(VariableElement field, String literalType) {
         StringBuilder out = new StringBuilder(docBlock(field, "  ", true));
         out.append("  ");
         if (field.getModifiers().contains(Modifier.FINAL)) {
@@ -387,7 +410,8 @@ public class TsEmitProcessor extends AbstractProcessor {
         if (field.getAnnotation(TsOptional.class) != null) {
             out.append("?");
         }
-        return out.append(": ").append(valueType(field)).append(";\n").toString();
+        String emitted = literalType != null ? literalType : valueType(field);
+        return out.append(": ").append(emitted).append(";\n").toString();
     }
 
     private List<VariableElement> instanceFields(TypeElement type) {
